@@ -9,20 +9,13 @@ import { Prose } from "@/components/editorial/Prose";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { ReadingProgress } from "./ReadingProgress";
 import { SectionFigure } from "./SectionFigures";
-
-/** The board year each section is about. */
-export const SECTION_YEARS: Record<string, number> = {
-  "the-first-year-the-promises": 2,
-  "the-third-year-the-fees-begin": 4,
-  "the-fifth-year-the-nickel-and-dime": 8,
-  "the-tenth-year-the-profits-flow-out": 12,
-  "the-fifteenth-year-the-question-of-quality": 18,
-  "the-twenty-fifth-year-the-lock-in": 20,
-};
+import { YearTimeline, ANCHOR_OFFSET } from "./YearTimeline";
+import { SECTION_YEARS, buildYearStops } from "./yearStops";
 
 /**
- * The article. The prose is whatever the locale's source file contains; the only
- * editorial layer added here is one animated figure per section.
+ * The article. The prose is whatever the locale's source file contains; the
+ * editorial layer added here is one animated figure and one year stop per
+ * section.
  */
 export function ArticlePage({
   article,
@@ -34,9 +27,12 @@ export function ArticlePage({
 }) {
   const { t } = useTranslation();
   const references = article.references;
+  const yearStops = buildYearStops(article.sections);
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-screen bg-paper pb-[6.5rem]">
+      {/* The year timeline is fixed to the foot of the window; this padding is
+          the room it needs, so it never covers the last paragraph. */}
       <ReadingProgress />
 
       <header className="sticky top-0 z-30 border-b border-rule bg-paper/95 backdrop-blur">
@@ -90,8 +86,10 @@ export function ArticlePage({
         <Prose blocks={article.standfirst} lead />
       </Column>
 
+      {yearStops.length ? <YearTimeline stops={yearStops} /> : null}
+
       {article.sections.map((section, index) => (
-        <section key={section.id} id={section.id} className="scroll-mt-16">
+        <section key={section.id} id={section.id} style={{ scrollMarginTop: ANCHOR_OFFSET }}>
           <Column>
             <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-rule pt-6">
               <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.1em] text-ink-4">

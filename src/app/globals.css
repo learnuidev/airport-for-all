@@ -33,6 +33,29 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * The year timeline
+ *
+ * The article's chronological scale, fixed to the foot of the window. The rules
+ * below are belt and braces on the positioning: `fixed` is what pins it, but a
+ * transform or a filter anywhere up the tree silently re-anchors a fixed
+ * element, so the bar that must never move declares its own containing block
+ * and is never itself transformed. The shadow is what makes its fixity legible
+ * — prose passing underneath it is the only indication a reader gets that the
+ * bar is pinned rather than parked at the end of the document.
+ * ------------------------------------------------------------------ */
+
+.year-timeline {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  transform: none;
+  filter: none;
+  box-shadow:
+    0 -1px 0 var(--color-rule),
+    0 -14px 22px -14px rgb(18 18 18 / 0.22);
+}
+
+/* ------------------------------------------------------------------ *
  * Base
  * ------------------------------------------------------------------ */
 
