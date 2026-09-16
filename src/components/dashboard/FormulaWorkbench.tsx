@@ -18,7 +18,7 @@
  *     for what it is rather than trusted.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { AIRPORTS } from "@/lib/sourced";
@@ -894,16 +894,26 @@ function StepField({
   const shownError = local.error ?? error;
 
   /**
-   * The caret is read from the element after every paint rather than from a
-   * key event: a change, a click, an arrow key and a paste all move it, and
-   * reading it here means the list always describes the text as it now stands.
+   * Track the caret through `selectionchange`, which the browser fires for
+   * every way a caret can move — typing, clicking, an arrow key, a paste — and
+   * does so on the document, so it keeps working while the field is being
+   * re-rendered. Reading the caret on each change instead means a field whose
+   * text React just committed would report no caret at all.
    */
-  useLayoutEffect(() => {
-    const node = areaRef.current;
-    if (!node || document.activeElement !== node) return;
-    const at = node.selectionStart ?? draft.length;
-    setCaret((current) => (current === at ? current : at));
-  });
+  useEffect(() => {
+    const onSelectionChange = () => {
+      const node = areaRef.current;
+      if (!node) return;
+      if (document.activeElement !== node) {
+        setCaret(null);
+        return;
+      }
+      const at = node.selectionStart ?? draft.length;
+      setCaret((current) => (current === at ? current : at));
+    };
+    document.addEventListener("selectionchange", onSelectionChange);
+    return () => document.removeEventListener("selectionchange", onSelectionChange);
+  }, [draft.length]);
 
   /**
    * `typed` is what the caret is attached to right now — `P.`, `airport.pop`.
@@ -923,6 +933,23 @@ function StepField({
   const items = request?.items.slice(0, 40) ?? [];
   // Escape silences the list until the caret moves, so a keystroke reopens it.
   const open = items.length > 0 && dismissed.current !== caret;
+
+  // In development, publish what this field believes about itself. It makes the
+  // caret state inspectable from a test harness without guessing.
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    const debug = ((window as unknown as { __formulaFields?: Record<string, unknown> }).__formulaFields ??= {});
+    debug[step.key] = {
+      draft,
+      caret,
+      browsing,
+      dismissed: dismissed.current,
+      owner: request?.owner ?? null,
+      prefix: request?.prefix ?? "",
+      suggestions: items.length,
+      open,
+    };
+  });
 
   // Keep the highlighted row inside the list as it is filtered by typing.
   useEffect(() => {
