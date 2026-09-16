@@ -381,6 +381,10 @@
     "savedAt": "Saved in this browser at {{time}}",
     "savedNote": "Every parameter, expression, input, switch and chart setting is kept in this browser's local storage and restored when you come back. Copy the link to move a formula to another browser.",
     "completions": "Names that fit here",
-    "completionsUnder": "Members of {{owner}}"
+    "completionsUnder": "Members of {{owner}}",
+    "completionsAll": "Every name a formula can read",
+    "browse": "Show available names",
+    "browseHint": "…or type a dot to list what follows",
+    "completionKeys": "↑↓ to choose · Enter to take · Esc to close"
   }
 }

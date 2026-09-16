@@ -381,6 +381,10 @@
     "savedAt": "Guardado en este navegador a las {{time}}",
     "savedNote": "Cada parámetro, expresión, dato de entrada, interruptor y ajuste del gráfico se guarda en el almacenamiento local de este navegador y se restaura al volver. Copie el enlace para llevar una fórmula a otro navegador.",
     "completions": "Nombres que encajan aquí",
-    "completionsUnder": "Miembros de {{owner}}"
+    "completionsUnder": "Miembros de {{owner}}",
+    "completionsAll": "Todos los nombres que puede leer una fórmula",
+    "browse": "Mostrar los nombres disponibles",
+    "browseHint": "…o escriba un punto para listar lo que sigue",
+    "completionKeys": "↑↓ para elegir · Enter para tomar · Esc para cerrar"
   }
 }

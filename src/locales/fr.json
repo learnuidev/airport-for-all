@@ -381,6 +381,10 @@
     "savedAt": "Enregistré dans ce navigateur à {{time}}",
     "savedNote": "Chaque paramètre, expression, donnée d'entrée, interrupteur et réglage de graphique est conservé dans le stockage local de ce navigateur et restauré à votre retour. Copiez le lien pour transporter une formule vers un autre navigateur.",
     "completions": "Noms possibles ici",
-    "completionsUnder": "Membres de {{owner}}"
+    "completionsUnder": "Membres de {{owner}}",
+    "completionsAll": "Tous les noms lisibles par une formule",
+    "browse": "Afficher les noms disponibles",
+    "browseHint": "…ou tapez un point pour lister ce qui suit",
+    "completionKeys": "↑↓ pour choisir · Entrée pour prendre · Échap pour fermer"
   }
 }

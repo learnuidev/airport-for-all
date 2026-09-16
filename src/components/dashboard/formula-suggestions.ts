@@ -228,6 +228,25 @@ function dedupe(items: Suggestion[]): Suggestion[] {
   });
 }
 
+/**
+ * What to offer when the reader asks for the list outright — the dropdown
+ * button rather than a keystroke.
+ *
+ * It stays in context: inside `P.tax…` it browses `P`'s members, otherwise it
+ * browses every name a formula can read.
+ */
+export function browseAt(text: string, caret: number, context: SuggestionContext): CompletionRequest {
+  const inContext = completionAt(text, caret, context);
+  if (inContext) return inContext;
+  return {
+    items: context.roots,
+    prefix: "",
+    from: caret,
+    to: caret,
+    owner: "",
+  };
+}
+
 /** Apply a completion, returning the new text and where the caret should sit. */
 export function applyCompletion(
   text: string,

@@ -25,6 +25,7 @@ import { AIRPORTS } from "@/lib/sourced";
 import { localeTag, money } from "@/components/editorial/model";
 import {
   applyCompletion,
+  browseAt,
   buildSuggestions,
   completionAt,
   type Suggestion,
@@ -867,8 +868,13 @@ function StepField({
 }) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState(step.expression);
+  /** Where the caret last was, read from the element; null when unfocused. */
   const [caret, setCaret] = useState<number | null>(null);
+  /** True when the dropdown button asked for the list, rather than a keystroke. */
+  const [browsing, setBrowsing] = useState(false);
   const [active, setActive] = useState(0);
+  /** The caret position Escape was pressed at: the list stays shut until it moves. */
+  const dismissed = useRef<number | null>(null);
   const areaRef = useRef<HTMLTextAreaElement | null>(null);
   const lastApplied = useRef(step.expression);
 
@@ -879,6 +885,8 @@ function StepField({
       lastApplied.current = step.expression;
       setDraft(step.expression);
       setCaret(null);
+      setBrowsing(false);
+      dismissed.current = null;
     }
   }, [step.expression]);
 
@@ -897,12 +905,24 @@ function StepField({
     setCaret((current) => (current === at ? current : at));
   });
 
-  const request = useMemo(
+  /**
+   * `typed` is what the caret is attached to right now — `P.`, `airport.pop`.
+   * `browse` is the same thing widened to everything available, which is what
+   * the ▾ button opens. Everything the reader sees comes from one of the two,
+   * and Enter always takes the highlighted row from whichever is showing.
+   */
+  const typed = useMemo(
     () => (caret === null ? null : completionAt(draft, caret, suggestions)),
     [draft, caret, suggestions],
   );
-  const items = request?.items.slice(0, 12) ?? [];
-  const open = items.length > 0;
+  const browse = useMemo(
+    () => (browsing ? browseAt(draft, caret ?? draft.length, suggestions) : null),
+    [browsing, draft, caret, suggestions],
+  );
+  const request = browse ?? typed;
+  const items = request?.items.slice(0, 40) ?? [];
+  // Escape silences the list until the caret moves, so a keystroke reopens it.
+  const open = items.length > 0 && dismissed.current !== caret;
 
   // Keep the highlighted row inside the list as it is filtered by typing.
   useEffect(() => {
@@ -914,6 +934,8 @@ function StepField({
       setDraft(next);
       edit(step.key, next);
       setCaret(nextCaret);
+      setBrowsing(false);
+      dismissed.current = null;
       // Put the caret back where the completion left it, after React's paint.
       window.requestAnimationFrame(() => {
         const node = areaRef.current;
@@ -953,7 +975,8 @@ function StepField({
       }
       if (event.key === "Escape") {
         event.preventDefault();
-        setCaret(null);
+        setBrowsing(false);
+        dismissed.current = caret;
         return;
       }
     }
@@ -961,6 +984,7 @@ function StepField({
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       setCaret(null);
+      setBrowsing(false);
       event.currentTarget.blur();
     }
   };
@@ -983,8 +1007,8 @@ function StepField({
       </div>
 
       <div className="relative mt-1">
-        <div className="flex items-baseline gap-2">
-          <code className="shrink-0 font-mono text-[0.7rem] text-ink-4">{step.key} =</code>
+        <div className="flex items-start gap-2">
+          <code className="shrink-0 pt-1 font-mono text-[0.7rem] text-ink-4">{step.key} =</code>
           <textarea
             ref={areaRef}
             value={draft}
@@ -993,9 +1017,18 @@ function StepField({
             onChange={(event) => {
               setDraft(event.target.value);
               edit(step.key, event.target.value);
+              if (dismissed.current !== null && dismissed.current !== event.target.selectionStart) {
+                dismissed.current = null;
+              }
             }}
             onKeyDown={onKeyDown}
-            onBlur={() => window.setTimeout(() => setCaret(null), 120)}
+            onBlur={() =>
+              window.setTimeout(() => {
+                setCaret(null);
+                setBrowsing(false);
+                dismissed.current = null;
+              }, 120)
+            }
             aria-label={step.label}
             aria-autocomplete="list"
             aria-expanded={open}
@@ -1004,6 +1037,32 @@ function StepField({
               shownError ? "border-data-a" : "border-rule focus:border-ink",
             ].join(" ")}
           />
+          <button
+            type="button"
+            onMouseDown={(event) => {
+              // Keep the caret where it is; the list describes that position.
+              event.preventDefault();
+            }}
+            onClick={() => {
+              if (open) {
+                setBrowsing(false);
+                dismissed.current = caret;
+                return;
+              }
+              dismissed.current = null;
+              setBrowsing(true);
+              areaRef.current?.focus();
+            }}
+            aria-label={t("formula.browse")}
+            aria-expanded={open}
+            title={t("formula.browse")}
+            className={[
+              "mt-0.5 shrink-0 cursor-pointer border px-1.5 py-1 font-sans text-[0.7rem] leading-none transition",
+              open ? "border-ink bg-ink text-white" : "border-rule text-ink-4 hover:border-ink hover:text-ink",
+            ].join(" ")}
+          >
+            ▾
+          </button>
         </div>
 
         {open && request ? (
@@ -1017,7 +1076,9 @@ function StepField({
             heading={
               request.owner
                 ? t("formula.completionsUnder", { owner: request.owner })
-                : t("formula.completions")
+                : browse
+                  ? t("formula.completionsAll")
+                  : t("formula.completions")
             }
           />
         ) : null}
@@ -1056,6 +1117,7 @@ function CompletionList({
   choose: (suggestion: Suggestion) => void;
   heading: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       role="listbox"
@@ -1070,7 +1132,7 @@ function CompletionList({
         {heading}
         {prefix ? <span className="ml-1.5 normal-case text-ink-3">“{prefix}”</span> : null}
         <span className="ml-2 font-normal normal-case tracking-normal text-ink-4">
-          ↑↓ to choose · Enter to take · Esc to close
+          {t("formula.completionKeys")}
         </span>
       </p>
       <ul>
