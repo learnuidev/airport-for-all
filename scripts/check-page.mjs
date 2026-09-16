@@ -91,6 +91,20 @@ const send = (method, params = {}) =>
 
 await send("Runtime.enable");
 await send("Page.enable");
+
+/**
+ * Start from a known state. A dev server in a browser that has already saved a
+ * formula would hand this test an edited model, so open the site first, clear
+ * the saved settings, then load the workbench.
+ */
+await send("Page.navigate", { url: URL.replace(/\/chart\/formula.*$/, "/") });
+await sleep(1500);
+const wipe = await send("Runtime.evaluate", {
+  expression: "window.localStorage.removeItem('aifa:formula:v1'), 'cleared'",
+  returnByValue: true,
+});
+if (wipe.result?.value !== "cleared") throw new Error("could not clear the saved settings before testing");
+
 await send("Page.navigate", { url: URL });
 await sleep(3500);
 
@@ -102,16 +116,6 @@ const evaluate = async (expression) => {
 
 /** The page as text, lower-cased: the shell sets much of its furniture in caps. */
 const text = async () => (await evaluate("document.body.innerText")).toLowerCase();
-
-/** Type into a textarea the way a person does, so React sees the change. */
-const typeInto = (find, value) => `(() => {
-  const area = [...document.querySelectorAll('textarea')].find((node) => node.value.includes(${JSON.stringify(find)}));
-  if (!area) throw new Error('no textarea containing ' + ${JSON.stringify(find)});
-  const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
-  setter.call(area, ${JSON.stringify(value)});
-  area.dispatchEvent(new Event('input', { bubbles: true }));
-  return true;
-})()`;
 
 const clickButton = (label) => `(() => {
   const wanted = ${JSON.stringify(label.toLowerCase())};
@@ -147,20 +151,126 @@ const storedSettings = () =>
 await has("The formula workbench", "the page renders");
 await has("matches the shipped model exactly", "the shipped formulas load unchanged");
 await has("Every year, every step", "the year table is drawn");
-await has("$7,924M", "the system-wide case is computed for the selected year");
+await has("$929M", "the system-wide case is computed for the selected year");
 await has("Restore default", "the restore button is present");
 
 /* ---- 2. the editor names a mistake ------------------------------- */
 await check("a typo is named, not swallowed", async () => {
-  await evaluate(typeInto("ticket - feeToday", "ticket - feeToday - aeroToday - taxs"));
+  await evaluate(typeIntoField("Taxes and fees", "ticket - feeToday - aeroToday", " - taxs"));
   await sleep(400);
   const body = await text();
   if (!body.includes("unknown name “taxs”")) throw new Error("the typo was not reported");
   return "reported as Unknown name “taxs”";
 });
 
-await check("fixing it clears the message", async () => {
-  await evaluate(typeInto("taxs", "ticket - feeToday - aeroToday - taxes"));
+/* ---- 2b. autocomplete -------------------------------------------- */
+/**
+ * Type into a field the way a person does.
+ *
+ * The base text is put in place in one go, then the rest is typed character by
+ * character with execCommand — which is a real edit with a real caret move, so
+ * React sees each keystroke and the completion list opens and filters exactly
+ * as it would under someone's fingers. Pass a `base` that already contains the
+ * partial you want the caret after (e.g. type "." onto "ticket * P").
+ */
+const typeIntoField = (label, base, typed) => `(() => {
+  const area = [...document.querySelectorAll('textarea')].find((node) => node.getAttribute('aria-label') === ${JSON.stringify(label)});
+  if (!area) throw new Error('no field labelled ' + ${JSON.stringify(label)});
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+  setter.call(area, ${JSON.stringify(base)});
+  area.dispatchEvent(new Event('input', { bubbles: true }));
+  area.focus();
+  area.setSelectionRange(${JSON.stringify(base)}.length, ${JSON.stringify(base)}.length);
+  for (const character of ${JSON.stringify(typed)}) {
+    document.execCommand('insertText', false, character);
+  }
+  return area.value;
+})()`;
+
+/** The completion list as the reader sees it: "P.taxShare — Taxes and fees…". */
+const completionItems = `[...document.querySelectorAll('[role=listbox] [role=option]')].map((node) => node.innerText.split('\\n')[0])`;
+
+await check("typing P. opens the parameter list", async () => {
+  await evaluate(typeIntoField("Taxes and fees", "ticket - feeToday - aeroToday - taxes", "ticket * P."));
+  await sleep(500);
+  const items = await evaluate(completionItems);
+  if (!items.length) throw new Error("no completion list appeared");
+  if (!items.some((item) => item.includes("taxShare"))) throw new Error("taxShare is not in the list");
+  const heading = await evaluate(`document.querySelector('[role=listbox]').innerText.split('\\n')[0]`);
+  return `${items.length} items, heading “${heading}”`;
+});
+
+await check("typing after the dot filters it", async () => {
+  await evaluate(typeIntoField("Taxes and fees", "ticket * P", ".taxS"));
+  await sleep(400);
+  const items = await evaluate(completionItems);
+  if (items.length !== 1 || !items[0].includes("taxShare")) {
+    throw new Error(`expected only taxShare, got ${JSON.stringify(items)}`);
+  }
+  return items[0].replace(/\n/g, " ");
+});
+
+await check("deleting the member and retyping the dot lists it again", async () => {
+  // Exactly the case reported: `ticket * P.taxShare` becomes `ticket * P.`
+  await evaluate(typeIntoField("Taxes and fees", "ticket * P.taxShare", ""));
+  await evaluate(typeIntoField("Taxes and fees", "ticket * P", "."));
+  await sleep(400);
+  const items = await evaluate(completionItems);
+  if (!items.some((item) => item.includes("taxShare"))) throw new Error("the list did not come back");
+  return "the list returns after deleting the member";
+});
+
+await check("Enter takes the highlighted completion", async () => {
+  await evaluate(`(() => {
+    const area = [...document.querySelectorAll('textarea')].find((node) => node.value.includes('P.'));
+    area.focus();
+    area.setSelectionRange(area.value.length, area.value.length);
+    area.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    return true;
+  })()`);
+  await sleep(250);
+  await evaluate(`(() => {
+    const area = [...document.querySelectorAll('textarea')].find((node) => node.value.includes('P.'));
+    area.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    return true;
+  })()`);
+  await sleep(500);
+  const value = await evaluate(
+    `[...document.querySelectorAll('textarea')].find((node) => node.value.includes('ticket * P.'))?.value ?? null`,
+  );
+  if (!value || value === "ticket * P.") throw new Error("Enter did not insert anything");
+  const list = await evaluate(completionItems);
+  if (list.length) throw new Error("the list stayed open after choosing");
+  return `field now reads “${value}”`;
+});
+
+await check("airport. and yearly. list their members", async () => {
+  await evaluate(typeIntoField("Taxes and fees", "ticket * P.taxShare", ""));
+  await evaluate(typeIntoField("Parking, for the party", "days * airport", "."));
+  await sleep(400);
+  const fields = await evaluate(completionItems);
+  if (!fields.some((item) => item.includes("parkingPerDay"))) throw new Error("parkingPerDay is not offered");
+  await evaluate(typeIntoField("Taken out since signing", "sum(yearly", "."));
+  await sleep(400);
+  const series = await evaluate(completionItems);
+  if (!series.some((item) => item.includes("extraRevenueNeeded"))) throw new Error("the step series are not offered");
+  return `${fields.length} airport fields, ${series.length} series`;
+});
+
+await check("Escape closes the list", async () => {
+  await evaluate(`(() => {
+    const area = [...document.querySelectorAll('textarea')].find((node) => node.value.includes('yearly.'));
+    area.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    return true;
+  })()`);
+  await sleep(300);
+  const list = await evaluate(completionItems);
+  if (list.length) throw new Error("the list is still showing");
+  return "closed";
+});
+
+await check("fixing the typo clears the message", async () => {
+  await evaluate(typeIntoField("Taxes and fees", "ticket - feeToday - aeroToday", " - taxes"));
   await sleep(500);
   const body = await text();
   if (body.includes("unknown name")) throw new Error("the message is still shown");
@@ -169,10 +279,10 @@ await check("fixing it clears the message", async () => {
 
 /* ---- 3. a real edit moves the model ------------------------------ */
 await check("an edited expression changes the projection", async () => {
-  await evaluate(typeInto("P.fareAnnual", "airfareToday * pow(1.08, year)"));
+  await evaluate(typeIntoField("Airline fare, later", "", "airfareToday * pow(1.08, year)"));
   await sleep(600);
   const body = await text();
-  const fare = body.match(/airline fare, later\n+\$([\d,.]+)/);
+  const fare = body.match(/airline fare, later[^\n]*\n+\$([\d,.]+)/);
   const trip = body.match(/whole trip, for the party\n+=\$([\d,.]+)/);
   if (!fare) throw new Error("the edited step's value is not shown");
   if (Number(fare[1].replace(/,/g, "")) <= 300) throw new Error(`the fare did not rise: $${fare[1]}`);

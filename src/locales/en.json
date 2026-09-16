@@ -379,6 +379,8 @@
     "restoreCleared": "Default is back, and the saved formula has been cleared from this browser.",
     "saved": "Saved in this browser",
     "savedAt": "Saved in this browser at {{time}}",
-    "savedNote": "Every parameter, expression, input, switch and chart setting is kept in this browser's local storage and restored when you come back. Copy the link to move a formula to another browser."
+    "savedNote": "Every parameter, expression, input, switch and chart setting is kept in this browser's local storage and restored when you come back. Copy the link to move a formula to another browser.",
+    "completions": "Names that fit here",
+    "completionsUnder": "Members of {{owner}}"
   }
 }

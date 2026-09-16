@@ -18,11 +18,18 @@
  *     for what it is rather than trusted.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { AIRPORTS } from "@/lib/sourced";
 import { localeTag, money } from "@/components/editorial/model";
+import {
+  applyCompletion,
+  buildSuggestions,
+  completionAt,
+  type Suggestion,
+  type SuggestionContext,
+} from "./formula-suggestions";
 import {
   DEFAULT_PARAMS,
   FORMULA_STORAGE_KEY,
@@ -36,6 +43,7 @@ import {
   evaluate,
   referencedNames,
   runModel,
+  VARIABLE_SPECS,
   sanitizeModel,
   type FormulaGroup,
   type FormulaModel,
@@ -357,6 +365,10 @@ export function FormulaWorkbench() {
     [chartKeys, stepByKey],
   );
 
+  // Rebuilt whenever a step or a parameter is renamed, so the list can never
+  // offer a name the evaluator would reject.
+  const suggestions = useMemo(() => buildSuggestions(model), [model]);
+
   return (
     <div className="min-h-screen bg-paper">
       {/* ---------------- header ---------------- */}
@@ -432,6 +444,7 @@ export function FormulaWorkbench() {
                   select={setSelectedStep}
                   edit={editExpression}
                   knownNames={knownNamesFor(model)}
+                  suggestions={suggestions}
                 />
               ))}
             </>
@@ -695,7 +708,7 @@ function ReferencePanel() {
           {t("formula.varsTitle")}
         </h2>
         <ul className="divide-y divide-rule">
-          {VARIABLE_REFERENCE.map((entry) => (
+          {VARIABLE_SPECS.map((entry) => (
             <li key={entry.name} className="flex items-baseline gap-3 px-3 py-1.5">
               <code className="w-44 shrink-0 font-mono text-[0.74rem] font-semibold">{entry.name}</code>
               <span className="font-sans text-[0.72rem] leading-snug text-ink-3">{entry.note}</span>
@@ -747,31 +760,6 @@ function ReferencePanel() {
   );
 }
 
-const VARIABLE_REFERENCE: { name: string; note: string }[] = [
-  { name: "year", note: "Years since the concession was signed. 0 is the year it is signed." },
-  { name: "ticket", note: "The reader's round-trip fare, before the airport's own charges." },
-  { name: "days", note: "Days the reader's car is parked." },
-  { name: "travellers", note: "People travelling. Never below 1." },
-  { name: "dropOffMinutes", note: "Minutes the reader's lift spends at the kerb." },
-  { name: "airport.code", note: "The IATA code, e.g. YYZ." },
-  { name: "airport.parkingPerDay", note: "Today's long-stay parking price at that airport, per day." },
-  { name: "airport.freeDropOffMinutes", note: "Free kerbside minutes that airport allows today." },
-  { name: "airport.passengers", note: "Annual passengers, millions." },
-  { name: "airport.trafficShare", note: "Share of Canadian air traffic, percent." },
-  { name: "airport.inScope", note: "True when the airport was named in the announcement." },
-  { name: "aifByAirport", note: "Table of the real 2025 Improvement Fee per airport. Keyed by code." },
-  { name: "P", note: "Every parameter on the Parameters tab, by key: P.rampEnd, P.taxShare, …" },
-  { name: "yearly", note: "The whole series so far: yearly.aif is a list of that step's value, year 0 to now." },
-  { name: "enabledTrip", note: "True when the reader has the ticket switched on." },
-  { name: "enabledAif", note: "True when the Improvement Fee counts toward the ticket." },
-  { name: "enabledAirfare", note: "Airline fare switch." },
-  { name: "enabledAeronautical", note: "Aeronautical charge switch." },
-  { name: "enabledTaxes", note: "Taxes and fees switch." },
-  { name: "enabledParking", note: "Parking switch." },
-  { name: "enabledDrop", note: "Kerbside drop-off switch." },
-  { name: "enabledFood", note: "Food and retail switch." },
-  { name: "horizon", note: "The projection horizon, in years." },
-];
 
 /* ------------------------------------------------------------------ *
  * The step editor
@@ -788,6 +776,7 @@ function StepGroup({
   select,
   edit,
   knownNames,
+  suggestions,
 }: {
   group: FormulaGroup;
   open: boolean;
@@ -799,6 +788,7 @@ function StepGroup({
   select: (key: string | null) => void;
   edit: (key: string, expression: string) => void;
   knownNames: Set<string>;
+  suggestions: SuggestionContext;
 }) {
   const groupErrors = group.steps.filter((step) => errors[step.key]).length;
   const groupChanged = group.steps.filter((step) => changed.has(step.key)).length;
@@ -834,6 +824,7 @@ function StepGroup({
                   select={() => select(selected === step.key ? null : step.key)}
                   edit={edit}
                   knownNames={knownNames}
+                  suggestions={suggestions}
                 />
               </li>
             ))}
@@ -845,9 +836,13 @@ function StepGroup({
 }
 
 /**
- * One editable expression. What is typed is kept verbatim — including a
- * half-finished expression — while the value beside it comes from the applied
- * formula, so the two never pretend to be the same thing.
+ * One editable expression, with a completion list.
+ *
+ * What is typed is kept verbatim — including a half-finished expression — while
+ * the value beside it comes from the applied formula, so the two never pretend
+ * to be the same thing. Typing a dot opens the members of whatever it follows
+ * (`P.` lists every parameter, `airport.` every field), which is what makes the
+ * reference tab feel optional rather than necessary.
  */
 function StepField({
   step,
@@ -858,6 +853,7 @@ function StepField({
   select,
   edit,
   knownNames,
+  suggestions,
 }: {
   step: FormulaStep;
   value: number | undefined;
@@ -867,8 +863,13 @@ function StepField({
   select: () => void;
   edit: (key: string, expression: string) => void;
   knownNames: Set<string>;
+  suggestions: SuggestionContext;
 }) {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState(step.expression);
+  const [caret, setCaret] = useState<number | null>(null);
+  const [active, setActive] = useState(0);
+  const areaRef = useRef<HTMLTextAreaElement | null>(null);
   const lastApplied = useRef(step.expression);
 
   // A preset or a reset rewrites the expression underneath us; follow it, but
@@ -877,11 +878,92 @@ function StepField({
     if (step.expression !== lastApplied.current) {
       lastApplied.current = step.expression;
       setDraft(step.expression);
+      setCaret(null);
     }
   }, [step.expression]);
 
   const local = useMemo(() => validate(draft, knownNames), [draft, knownNames]);
   const shownError = local.error ?? error;
+
+  /**
+   * The caret is read from the element after every paint rather than from a
+   * key event: a change, a click, an arrow key and a paste all move it, and
+   * reading it here means the list always describes the text as it now stands.
+   */
+  useLayoutEffect(() => {
+    const node = areaRef.current;
+    if (!node || document.activeElement !== node) return;
+    const at = node.selectionStart ?? draft.length;
+    setCaret((current) => (current === at ? current : at));
+  });
+
+  const request = useMemo(
+    () => (caret === null ? null : completionAt(draft, caret, suggestions)),
+    [draft, caret, suggestions],
+  );
+  const items = request?.items.slice(0, 12) ?? [];
+  const open = items.length > 0;
+
+  // Keep the highlighted row inside the list as it is filtered by typing.
+  useEffect(() => {
+    setActive(0);
+  }, [request?.owner, request?.prefix]);
+
+  const commit = useCallback(
+    (next: string, nextCaret: number) => {
+      setDraft(next);
+      edit(step.key, next);
+      setCaret(nextCaret);
+      // Put the caret back where the completion left it, after React's paint.
+      window.requestAnimationFrame(() => {
+        const node = areaRef.current;
+        if (!node) return;
+        node.focus();
+        node.setSelectionRange(nextCaret, nextCaret);
+      });
+    },
+    [edit, step.key],
+  );
+
+  const accept = useCallback(
+    (suggestion: Suggestion) => {
+      if (!request) return;
+      const applied = applyCompletion(draft, request, suggestion);
+      commit(applied.text, applied.caret);
+    },
+    [commit, draft, request],
+  );
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (open) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setActive((current) => (current + 1) % items.length);
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setActive((current) => (current - 1 + items.length) % items.length);
+        return;
+      }
+      if (event.key === "Enter" || event.key === "Tab") {
+        event.preventDefault();
+        accept(items[active]);
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setCaret(null);
+        return;
+      }
+    }
+    // Enter without a list open leaves the field; Shift+Enter writes arithmetic.
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      setCaret(null);
+      event.currentTarget.blur();
+    }
+  };
 
   return (
     <div className="px-3 py-2">
@@ -900,28 +982,45 @@ function StepField({
         </span>
       </div>
 
-      <div className="mt-1 flex items-baseline gap-2">
-        <code className="shrink-0 font-mono text-[0.7rem] text-ink-4">{step.key} =</code>
-        <textarea
-          value={draft}
-          spellCheck={false}
-          rows={Math.max(1, Math.ceil(draft.length / 52))}
-          onChange={(event) => {
-            setDraft(event.target.value);
-            edit(step.key, event.target.value);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && !event.shiftKey) {
-              event.preventDefault();
-              event.currentTarget.blur();
+      <div className="relative mt-1">
+        <div className="flex items-baseline gap-2">
+          <code className="shrink-0 font-mono text-[0.7rem] text-ink-4">{step.key} =</code>
+          <textarea
+            ref={areaRef}
+            value={draft}
+            spellCheck={false}
+            rows={Math.max(1, Math.ceil(draft.length / 52))}
+            onChange={(event) => {
+              setDraft(event.target.value);
+              edit(step.key, event.target.value);
+            }}
+            onKeyDown={onKeyDown}
+            onBlur={() => window.setTimeout(() => setCaret(null), 120)}
+            aria-label={step.label}
+            aria-autocomplete="list"
+            aria-expanded={open}
+            className={[
+              "w-full resize-y border bg-transparent px-1.5 py-1 font-mono text-[0.72rem] leading-relaxed outline-none",
+              shownError ? "border-data-a" : "border-rule focus:border-ink",
+            ].join(" ")}
+          />
+        </div>
+
+        {open && request ? (
+          <CompletionList
+            owner={request.owner}
+            prefix={request.prefix}
+            items={items}
+            active={active}
+            setActive={setActive}
+            choose={accept}
+            heading={
+              request.owner
+                ? t("formula.completionsUnder", { owner: request.owner })
+                : t("formula.completions")
             }
-          }}
-          aria-label={step.label}
-          className={[
-            "w-full resize-y border bg-transparent px-1.5 py-1 font-mono text-[0.72rem] leading-relaxed outline-none",
-            shownError ? "border-data-a" : "border-rule focus:border-ink",
-          ].join(" ")}
-        />
+          />
+        ) : null}
       </div>
 
       {shownError ? (
@@ -932,6 +1031,81 @@ function StepField({
           {step.unit ? <span className="ml-1 font-mono">{step.unit}</span> : null}
         </p>
       )}
+    </div>
+  );
+}
+
+/**
+ * The completion list. Absolutely positioned under the field rather than
+ * portalled, so it travels with the editor it belongs to.
+ */
+function CompletionList({
+  owner,
+  prefix,
+  items,
+  active,
+  setActive,
+  choose,
+  heading,
+}: {
+  owner: string;
+  prefix: string;
+  items: Suggestion[];
+  active: number;
+  setActive: (index: number) => void;
+  choose: (suggestion: Suggestion) => void;
+  heading: string;
+}) {
+  return (
+    <div
+      role="listbox"
+      aria-label={heading}
+      // Prevent the blur that would close the list before the click lands.
+      onMouseDown={(event) => {
+        event.preventDefault();
+      }}
+      className="absolute left-0 right-0 z-40 mt-1 max-h-72 overflow-y-auto border border-ink bg-paper shadow-[4px_4px_0_rgba(18,18,18,0.12)]"
+    >
+      <p className="sticky top-0 border-b border-rule bg-cream px-2 py-1 font-sans text-[0.62rem] font-bold uppercase tracking-[0.09em] text-ink-4">
+        {heading}
+        {prefix ? <span className="ml-1.5 normal-case text-ink-3">“{prefix}”</span> : null}
+        <span className="ml-2 font-normal normal-case tracking-normal text-ink-4">
+          ↑↓ to choose · Enter to take · Esc to close
+        </span>
+      </p>
+      <ul>
+        {items.map((item, index) => (
+          <li key={`${item.kind}-${item.label}`} role="option" aria-selected={index === active}>
+            <button
+              type="button"
+              onMouseEnter={() => setActive(index)}
+              onClick={() => choose(item)}
+              className={[
+                "flex w-full cursor-pointer items-baseline gap-2 px-2 py-1 text-left",
+                index === active ? "bg-ink text-white" : "hover:bg-cream",
+              ].join(" ")}
+            >
+              <code
+                className={[
+                  "shrink-0 font-mono text-[0.72rem] font-semibold",
+                  index === active ? "text-white" : "text-ink",
+                ].join(" ")}
+              >
+                {owner ? `${owner}.` : ""}
+                {item.label}
+              </code>
+              <span
+                className={[
+                  "font-sans text-[0.68rem] leading-snug",
+                  index === active ? "text-white/80" : "text-ink-3",
+                ].join(" ")}
+              >
+                {item.detail}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -1296,7 +1470,9 @@ function FormulaChart({
       for (const key of series) peak = Math.max(peak, Math.abs(row.values[key] ?? 0));
     }
     if (showShipped) for (const row of shipped.years) peak = Math.max(peak, row.tripTotal);
-    return peak * 1.06 || 1;
+    // With every line switched off there is nothing to scale to; 1 keeps the
+    // axes finite rather than drawing NaN across the plot.
+    return peak > 0 ? peak * 1.06 : 1;
   }, [run.years, shipped.years, series, showShipped]);
 
   const sx = (year: number) => PAD.left + (year / Math.max(1, horizon)) * plotW;

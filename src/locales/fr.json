@@ -379,6 +379,8 @@
     "restoreCleared": "Les valeurs par défaut sont de retour et la formule enregistrée a été effacée de ce navigateur.",
     "saved": "Enregistré dans ce navigateur",
     "savedAt": "Enregistré dans ce navigateur à {{time}}",
-    "savedNote": "Chaque paramètre, expression, donnée d'entrée, interrupteur et réglage de graphique est conservé dans le stockage local de ce navigateur et restauré à votre retour. Copiez le lien pour transporter une formule vers un autre navigateur."
+    "savedNote": "Chaque paramètre, expression, donnée d'entrée, interrupteur et réglage de graphique est conservé dans le stockage local de ce navigateur et restauré à votre retour. Copiez le lien pour transporter une formule vers un autre navigateur.",
+    "completions": "Noms possibles ici",
+    "completionsUnder": "Membres de {{owner}}"
   }
 }

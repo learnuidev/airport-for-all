@@ -21,6 +21,9 @@
 import { AIF_BY_AIRPORT, AIF_PER_TICKET, type TripInput, type YearCosts, costsFor, seriesFor } from "@/components/editorial/model";
 import { AIRPORTS } from "@/lib/sourced";
 
+/** Re-exported so the autocomplete list can describe the per-airport fee table. */
+export { AIF_BY_AIRPORT };
+
 /* ================================================================== *
  * 1. The evaluator
  * ================================================================== */
@@ -230,21 +233,23 @@ export function parse(source: string): Node {
       const op = (next() as { value: string }).value;
       return { kind: "unary", op, argument: parseUnary() };
     }
-    return parseCall();
+    return parseExponent();
   };
 
+  // `**` binds tighter than a leading minus and is right-associative, so
+  // `-2 ** 2` is -4 and `2 ** 3 ** 2` is 512, as in JavaScript.
   const parseExponent = (): Node => {
-    const left = parseUnary();
-    if (eat("**")) return { kind: "binary", op: "**", left, right: parseExponent() };
+    const left = parseCall();
+    if (eat("**")) return { kind: "binary", op: "**", left, right: parseUnary() };
     return left;
   };
 
   const parseMultiplicative = (): Node => {
-    let node = parseExponent();
+    let node = parseUnary();
     for (;;) {
       if (isOp("*") || isOp("/") || isOp("%")) {
         const op = (next() as { value: string }).value;
-        node = { kind: "binary", op, left: node, right: parseExponent() };
+        node = { kind: "binary", op, left: node, right: parseUnary() };
         continue;
       }
       return node;
@@ -428,7 +433,48 @@ function callFunction(name: string, args: unknown[]): unknown {
   }
 }
 
-/** Every function a formula may call, for the reference panel. */
+/** A name a formula can read that is not a step: an input, a table or a switch. */
+export type VariableSpec = {
+  name: string;
+  note: string;
+  kind: "input" | "airport" | "table" | "series" | "switch";
+};
+
+/**
+ * The names available to every formula, described once. The Reference tab, the
+ * autocomplete list and the typo check all read this, so a name cannot be
+ * offered in one place and rejected in another.
+ */
+export const VARIABLE_SPECS: VariableSpec[] = [
+  { name: "year", note: "Years since the concession was signed. 0 is the year it is signed.", kind: "input" },
+  { name: "ticket", note: "The reader's round-trip fare, before the airport's own charges.", kind: "input" },
+  { name: "days", note: "Days the reader's car is parked.", kind: "input" },
+  { name: "travellers", note: "People travelling. Never below 1.", kind: "input" },
+  { name: "dropOffMinutes", note: "Minutes the reader's lift spends at the kerb.", kind: "input" },
+  { name: "horizon", note: "The projection horizon, in years.", kind: "input" },
+  { name: "airportCode", note: "The IATA code of the airport being modelled, e.g. YYZ.", kind: "airport" },
+  { name: "airport", note: "The full airport record: airport.parkingPerDay, airport.freeDropOffMinutes, …", kind: "airport" },
+  { name: "aifByAirport", note: "The real 2025 Improvement Fee per airport, keyed by code: get(aifByAirport, 'YYZ').", kind: "table" },
+  { name: "P", note: "Every parameter on the Parameters tab, by key: P.rampEnd, P.taxShare, …", kind: "table" },
+  {
+    name: "yearly",
+    note: "The series so far: yearly.aif is a list of that step's value from year 0 to this year.",
+    kind: "series",
+  },
+  { name: "enabledTrip", note: "True when the reader has the ticket switched on.", kind: "switch" },
+  { name: "enabledTicket", note: "True when the ticket counts toward the trip total.", kind: "switch" },
+  { name: "enabledAif", note: "True when the Improvement Fee counts toward the ticket.", kind: "switch" },
+  { name: "enabledAirfare", note: "Airline fare switch.", kind: "switch" },
+  { name: "enabledAeronautical", note: "Aeronautical charge switch.", kind: "switch" },
+  { name: "enabledTaxes", note: "Taxes and fees switch.", kind: "switch" },
+  { name: "enabledParking", note: "Parking switch.", kind: "switch" },
+  { name: "enabledDrop", note: "Kerbside drop-off switch.", kind: "switch" },
+  { name: "enabledFood", note: "Food and retail switch.", kind: "switch" },
+];
+
+/**
+ * Every function a formula may call, for the reference panel and inline autocomplete.
+ */
 export const FUNCTION_REFERENCE: { name: string; signature: string; note: string }[] = [
   { name: "min", signature: "min(a, b, …)", note: "Smallest value" },
   { name: "max", signature: "max(a, b, …)", note: "Largest value" },
@@ -537,10 +583,17 @@ export function evaluate(source: string, scope: Scope): unknown {
   return evaluateNode(parse(source), scope);
 }
 
-/** Evaluate and coerce to a number; a non-finite result becomes 0. */
+/**
+ * Evaluate and coerce to a number.
+ *
+ * A result that is not a finite number — `0 / 0`, `log(0)`, half-typed text that
+ * still parses — becomes 0. The alternative is NaN travelling into the chart,
+ * the table and the figures, where it renders as garbage rather than as a zero
+ * the reader can see and correct.
+ */
 export function evaluateNumber(source: string, scope: Scope): number {
-  const value = evaluate(source, scope);
-  return toNumber(value);
+  const value = toNumber(evaluate(source, scope));
+  return Number.isFinite(value) ? value : 0;
 }
 
 /**
@@ -1231,14 +1284,21 @@ export function runModel(
 
   const years: FormulaRow[] = [];
 
+  /**
+   * The steps that read the whole series are held back until the rest of the
+   * year is worked out, so `sum(yearly.aif)` includes this year's fee and a
+   * running total is a total rather than a lagging indicator.
+   */
+  const readsSeries = (step: FormulaStep) => referencedNames(step.expression).includes("yearly");
+  const rawOrder = order.filter((step) => !readsSeries(step));
+  const seriesOrder = order.filter(readsSeries);
+
   for (let year = 0; year <= horizon; year += 1) {
     const values: Record<string, number> = {};
-    // `yearly.<key>` holds every year from signing up to and including this one,
-    // so a step can sum, average or difference the series — a cumulative total
-    // uses the earlier years' values and updates itself after the fact.
+    // `yearly.<key>` holds every year from signing up to and including this one.
     const scope = scopeFor(year, seriesScope(order, years, year));
 
-    for (const step of order) {
+    const runStep = (step: FormulaStep, stepsAfter?: FormulaStep[]) => {
       try {
         values[step.key] = evaluateNumber(step.expression, scope);
       } catch (error) {
@@ -1253,7 +1313,15 @@ export function runModel(
       // Each step is visible to the steps after it, in the order `resolveOrder`
       // worked out from what they read.
       scope[step.key] = values[step.key];
-    }
+      // A cumulative step needs this year's series rebuilt around it: its own
+      // value is a list, and the list exists because of the step.
+      if (stepsAfter && seriesOrder.length) {
+        Object.assign(scope.yearly as Record<string, unknown>, seriesScope(order, years, year, values));
+      }
+    };
+
+    for (const step of rawOrder) runStep(step, seriesOrder);
+    for (const step of seriesOrder) runStep(step, seriesOrder);
 
     years.push({
       year,
@@ -1291,11 +1359,24 @@ export function runModel(
   };
 }
 
-/** `yearly.<key>` — one step's value for each year from signing to `upto`. */
-function seriesScope(order: FormulaStep[], years: FormulaRow[], upto: number): Record<string, number[]> {
+/**
+ * `yearly.<key>` — one step's value for each year from signing to `upto`.
+ *
+ * `current` is the year in flight: the raw steps of this year are already
+ * known, so they are folded in even though the row has not been pushed onto
+ * `years` yet.
+ */
+function seriesScope(
+  order: FormulaStep[],
+  years: FormulaRow[],
+  upto: number,
+  current?: Record<string, number>,
+): Record<string, number[]> {
   const series: Record<string, number[]> = {};
   for (const step of order) {
-    series[step.key] = years.slice(0, upto + 1).map((row) => row.values[step.key] ?? 0);
+    const earlier = years.slice(0, upto).map((row) => row.values[step.key] ?? 0);
+    const thisYear = current && step.key in current ? [current[step.key]] : [];
+    series[step.key] = [...earlier, ...thisYear];
   }
   return series;
 }
@@ -1433,10 +1514,17 @@ export const PRESETS: Preset[] = [
   },
 ];
 
+/**
+ * Apply a preset.
+ *
+ * A preset that names parameters starts from the shipped values and overrides
+ * them, so applying "the shipped model" after an aggressive preset puts every
+ * parameter back rather than leaving the previous preset's numbers behind.
+ */
 export function applyPreset(preset: Preset, current: FormulaModel): FormulaModel {
   if (preset.build) return preset.build();
   return {
-    params: { ...DEFAULT_PARAMS, ...current.params, ...(preset.params ?? {}) },
+    params: { ...DEFAULT_PARAMS, ...(preset.params ?? {}) },
     groups: current.groups.map((group) => ({ ...group, steps: group.steps.map((step) => ({ ...step })) })),
   };
 }

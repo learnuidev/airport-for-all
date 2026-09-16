@@ -379,6 +379,8 @@
     "restoreCleared": "Los valores por defecto han vuelto y la fórmula guardada se ha borrado de este navegador.",
     "saved": "Guardado en este navegador",
     "savedAt": "Guardado en este navegador a las {{time}}",
-    "savedNote": "Cada parámetro, expresión, dato de entrada, interruptor y ajuste del gráfico se guarda en el almacenamiento local de este navegador y se restaura al volver. Copie el enlace para llevar una fórmula a otro navegador."
+    "savedNote": "Cada parámetro, expresión, dato de entrada, interruptor y ajuste del gráfico se guarda en el almacenamiento local de este navegador y se restaura al volver. Copie el enlace para llevar una fórmula a otro navegador.",
+    "completions": "Nombres que encajan aquí",
+    "completionsUnder": "Miembros de {{owner}}"
   }
 }
