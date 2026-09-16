@@ -69,6 +69,12 @@ export type Section = {
   /** Numeric bounds parsed from the kicker when present. */
   startYear: number | null;
   endYear: number | null;
+  /**
+   * The year this chapter is set in, read from a spelled-out kicker
+   * ("The Third Year" → 3) as well as a numeric one. Null for the closing
+   * sections, which are not part of the chronology.
+   */
+  chapterYear: number | null;
   /** True for the section that accumulates every year from its start onward. */
   openEnded: boolean;
   blocks: Block[];
@@ -248,13 +254,58 @@ const LEGACY_CITED = new Set(Object.values(LEGACY_BY_CANONICAL));
 /**
  * A stable id for a heading, so sections can be linked to and looked up by
  * reading order or by slug without a hardcoded table.
+ *
+ * A heading that slugifies to nothing — a Chinese heading, whose characters are
+ * all outside `[a-z0-9]` — falls back to its position. Without that fallback
+ * every section in that locale shares the id `""`, which makes the whole
+ * article unlinkable: no anchor resolves, and the year timeline has nothing to
+ * point at.
  */
-function slugifyHeading(heading: string): string {
-  return heading
+function slugifyHeading(heading: string, index: number): string {
+  const slug = heading
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 60);
+  return slug || `section-${index + 1}`;
+}
+
+/**
+ * The year a spelled-out kicker names, e.g. "The Third Year" → 3.
+ *
+ * `parseKicker` below only understands numerals, and this source spells its
+ * headings out, so the words are read here. Deliberately Latin-script only: a
+ * wrong guess is worse than none, and the timeline does not depend on this.
+ */
+const YEAR_WORDS: [string, number][] = [
+  ["twenty-fifth", 25],
+  ["twenty-first", 21],
+  ["twentieth", 20],
+  ["fifteenth", 15],
+  ["fourteenth", 14],
+  ["thirteenth", 13],
+  ["twelfth", 12],
+  ["eleventh", 11],
+  ["tenth", 10],
+  ["ninth", 9],
+  ["eighth", 8],
+  ["seventh", 7],
+  ["sixth", 6],
+  ["fifth", 5],
+  ["fourth", 4],
+  ["third", 3],
+  ["second", 2],
+  ["first", 1],
+];
+
+function parseOrdinalYear(kicker: string): number | null {
+  const lower = kicker.toLowerCase();
+  if (!/\byear\b/.test(lower)) return null;
+  for (const [word, year] of YEAR_WORDS) {
+    if (lower.includes(word)) return year;
+  }
+  const numeric = /\b(\d{1,3})(?:st|nd|rd|th)\b/.exec(lower);
+  return numeric ? Number(numeric[1]) : null;
 }
 
 function parseKicker(kicker: string): {
@@ -417,7 +468,7 @@ export function parseArticle(markdown: string): ParsedArticle {
       const title = match ? match[2].trim() : heading;
       const { startYear, endYear, openEnded } = parseKicker(kicker);
       current = {
-        id: slugifyHeading(heading),
+        id: slugifyHeading(heading, sections.length),
         index: sections.length,
         heading,
         kicker,
@@ -425,6 +476,8 @@ export function parseArticle(markdown: string): ParsedArticle {
         startYear,
         endYear,
         openEnded,
+        /** The year this chapter is set in, spelled out or numeric. */
+        chapterYear: parseOrdinalYear(kicker),
         blocks: [],
         refs: [],
         wordCount: 0,

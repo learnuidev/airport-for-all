@@ -10,7 +10,7 @@ import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { ReadingProgress } from "./ReadingProgress";
 import { SectionFigure } from "./SectionFigures";
 import { YearTimeline, ANCHOR_OFFSET } from "./YearTimeline";
-import { SECTION_YEARS, buildYearStops } from "./yearStops";
+import { boardYearFor, buildYearStops } from "./yearStops";
 
 /**
  * The article. The prose is whatever the locale's source file contains; the
@@ -96,7 +96,7 @@ export function ArticlePage({
                 {String(index + 1).padStart(2, "0")} /{" "}
                 {String(article.sections.length).padStart(2, "0")}
               </p>
-              <BoardLink sectionId={section.id} />
+              <BoardLink sectionIndex={index} />
             </div>
             <h2 className="mt-2 font-serif text-[1.75rem] font-bold leading-tight tracking-[-0.01em] sm:text-[2.1rem]">
               {section.title}
@@ -175,10 +175,10 @@ export function ArticlePage({
 }
 
 /** Links to the board with the year this section is about. */
-function BoardLink({ sectionId }: { sectionId: string }) {
+function BoardLink({ sectionIndex }: { sectionIndex: number }) {
   const { t } = useTranslation();
   const trip = useTrip();
-  const year = SECTION_YEARS[sectionId];
+  const year = boardYearFor(sectionIndex);
   if (year === undefined) return null;
   return (
     <Link
