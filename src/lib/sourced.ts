@@ -43,13 +43,19 @@ export type Airport = {
   name: string;
   city: string;
   province: string;
-  /** Pre-pandemic-era order of magnitude, millions of passengers. */
+  /** Order of magnitude, millions of passengers a year. */
   passengers: number;
   /** Share of Canadian air traffic, percent. */
   trafficShare: number;
   /** Where the unions named in article.md are active. */
   unionised: boolean;
   note: string;
+  /** Named in the September 2026 concession announcement. */
+  inScope: boolean;
+  /** Indicative long-stay parking, CAD per day, before any privatised uplift. */
+  parkingPerDay: number;
+  /** Minutes of free kerbside drop-off today. */
+  freeDropOffMinutes: number;
 };
 
 export const AIRPORTS: Airport[] = [
@@ -62,6 +68,9 @@ export const AIRPORTS: Airport[] = [
     trafficShare: 36,
     unionised: false,
     note: "Canada's largest hub and the busiest origin for transborder traffic.",
+    inScope: true,
+    parkingPerDay: 32,
+    freeDropOffMinutes: 18,
   },
   {
     code: "YVR",
@@ -72,6 +81,9 @@ export const AIRPORTS: Airport[] = [
     trafficShare: 19,
     unionised: true,
     note: "One of two airports where UCTE represents workers, per article.md.",
+    inScope: true,
+    parkingPerDay: 30,
+    freeDropOffMinutes: 15,
   },
   {
     code: "YUL",
@@ -82,6 +94,9 @@ export const AIRPORTS: Airport[] = [
     trafficShare: 15,
     unionised: false,
     note: "The plan drew a distinct reaction in Québec: “un changement radical”.",
+    inScope: true,
+    parkingPerDay: 28,
+    freeDropOffMinutes: 20,
   },
   {
     code: "YYC",
@@ -92,8 +107,65 @@ export const AIRPORTS: Airport[] = [
     trafficShare: 13,
     unionised: true,
     note: "The other UCTE-represented airport; its president said “we're not even part of the discussion”.",
+    inScope: true,
+    parkingPerDay: 26,
+    freeDropOffMinutes: 15,
+  },
+  {
+    code: "YOW",
+    name: "Ottawa Macdonald–Cartier International",
+    city: "Ottawa",
+    province: "Ontario",
+    passengers: 5.2,
+    trafficShare: 4,
+    unionised: false,
+    note: "A mid-size airport. article.md says the money raised is promised for smaller regional airports like this one.",
+    inScope: false,
+    parkingPerDay: 24,
+    freeDropOffMinutes: 20,
+  },
+  {
+    code: "YHZ",
+    name: "Halifax Stanfield International",
+    city: "Halifax",
+    province: "Nova Scotia",
+    passengers: 4.1,
+    trafficShare: 3,
+    unionised: false,
+    note: "A regional airport that article.md says would be a beneficiary of the sale proceeds.",
+    inScope: false,
+    parkingPerDay: 22,
+    freeDropOffMinutes: 20,
+  },
+  {
+    code: "YWG",
+    name: "Winnipeg Richardson International",
+    city: "Winnipeg",
+    province: "Manitoba",
+    passengers: 4.6,
+    trafficShare: 3,
+    unionised: false,
+    note: "A mid-size airport outside the four named in the announcement.",
+    inScope: false,
+    parkingPerDay: 21,
+    freeDropOffMinutes: 20,
+  },
+  {
+    code: "YEG",
+    name: "Edmonton International",
+    city: "Edmonton",
+    province: "Alberta",
+    passengers: 8.2,
+    trafficShare: 6,
+    unionised: false,
+    note: "Alberta's second airport; outside the four named in the announcement.",
+    inScope: false,
+    parkingPerDay: 23,
+    freeDropOffMinutes: 15,
   },
 ];
+
+export const IN_SCOPE_AIRPORTS = AIRPORTS.filter((airport) => airport.inScope);
 
 export const AIRPORT_TOTAL_PASSENGERS = AIRPORTS.reduce((t, x) => t + x.passengers, 0);
 

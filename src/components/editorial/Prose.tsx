@@ -1,6 +1,6 @@
 "use client";
 
-import { CitationMarker } from "./CitationMarker";
+import { Cite } from "./Cite";
 import type { Block, InlineRun } from "@/lib/article";
 
 function Runs({ runs }: { runs: InlineRun[] }) {
@@ -9,10 +9,10 @@ function Runs({ runs }: { runs: InlineRun[] }) {
       {runs.map((run, index) => {
         switch (run.kind) {
           case "citation":
-            return <CitationMarker key={`c-${run.raw}-${index}`} refId={run.refId} />;
+            return <Cite key={`c-${run.raw}-${index}`} id={run.refId} />;
           case "strong":
             return (
-              <strong key={`s-${index}`} className="font-semibold text-ink">
+              <strong key={`s-${index}`} className="font-semibold">
                 {run.value}
               </strong>
             );
@@ -29,7 +29,7 @@ function Runs({ runs }: { runs: InlineRun[] }) {
                 href={run.href}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="text-blue underline decoration-blue/30 underline-offset-2 hover:decoration-blue"
+                className="text-data-b underline decoration-data-b/40 underline-offset-2"
               >
                 {run.value}
               </a>
@@ -43,27 +43,25 @@ function Runs({ runs }: { runs: InlineRun[] }) {
 }
 
 /**
- * Renders the parsed article.md blocks. `**Label:**` paragraphs become a small
- * stacked field label with the body beneath it.
+ * The article body. One column, one measure, no furniture — the way a newspaper
+ * sets running text. `**Label:**` paragraphs from article.md become a small
+ * sans-serif kicker above an indented block, which is how the source structures
+ * each year: what happens, the precedent, the Canadian projection.
  */
-export function Prose({ blocks }: { blocks: Block[] }) {
+export function Prose({ blocks, lead = false }: { blocks: Block[]; lead?: boolean }) {
+  let paragraphIndex = 0;
+
   return (
-    <div className="space-y-5">
+    <div>
       {blocks.map((block, index) => {
         if (block.type === "divider") return null;
 
         if (block.type === "list") {
           return (
-            <ul key={`list-${index}`} className="space-y-3">
+            <ul key={`list-${index}`} className="my-6 space-y-4 border-y border-rule py-5">
               {block.items.map((item, itemIndex) => (
-                <li key={`item-${index}-${itemIndex}`} className="flex gap-3">
-                  <span
-                    aria-hidden
-                    className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-line"
-                  />
-                  <p className="prose-body">
-                    <Runs runs={item.runs} />
-                  </p>
+                <li key={`item-${index}-${itemIndex}`} className="serif-body">
+                  <Runs runs={item.runs} />
                 </li>
               ))}
             </ul>
@@ -72,17 +70,25 @@ export function Prose({ blocks }: { blocks: Block[] }) {
 
         if (block.label) {
           return (
-            <div key={`labelled-${index}`} className="sm:pl-5 sm:border-l sm:border-line">
-              <p className="label-caps text-ink-4">{block.label}</p>
-              <p className="prose-body mt-1">
+            <div key={`labelled-${index}`} className="my-7 border-l-2 border-ink pl-4">
+              <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.08em] text-ink-3">
+                {block.label}
+              </p>
+              <p className="serif-body mt-1.5">
                 <Runs runs={block.runs} />
               </p>
             </div>
           );
         }
 
+        const isLead = lead && paragraphIndex === 0;
+        paragraphIndex += 1;
+
         return (
-          <p key={`p-${index}`} className="prose-body">
+          <p
+            key={`p-${index}`}
+            className={`serif-body mb-5 ${isLead ? "dropcap" : ""}`}
+          >
             <Runs runs={block.runs} />
           </p>
         );

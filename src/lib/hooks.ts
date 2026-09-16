@@ -132,14 +132,21 @@ export function useActiveSection(ids: string[], offset = 0.35) {
 
 export function useAnimatedNumber(
   target: number,
-  options: { duration?: number; decimals?: number; start?: number } = {},
+  options: {
+    duration?: number;
+    decimals?: number;
+    start?: number;
+    /** Jump straight to the first target instead of counting up from zero. */
+    immediate?: boolean;
+  } = {},
 ) {
-  const { duration = 1100, decimals = 0, start = 0 } = options;
+  const { duration = 1100, decimals = 0, start = 0, immediate = false } = options;
   const reduced = useReducedMotion();
-  const [value, setValue] = useState(start);
+  const [value, setValue] = useState(immediate ? target : start);
   /** The value currently painted, so each new target eases from what's on screen. */
-  const paintedRef = useRef(start);
+  const paintedRef = useRef(immediate ? target : start);
   const frameRef = useRef(0);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
     if (reduced) {
@@ -147,6 +154,16 @@ export function useAnimatedNumber(
       setValue(target);
       return;
     }
+    const first = !mountedRef.current;
+    mountedRef.current = true;
+    // With `immediate`, the very first paint already shows the target so a
+    // server-rendered page never flashes a zero.
+    if (first && immediate) {
+      paintedRef.current = target;
+      setValue(target);
+      return;
+    }
+
     const from = paintedRef.current;
     const delta = target - from;
     if (Math.abs(delta) < 1e-9) return;
@@ -164,7 +181,7 @@ export function useAnimatedNumber(
 
     frameRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameRef.current);
-  }, [target, duration, decimals, reduced]);
+  }, [target, duration, decimals, reduced, immediate]);
 
   return value;
 }

@@ -1,34 +1,35 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ *
- * Design tokens — light editorial
+ * Editorial design tokens
+ *
+ * Reference points: the New York Times' long-form grid (narrow serif text
+ * column, full-bleed figures, hairline furniture) and Gallup's news layout
+ * (large stat callouts, explicit methodology box, source lines under charts).
+ *
+ * Deliberately restrained: black, white, one hairline grey, one accent red.
+ * Figures carry data colour; nothing else does.
  * ------------------------------------------------------------------ */
 
 @theme {
   --color-paper: #ffffff;
-  --color-paper-2: #faf9f7;
-  --color-paper-3: #f3f1ec;
-  --color-line: #e6e2da;
-  --color-line-strong: #d5cfc4;
+  --color-cream: #f7f7f5;
+  --color-ink: #121212;
+  --color-ink-2: #333333;
+  --color-ink-3: #5a5a5a;
+  --color-ink-4: #767676;
+  --color-rule: #e2e2e2;
+  --color-rule-strong: #121212;
 
-  --color-ink: #17181a;
-  --color-ink-2: #3c3f45;
-  --color-ink-3: #5f636b;
-  --color-ink-4: #8a8e96;
+  /* Data colours — used only inside charts */
+  --color-data-a: #d0021b;
+  --color-data-b: #1a5fb4;
+  --color-data-c: #b8b8b8;
+  --color-data-d: #0f7b3e;
 
-  --color-accent: #c2410c;
-  --color-accent-soft: #fff3ea;
-  --color-accent-line: #f2c9ac;
-
-  --color-blue: #1d4ed8;
-  --color-blue-soft: #eff4ff;
-
-  --color-green: #15803d;
-  --color-green-soft: #f0fdf4;
-
-  --font-display: var(--font-display), ui-serif, Georgia, serif;
-  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-serif: var(--font-serif), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-sans), -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-mono), "SF Mono", Menlo, monospace;
 }
 
 /* ------------------------------------------------------------------ *
@@ -45,58 +46,89 @@ html {
 }
 
 body {
-  background-color: var(--color-paper-2);
-  color: var(--color-ink-2);
-  font-family: var(--font-sans);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
   overflow-x: hidden;
 }
 
 ::selection {
-  background: #ffe1c9;
+  background: #ffe9a8;
   color: var(--color-ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-blue);
+  outline: 2px solid var(--color-data-b);
   outline-offset: 2px;
-  border-radius: 3px;
 }
 
 /* ------------------------------------------------------------------ *
- * Utilities
+ * Editorial furniture
  * ------------------------------------------------------------------ */
 
-@utility card {
-  background: var(--color-paper);
-  border: 1px solid var(--color-line);
-  border-radius: 0.875rem;
+@utility rule-top {
+  border-top: 1px solid var(--color-rule);
 }
 
-@utility label-caps {
+@utility rule-top-thick {
+  border-top: 1px solid var(--color-rule-strong);
+}
+
+@utility sans-label {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  font-size: 0.68rem;
-  font-weight: 600;
+  color: var(--color-ink-3);
+}
+
+@utility serif-body {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--color-ink);
+
+  @media (max-width: 640px) {
+    font-size: 1.15rem;
+  }
 }
 
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
 
-@utility prose-body {
-  font-size: 1.0625rem;
-  line-height: 1.75;
-  color: var(--color-ink-2);
+/* NYT-style drop cap on the opening paragraph */
+@utility dropcap {
+  &::first-letter {
+    float: left;
+    font-family: var(--font-serif);
+    font-size: 4.1rem;
+    line-height: 0.82;
+    font-weight: 700;
+    padding-right: 0.09em;
+    padding-top: 0.06em;
+  }
 }
 
-/* Reveal on scroll */
+/* Understated interactive field, the way data desks style inline inputs */
+@utility field {
+  font-family: var(--font-sans);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--color-ink);
+  border-radius: 0;
+  padding: 0.1em 0;
+  color: var(--color-ink);
+  outline: none;
+}
+
 [data-reveal] {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(10px);
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
-  transition-delay: var(--reveal-delay, 0ms);
+    opacity 0.55s ease,
+    transform 0.55s ease;
 }
 
 [data-reveal="shown"] {
