@@ -38,7 +38,7 @@ export function WorkforceFigure() {
       source={
         <>
           Staffing modelled at 62 jobs per million annual passengers. The 40 percent cut is the
-          figure reported for Sydney Airport in article.md. <Cite id={14} />
+          figure reported for Sydney Airport. <Cite id={14} />
         </>
       }
     >
@@ -137,7 +137,7 @@ export function TicketFigure() {
             Green: airfare, Improvement Fee, aeronautical charges and taxes. Red adds parking,
             drop-off, food and retail. Aeronautical charges rise at the rate that reproduces
             Perth&rsquo;s reported +60 percent per passenger over a decade; non-ticket charges reach
-            the levels article.md documents in the UK. <Cite id={14} /><Cite id={13} />
+            the levels documented in the UK. <Cite id={14} /><Cite id={13} />
           </>
         }
       >
@@ -389,7 +389,7 @@ export function RevenueFigure() {
       aside="Modelled"
       source={
         <>
-          Revenue base and the $525 million annual rent from article.md. The 15–20 percent
+          Revenue base and the $525 million annual rent from the reporting. The 15–20 percent
           investor return is the Canadian Labour Congress estimate; the 37 percent Improvement Fee
           share is the CCPA&rsquo;s. <Cite id={1} /><Cite id={14} />
         </>
@@ -475,7 +475,7 @@ export function ServiceFigure() {
       aside="Both effects, same study"
       source={
         <>
-          University of Alberta study as reported in article.md and the Canadian Labour Congress
+          University of Alberta study as reported, and the Canadian Labour Congress
           review. <Cite id={14} />
         </>
       }
@@ -532,7 +532,7 @@ export function LockInFigure() {
   return (
     <Figure
       title="A contract longer than most careers, mortgages and governments"
-      deck="article.md describes concessions of 50 to 99 years. Once signed, buying the contract back is prohibitively expensive."
+      deck="The concessions described run 50 to 99 years. Once signed, buying the contract back is prohibitively expensive."
       aside="Reported term"
       source={
         <>
@@ -616,7 +616,7 @@ export function EvidenceFigure() {
   return (
     <Figure
       title="Five countries, three decades, one direction"
-      deck="article.md reports a consistent pattern across Australia, New Zealand, Portugal, the United Kingdom and the United States: higher charges, pressure on workers and the loss of long-term public value."
+      deck="A consistent pattern across Australia, New Zealand, Portugal, the United Kingdom and the United States: higher charges, pressure on workers and the loss of long-term public value."
       aside={
         <span className="flex gap-3">
           {(["all", "cost", "benefit"] as const).map((option) => (
@@ -636,7 +636,7 @@ export function EvidenceFigure() {
       }
       source={
         <>
-          All figures as reported in article.md. <Cite id={14} /><Cite id={13} /><Cite id={5} />
+          All figures as reported. <Cite id={14} /><Cite id={13} /><Cite id={5} />
         </>
       }
     >
@@ -689,11 +689,11 @@ export function PromisesFigure() {
   return (
     <Figure
       title="Eight commitments, held against the record"
-      deck={`${counts["at-risk"]} of the eight claims made for the deal have a documented failure mode in article.md; ${counts.unproven} are unproven; ${counts.supported} are backed by evidence.`}
+      deck={`${counts["at-risk"]} of the eight claims made for the deal have a documented failure mode in the record; ${counts.unproven} are unproven; ${counts.supported} are backed by evidence.`}
       aside="Tap a row"
       source={
         <>
-          Statuses are this article&rsquo;s judgement, drawn from what article.md reports about the
+          Statuses are this article&rsquo;s judgement, drawn from what the reporting shows about the
           same claims in Australia, the United Kingdom and Brazil.
         </>
       }

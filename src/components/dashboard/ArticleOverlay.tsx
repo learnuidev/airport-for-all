@@ -156,7 +156,7 @@ export function ArticleOverlay({
             What the record shows
           </h2>
           <p className="mt-3 font-serif text-[1.1rem] leading-relaxed text-ink-2">
-            The projection rests on what happened elsewhere. article.md reviews five countries and
+            The projection rests on what happened elsewhere. The record covers five countries and
             three decades; one academic study shows genuine benefits alongside the bill.
           </p>
         </Column>
@@ -191,7 +191,7 @@ export function ArticleOverlay({
             text
           </h2>
           <p className="mt-2 font-serif text-[1rem] leading-relaxed text-ink-3">
-            article.md carries a footnote block of 15 and a closing list of 20. Both are shown.
+            The reporting carries a footnote block of 15 sources and a closing list of 20. Both are shown.
             Citation markers in the text open the matching entry here.
           </p>
           <ol id="sources" className="mt-5 divide-y divide-rule border-y border-rule">
@@ -219,9 +219,8 @@ export function ArticleOverlay({
             ))}
           </ol>
           <p className="mt-6 border-t border-rule pt-3 font-sans text-[0.74rem] leading-relaxed text-ink-4">
-            Every paragraph above is parsed at build time from article.md, the single source of
-            truth for this project. Projections are anchored to the reported figures and labelled
-            as modelled. <Cite id={1} />
+            Every paragraph above comes from the reporting; the projections are anchored to its
+            figures and labelled as modelled. <Cite id={1} />
           </p>
         </Column>
       </section>

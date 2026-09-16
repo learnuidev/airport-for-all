@@ -437,7 +437,7 @@ function Info({
       {view === "books" ? <Books /> : null}
 
       <p className="mt-auto border-t border-rule pt-2.5 font-sans text-[0.68rem] leading-relaxed text-ink-4">
-        Reported anchors in article.md: Perth +60 percent per passenger over a decade, UK parking
+        Reported anchors: Perth +60 percent per passenger over a decade, UK parking
         at £98 a day and £28 for 30 minutes at Stansted, a 15–20 percent investor requirement, and
         a 40 percent workforce cut at Sydney.
       </p>

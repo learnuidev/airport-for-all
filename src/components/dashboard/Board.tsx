@@ -95,7 +95,7 @@ export const VIEWS: {
     label: "The record",
     title: "Five countries, three decades, one direction",
     blurb:
-      "Every measured outcome article.md reports, with the 2023 study's benefits included rather than buried.",
+      "Every measured outcome in the record, with the 2023 study's benefits included rather than buried.",
     chart: "contribution",
   },
 ];
