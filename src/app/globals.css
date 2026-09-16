@@ -1,108 +1,34 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ *
- * Design tokens
+ * Design tokens — light editorial
  * ------------------------------------------------------------------ */
 
 @theme {
-  --color-ink-950: #04060d;
-  --color-ink-900: #070a14;
-  --color-ink-850: #0a0e1b;
-  --color-ink-800: #0e1322;
-  --color-ink-700: #161c2e;
-  --color-ink-600: #212a42;
-  --color-ink-500: #2f3a56;
+  --color-paper: #ffffff;
+  --color-paper-2: #faf9f7;
+  --color-paper-3: #f3f1ec;
+  --color-line: #e6e2da;
+  --color-line-strong: #d5cfc4;
 
-  --color-fog-100: #eef2fb;
-  --color-fog-300: #c3cce2;
-  --color-fog-400: #98a4c0;
-  --color-fog-500: #7b88a6;
-  --color-fog-600: #5d6a88;
+  --color-ink: #17181a;
+  --color-ink-2: #3c3f45;
+  --color-ink-3: #5f636b;
+  --color-ink-4: #8a8e96;
 
-  --color-signal-400: #ffa94d;
-  --color-signal-500: #f97316;
-  --color-signal-600: #dc5a08;
+  --color-accent: #c2410c;
+  --color-accent-soft: #fff3ea;
+  --color-accent-line: #f2c9ac;
 
-  --color-jet-400: #7fb4ff;
-  --color-jet-500: #3b82f6;
+  --color-blue: #1d4ed8;
+  --color-blue-soft: #eff4ff;
 
-  --color-runway-400: #4ade80;
-  --color-runway-500: #22c55e;
+  --color-green: #15803d;
+  --color-green-soft: #f0fdf4;
 
-  --color-alarm-400: #fb7185;
-  --color-alarm-500: #f43f5e;
-
-  --color-haze-400: #c4b5fd;
-  --color-cyan-400: #22d3ee;
-
-  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-serif, Georgia, serif;
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, "SF Mono", monospace;
-
-  --radius-4xl: 2rem;
-
-  --animate-fade-up: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-float: float 7s ease-in-out infinite;
-  --animate-sweep: sweep 3.6s linear infinite;
-  --animate-pulse-ring: pulse-ring 2.6s ease-out infinite;
-  --animate-marquee: marquee 48s linear infinite;
-  --animate-blink: blink 1.6s step-end infinite;
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-14px);
-  }
-}
-
-@keyframes sweep {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(320%);
-  }
-}
-
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.72);
-    opacity: 0.85;
-  }
-  100% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0.25;
-  }
+  --font-mono: var(--font-mono), ui-monospace, monospace;
 }
 
 /* ------------------------------------------------------------------ *
@@ -119,117 +45,63 @@ html {
 }
 
 body {
-  background-color: var(--color-ink-950);
-  color: var(--color-fog-300);
+  background-color: var(--color-paper-2);
+  color: var(--color-ink-2);
   font-family: var(--font-sans);
   overflow-x: hidden;
-  font-synthesis-weight: none;
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--color-signal-500) 55%, transparent);
-  color: white;
+  background: #ffe1c9;
+  color: var(--color-ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-jet-400);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-ink-900);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-ink-600);
-  border-radius: 999px;
-  border: 2px solid var(--color-ink-900);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-ink-500);
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 /* ------------------------------------------------------------------ *
  * Utilities
  * ------------------------------------------------------------------ */
 
-@utility text-balance-pretty {
-  text-wrap: pretty;
-}
-
-@utility hairline {
-  border: 1px solid color-mix(in oklab, var(--color-ink-500) 60%, transparent);
-}
-
-@utility glass {
-  background:
-    linear-gradient(
-      to bottom right,
-      color-mix(in oklab, var(--color-ink-800) 88%, transparent),
-      color-mix(in oklab, var(--color-ink-900) 94%, transparent)
-    );
-  border: 1px solid color-mix(in oklab, var(--color-ink-500) 55%, transparent);
-  backdrop-filter: blur(14px) saturate(140%);
-}
-
-@utility grid-noise {
-  background-image:
-    linear-gradient(color-mix(in oklab, var(--color-ink-500) 22%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in oklab, var(--color-ink-500) 22%, transparent) 1px, transparent 1px);
-  background-size: 44px 44px;
-}
-
-@utility glow-signal {
-  box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--color-signal-500) 30%, transparent),
-    0 18px 60px -22px color-mix(in oklab, var(--color-signal-500) 55%, transparent);
-}
-
-@utility glow-jet {
-  box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--color-jet-400) 30%, transparent),
-    0 18px 60px -22px color-mix(in oklab, var(--color-jet-400) 55%, transparent);
-}
-
-@utility tabular {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
+@utility card {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 0.875rem;
 }
 
 @utility label-caps {
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.09em;
   font-size: 0.68rem;
   font-weight: 600;
 }
 
-/* ------------------------------------------------------------------ *
- * Reveal-on-scroll (driven by IntersectionObserver in useReveal)
- * ------------------------------------------------------------------ */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
 
+@utility prose-body {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--color-ink-2);
+}
+
+/* Reveal on scroll */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(26px);
+  transform: translateY(12px);
   transition:
-    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.6s ease,
+    transform 0.6s ease;
   transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
 }
 
 [data-reveal="shown"] {
   opacity: 1;
   transform: none;
-}
-
-/* Section-level dimming so the active chapter reads clearly */
-[data-chapter] {
-  transition: opacity 0.6s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -240,7 +112,6 @@ body {
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
   [data-reveal] {

@@ -1,11 +1,12 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  experimental: {
-    // article.md is read at build time by src/lib/article.ts; keep it out of the
-    // client bundle and ensure the file is traced for server output.
-    optimizePackageImports: [],
+  // The repo is not a git root on every machine; pin the workspace so Turbopack
+  // does not walk up into a parent lockfile.
+  turbopack: {
+    root: path.resolve(__dirname),
   },
 };
 

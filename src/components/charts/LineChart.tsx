@@ -126,7 +126,7 @@ export function LineChart({
               y1={sy(tick)}
               y2={sy(tick)}
               stroke="currentColor"
-              className="text-ink-600/70"
+              className="text-line"
               strokeWidth={1}
               strokeDasharray={tick === minY ? undefined : "3 6"}
             />
@@ -135,7 +135,7 @@ export function LineChart({
               y={sy(tick)}
               dy="0.32em"
               textAnchor="end"
-              className="fill-fog-500 font-mono text-[10px] tabular"
+              className="fill-ink-4 font-mono text-[10px] tabular"
             >
               {formatY(tick)}
             </text>
@@ -148,7 +148,7 @@ export function LineChart({
             x={sx(tick)}
             y={PAD.top + plotH + 20}
             textAnchor="middle"
-            className="fill-fog-500 font-mono text-[10px] tabular"
+            className="fill-ink-4 font-mono text-[10px] tabular"
           >
             {formatX(tick)}
           </text>
@@ -163,7 +163,7 @@ export function LineChart({
               y1={PAD.top - 8}
               y2={PAD.top + plotH}
               stroke={marker.color ?? "currentColor"}
-              className={marker.color ? undefined : "text-ink-500"}
+              className={marker.color ? undefined : "text-line-strong"}
               strokeWidth={1}
               strokeDasharray="2 5"
             />
@@ -223,7 +223,7 @@ export function LineChart({
                 cy={sy(point.y)}
                 r={4.5}
                 fill={s.color}
-                stroke="#04060d"
+                stroke="#ffffff"
                 strokeWidth={2}
               />
             ))}
@@ -246,20 +246,20 @@ export function LineChart({
 
       {hoveredX !== null && hoveredValues.length ? (
         <div
-          className="pointer-events-none absolute top-1 z-10 min-w-[9.5rem] -translate-x-1/2 rounded-xl border border-ink-500 bg-ink-900/95 p-2.5 text-xs shadow-2xl"
+          className="pointer-events-none absolute top-1 z-10 min-w-[9.5rem] -translate-x-1/2 rounded-xl border border-line bg-white/95 p-2.5 text-xs shadow-2xl"
           style={{
             left: Math.min(Math.max(sx(hoveredX), 96), Math.max(width - 96, 96)),
           }}
         >
-          <div className="label-caps mb-1.5 text-fog-500">{formatX(hoveredX)}</div>
+          <div className="label-caps mb-1.5 text-ink-4">{formatX(hoveredX)}</div>
           <ul className="space-y-1">
             {hoveredValues.map(({ series: s, point }) => (
               <li key={`tip-${s.id}`} className="flex items-center justify-between gap-4">
-                <span className="flex items-center gap-1.5 text-fog-400">
+                <span className="flex items-center gap-1.5 text-ink-3">
                   <span className="h-2 w-2 rounded-full" style={{ background: s.color }} />
                   {s.label}
                 </span>
-                <span className="font-mono tabular text-fog-100">{formatY(point.y)}</span>
+                <span className="font-mono tabular text-ink">{formatY(point.y)}</span>
               </li>
             ))}
           </ul>
@@ -268,7 +268,7 @@ export function LineChart({
 
       <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1.5 pl-1">
         {series.map((s) => (
-          <span key={`legend-${s.id}`} className="flex items-center gap-2 text-xs text-fog-400">
+          <span key={`legend-${s.id}`} className="flex items-center gap-2 text-xs text-ink-3">
             <span
               className="h-0.5 w-5 rounded-full"
               style={{

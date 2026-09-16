@@ -482,7 +482,7 @@ export function parseArticle(markdown: string): ParsedArticle {
  * References
  * ------------------------------------------------------------------ */
 
-type RefSeed = Omit<Reference, "cited" | "legacyId" | "id">;
+type RefSeed = Omit<Reference, "cited" | "legacyId" | "id" | "groupKey">;
 
 /** Order matches the first draft's footnote markers — the canonical numbering. */
 const REF_SEEDS: RefSeed[] = [
