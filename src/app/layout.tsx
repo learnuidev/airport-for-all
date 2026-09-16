@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4, Source_Code_Pro } from "next/font/google";
 import "./globals.css";
+import { cookies } from "next/headers";
 import { getArticle } from "@/lib/article.server";
+import { LocaleProvider } from "@/components/i18n/LocaleProvider";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_TAGS, isLocale } from "@/lib/locales";
 
-// The headline lives in article.md, so metadata must be read per request.
+// The headline comes from the source document, so metadata is read per request.
 export const dynamic = "force-dynamic";
 
 const serif = Source_Serif_4({
@@ -32,9 +35,17 @@ export const metadata: Metadata = {
   openGraph: { title: article.title, description: article.deck, type: "article" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookie = await cookies();
+  const raw = cookie.get(LOCALE_COOKIE)?.value;
+  const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+    <html
+      lang={locale}
+      data-locale={locale}
+      className={`${serif.variable} ${sans.variable} ${mono.variable}`}
+    >
       <body className="antialiased">
         <a
           href="#lead"
@@ -42,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to the article
         </a>
-        {children}
+        <LocaleProvider locale={locale}>{children}</LocaleProvider>
       </body>
     </html>
   );

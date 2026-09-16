@@ -5,13 +5,13 @@
  * article projects afterwards is derived here, so the numbers in chapter 3 agree
  * with the numbers in chapter 6.
  *
- * Anchors taken from article.md:
+ * Anchors taken from the reporting:
  *   - Airport Improvement Fee: $30–$40 a ticket, 37% of large-airport revenue.
  *   - Taxes and fees: 25–35% of a Canadian ticket. Set here at 28%.
  *   - Aeronautical charges: the slice of a fare that reaches the operator,
  *     rising at the rate that reproduces Perth's reported +60% per passenger
  *     over a decade.
- *   - Non-ticket charges ramp to the levels article.md documents in the UK:
+ *   - Non-ticket charges ramp to the levels documented in the UK:
  *     £98/day Heathrow parking, £28 for 30 minutes at Stansted, and the CCPA's
  *     warning that retail and food prices follow rents up.
  *   - Sydney's 40% workforce cut is the labour anchor.
@@ -21,8 +21,8 @@ import { AIRPORTS, type Airport } from "@/lib/sourced";
 
 /**
  * The Improvement Fee actually charged per departing passenger in 2025, from
- * the CLC report's reading of each authority's statements. The $30-$40 band in
- * article.md is a national range; these are the real numbers.
+ * the CLC report's reading of each authority's statements. The $30-$40 band is a
+ * national range; these are the exact per-airport figures.
  */
 export const AIF_BY_AIRPORT: Record<string, number> = {
   YYZ: 41.81,

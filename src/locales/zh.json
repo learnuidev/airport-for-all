@@ -1,0 +1,178 @@
+{
+  "app": {
+    "title": "机场属于所有人",
+    "kicker": "特许经营档案"
+  },
+  "controls": {
+    "airport": "选择机场",
+    "airportAria": "机场",
+    "inScope": "特许经营范围内",
+    "notNamed": "公告未提及",
+    "ticketAria": "往返票价",
+    "readArticle": "阅读报道",
+    "concessionYear": "特许经营年份",
+    "signed": "签约",
+    "yearsIn": "已{{count}}年",
+    "emptyHeading": "先选择一个机场",
+    "emptyBody": "再输入你花了多少钱。看板会把你的一张机票和整趟行程放在一起，一直推算到二十年后。",
+    "emptyAction": "改为阅读报道",
+    "daysParked": "停车天数",
+    "travellers": "旅客人数",
+    "kerbside": "路边落客",
+    "decrease": "减少{{label}}",
+    "increase": "增加{{label}}",
+    "chartHint": "拖动图表或年份 · 方向键"
+  },
+  "chart": {
+    "aria": "特许经营签约以来逐年的费用"
+  },
+  "axis": {
+    "label": "特许经营年份",
+    "play": "播放",
+    "pause": "暂停",
+    "drag": "拖动年份",
+    "yearAria": "{{year}}年"
+  },
+  "views": {
+    "cost": "行程花费",
+    "charges": "收费项目",
+    "ticket": "票价内",
+    "revenue": "钱去哪了",
+    "books": "账本",
+    "record": "记录"
+  },
+  "viewTitles": {
+    "cost": "机票几乎不动，行程花费却一路上涨",
+    "charges": "哪项收费在涨，涨得多快",
+    "ticket": "拆开票价，逐年看",
+    "revenue": "一次性的横财，永久性的抽取",
+    "books": "私有化后不再公开的账目",
+    "record": "五国三十年，同一个方向"
+  },
+  "viewBlurbs": {
+    "cost": "把你的机票和其余所有花费——停车、落客、餐饮零售——放在一起对比。差出来的那一截，就是私营运营商加上去的。",
+    "charges": "每项非票务收费各占一条。逐项关闭，看总额靠什么撑着。",
+    "ticket": "加拿大机票的四项公开构成，叠加显示。关闭任意一项，就能把票价拆回去。",
+    "revenue": "当局2022年营收$3.95B，却没有一分钱利润。私营运营商则必须每年多挣15%到20%。",
+    "books": "三家最繁忙机场2025年的财报，数据就来自报告本身的表格。而私有化之后，私营所有者不再需要向任何人披露这些。",
+    "record": "记录里每一项可量化的结果，2023年研究提到的收益也一并列出，而不是被埋掉。"
+  },
+  "series": {
+    "parking": "停车",
+    "food": "餐饮零售",
+    "drop": "落客",
+    "aif": "机场改善费",
+    "aeronautical": "航空性收入",
+    "airfare": "机票",
+    "taxes": "税费"
+  },
+  "panels": {
+    "charges": "收费项目",
+    "insideFare": "票价构成"
+  },
+  "summary": {
+    "atSigning": "签约时",
+    "yearsIn": "已{{count}}年 · {{calendar}}",
+    "chargesReach": "在{{trip}}的行程花费中，非票务收费达{{extras}}{{grew}}。",
+    "andGrew": "，签约以来上涨{{amount}}",
+    "parkingLeads": "停车费最高，达{{parking}}；其次是餐饮零售，{{food}}。",
+    "rampFinished": "爬坡期已经结束：此后这些价格只会跟着通胀走。",
+    "fiveMore": "再过五年，还会再涨{{amount}}。",
+    "fareReaches": "票价达{{ticket}}{{added}}。",
+    "andAdded": "，比签约时的{{base}}上涨{{amount}}",
+    "aifFastest": "机场改善费涨得最快，达{{aif}}；税费则固定在{{taxes}}。",
+    "fareInflation": "机票价格随通胀走，与特许经营无关。",
+    "investorsNeed": "投资者今年需要多挣约${{amount}}M的营收。",
+    "takenOut": "这是签约以来被抽走的${{amount}}M——换来的只是一次性的横财。",
+    "baseNoProfit": "而这$3.95B的营收基数，本来一分钱利润都没有。",
+    "booksLine1": "多伦多皮尔逊2025年收入$2.08B，蒙特利尔特鲁多$961M，温哥华$717M——而且每一行都公布了。",
+    "booksLine2": "工资是最大的一项可控成本：$297M、$108M和$139M。上缴渥太华的租金：$236M、$107M、$78M。",
+    "booksLine3": "私营机场不必向公众做这样的披露。",
+    "recordLine1": "五国三十年：收费更高，员工承压，公共价值流失。",
+    "recordLine2": "保护条款一到期，悉尼就裁掉了40%的员工——当年它还赚了A$376M。",
+    "recordLine3": "奥克兰被认定多赚了NZ$190–200M的超额利润；葡萄牙的收费高出成本30%。",
+    "tripCosts": "这趟行程要花{{total}}，比签约时的{{base}}上涨{{amount}}。",
+    "tripBefore": "特许经营见效之前，这趟行程要花{{total}}。",
+    "offTicketShare": "非票务收费现在为{{amount}}——占你总花费的{{share}}%。",
+    "fareOnlyPart": "其中票价本身只占{{amount}}。",
+    "switchOn": "打开左侧的一项收费，看看它落在哪里。"
+  },
+  "metrics": {
+    "tripIn": "{{calendar}}年行程花费",
+    "sameTripAtSigning": "签约时的同一趟行程",
+    "addedByConcession": "特许经营带来的增量",
+    "aboveCurrent": "高于现行模式",
+    "ticketIn": "{{calendar}}年票价",
+    "addedToFare": "票价的涨幅",
+    "improvementFee": "机场改善费",
+    "taxesAndFees": "税费",
+    "parking": "停车费",
+    "dropOff": "落客费",
+    "foodRetail": "餐饮零售",
+    "addedSinceSigning": "签约以来的增量",
+    "free": "免费",
+    "revenueNeeded": "{{calendar}}年所需营收",
+    "extractedSinceSigning": "签约以来被抽走",
+    "revenue2022": "2022年营收，毫无利润",
+    "annualRent": "每年上缴渥太华的租金",
+    "canadaRank": "加拿大可负担性排名",
+    "sydneyCut": "悉尼裁员比例",
+    "perthPerPax": "珀斯人均收费，十年",
+    "studyFees": "2023年研究费用——取消量减少50%",
+    "taxShareOfTicket": "票价中税费所占比例",
+    "revenueShareAif": "营收中机场改善费所占比例",
+    "concessionYears": "特许经营年限",
+    "pearsonRevenue": "多伦多皮尔逊2025年营收",
+    "trudeauRevenue": "蒙特利尔特鲁多的营收",
+    "vancouverRevenue": "温哥华的营收",
+    "rentSince1994": "1994年以来上缴渥太华的租金"
+  },
+  "books": {
+    "title": "2025年账目",
+    "revenue": "收入",
+    "expenses": "支出",
+    "aeronautical": "航空性收入",
+    "nonAeronautical": "非航空性收入",
+    "improvementFees": "机场改善费",
+    "wages": "工资、薪酬与福利",
+    "rent": "加拿大交通部租金",
+    "feePerPassenger": "每位出发旅客的机场改善费{{fee}}",
+    "source": "摘自2025年合并财务报表，整理自加拿大劳工大会报告，第24–25页。"
+  },
+  "airportsPanel": {
+    "staffCut": "员工→裁减"
+  },
+  "article": {
+    "readTitle": "完整报道",
+    "meta": "{{words}}字 · {{citations}}条引注 · {{minutes}}分钟",
+    "backToBoard": "返回看板",
+    "kicker": "测算",
+    "byline": "撰文",
+    "author": "数据组",
+    "dateline": "2026年9月15日",
+    "recordHeading": "记录说明了什么",
+    "recordLede": "测算的依据是别处的经验。记录涵盖五国三十年；有一项学术研究在列出代价的同时，也记录了真实的收益。",
+    "counterargument": "反方观点",
+    "sourcesHeading": "{{total}}个来源，正文引用{{cited}}个",
+    "sourcesLede": "原报道的脚注区列出15个来源，文末清单列出20个。这里两者都呈现。",
+    "openSource": "打开",
+    "footer": "以上每一段都来自原报道；测算部分以报道中的数字为依据，并标注为模型推算。",
+    "seeYear": "在看板上查看这一年"
+  },
+  "sources": {
+    "kind": {
+      "think-tank": "智库",
+      "labour": "工会",
+      "news": "新闻",
+      "academic": "学术",
+      "government": "政府",
+      "legal": "法律"
+    },
+    "listedOnly": "仅列出，正文未引用",
+    "anchors": "报道中的关键数据：珀斯人均收费十年上涨60%，英国停车费每天£98，投资者要求15%到20%的回报，悉尼裁员40%。"
+  },
+  "language": {
+    "label": "语言",
+    "switch": "切换语言"
+  }
+}

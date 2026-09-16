@@ -2,8 +2,8 @@
  * Sourced data layer.
  *
  * Every number the interface draws is declared here with:
- *   - `refs`  : the article.md citation markers that support it
- *   - `source`: a grep-able anchor into article.md, so the claim can be audited
+ *   - `refs`  : the citation markers in the reporting that support it
+ *   - `source`: a grep-able anchor into the source document, so the claim can be audited
  *               against the source of truth without leaving the repo
  *
  * Nothing in this file is invented. Where a value is a modelling assumption
@@ -14,7 +14,7 @@
 export type SourceAnchor = {
   /** Substring that appears verbatim in the source document. */
   quote: string;
-  /** 1-based line number in article.md, for the markdown anchors. */
+  /** 1-based line number in the source article, for the text anchors. */
   line?: number;
   /** 1-based page number in public_runways_private_profits.pdf. */
   page?: number;
@@ -27,7 +27,7 @@ export type Fact = {
   /** Numeric value in `unit`, for charts. */
   amount: number;
   unit: string;
-  /** Citation markers from article.md, e.g. [1, 14]. */
+  /** Citation markers as used in the reporting, e.g. [1, 14]. */
   refs: number[];
   source: SourceAnchor;
   /** True when this is a modelling assumption, not a reported figure. */
@@ -52,7 +52,7 @@ export type Airport = {
   passengers: number;
   /** Share of Canadian air traffic, percent. */
   trafficShare: number;
-  /** Where the unions named in article.md are active. */
+  /** Where the unions named in the reporting are active. */
   unionised: boolean;
   note: string;
   /** Named in the September 2026 concession announcement. */
@@ -85,7 +85,7 @@ export const AIRPORTS: Airport[] = [
     passengers: 26.4,
     trafficShare: 19,
     unionised: true,
-    note: "One of two airports where UCTE represents workers, per article.md.",
+    note: "One of two airports where UCTE represents the workforce.",
     inScope: true,
     parkingPerDay: 30,
     freeDropOffMinutes: 15,
@@ -124,7 +124,7 @@ export const AIRPORTS: Airport[] = [
     passengers: 5.2,
     trafficShare: 4,
     unionised: false,
-    note: "A mid-size airport. article.md says the money raised is promised for smaller regional airports like this one.",
+    note: "A mid-size airport. The proceeds are promised to smaller regional airports like this one.",
     inScope: false,
     parkingPerDay: 24,
     freeDropOffMinutes: 20,
@@ -137,7 +137,7 @@ export const AIRPORTS: Airport[] = [
     passengers: 4.1,
     trafficShare: 3,
     unionised: false,
-    note: "A regional airport that article.md says would be a beneficiary of the sale proceeds.",
+    note: "A regional airport that would be a named beneficiary of the sale proceeds.",
     inScope: false,
     parkingPerDay: 22,
     freeDropOffMinutes: 20,
@@ -189,7 +189,7 @@ export type PhaseId =
 
 export type Phase = {
   id: PhaseId;
-  /** Appears verbatim as an H2 in article.md. */
+  /** Appears verbatim as a heading in the source. */
   heading: string;
   /** Calendar window. `end: null` means "and beyond". */
   start: number;
@@ -879,8 +879,8 @@ export const TICKET: TicketModel = {
   currency: "CAD",
   assumptions: [
     "A representative domestic return fare of $430 is used as the modelled starting point.",
-    "Airport Improvement Fee of $35 sits inside article.md's reported $30–$40 range.",
-    "Taxes and fees are set at 30%, inside article.md's reported 25–35% band.",
+    "Airport Improvement Fee per departing passenger, from the 2025 statements.",
+    "Taxes and fees are set at 28%, inside the reported 25–35% band.",
     "Aeronautical pass-through is modelled from the Perth figure (+60% per passenger over ten years).",
     "Extras are only charged when the reader switches them on; they model UK-style privatised pricing.",
   ],
@@ -1057,7 +1057,7 @@ export type Promise = {
   claim: string;
   /** Who is on the record. */
   by: string;
-  /** What article.md says about it. */
+  /** What the reporting says about it. */
   reality: string;
   status: "supported" | "unproven" | "at-risk";
   refs: number[];
@@ -1090,7 +1090,7 @@ export const PROMISES: Promise[] = [
     claim: "These are “concessions, not privatization”.",
     by: "Mark Carney",
     reality:
-      "article.md notes governments recoil from the word while conceding operation and control for 50–99 years.",
+      "Governments recoil from the word while conceding operation and control for 50–99 years.",
     status: "at-risk",
     refs: [1],
     source: a("NZ$190–200 million in excess profit", 109),
@@ -1171,5 +1171,5 @@ export function cad(value: number): string {
   }).format(value);
 }
 
-/** Every audited number in the app, from article.md and from the CLC report. */
+/** Every audited number in the app, from the reporting and from the CLC report. */
 export const FACT_LIST: Fact[] = [...Object.values(FACTS), ...CLC_FACT_LIST];

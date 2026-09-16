@@ -3,7 +3,7 @@
 import { useCitations } from "./ArticleContext";
 
 /**
- * Superscript reference marker, parsed from article.md's citation notation.
+ * Superscript reference marker, parsed from the source's citation notation.
  * Styled the way newspapers set them: small, quiet, and a real link.
  */
 export function Cite({ id }: { id: number }) {

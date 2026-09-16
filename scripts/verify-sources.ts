@@ -1,7 +1,7 @@
 /**
  * Integrity check for every figure the app draws.
  *
- * Markdown anchors must appear verbatim at the line they claim in article.md.
+ * Text anchors must appear verbatim at the line they claim in the source article.
  * PDF anchors must appear on the page they claim in the Canadian Labour
  * Congress report. If either source moves, the build fails and names the chart
  * data that is no longer supported.
@@ -65,7 +65,7 @@ for (const anchor of anchors) {
 if (failures.length) {
   console.error(`\n✗ ${failures.length} of ${anchors.length} source anchors no longer match:\n`);
   for (const { anchor, found } of failures) {
-    const where = anchor.line ? `article.md line ${anchor.line}` : `report page ${anchor.page}`;
+    const where = anchor.line ? `source article, line ${anchor.line}` : `runways report, page ${anchor.page}`;
     console.error(`  ${anchor.path}`);
     console.error(`    expected in ${where}: ${JSON.stringify(anchor.quote)}`);
     console.error(`    found:                 ${JSON.stringify(found)}`);
@@ -76,5 +76,5 @@ if (failures.length) {
 const mdCount = anchors.filter((a) => a.line).length;
 const pdfCount = anchors.filter((a) => a.page).length;
 console.log(
-  `✓ ${anchors.length} source anchors verified — ${mdCount} against article.md (${articleLines.length} lines), ${pdfCount} against runways report (${pages.length} pages)`,
+  `✓ ${anchors.length} source anchors verified — ${mdCount} against the source article (${articleLines.length} lines), ${pdfCount} against the runways report (${pages.length} pages)`,
 );

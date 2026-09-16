@@ -44,78 +44,14 @@ export function componentValue(row: YearCosts, key: string): number {
 export type ChartView = "waterline" | "stacked" | "contribution";
 export type ViewId = "cost" | "charges" | "ticket" | "revenue" | "books" | "record";
 
-export const VIEWS: {
-  id: ViewId;
-  label: string;
-  title: string;
-  blurb: string;
-  chart: ChartView;
-}[] = [
-  {
-    id: "cost",
-    label: "Trip cost",
-    title: "The fare barely moves. The trip does.",
-    blurb:
-      "Your ticket against everything else you pay — parking, drop-off, food and retail. The gap is what a private operator adds.",
-    chart: "waterline",
-  },
-  {
-    id: "charges",
-    label: "Charges",
-    title: "Which charge grows, and how fast",
-    blurb: "Each non-ticket charge on its own. Switch them off to see what the total depends on.",
-    chart: "contribution",
-  },
-  {
-    id: "ticket",
-    label: "In your ticket",
-    title: "Inside the ticket, year by year",
-    blurb:
-      "The four reported components of a Canadian fare, stacked. Switch any of them off to strip the fare back.",
-    chart: "stacked",
-  },
-  {
-    id: "revenue",
-    label: "Where it goes",
-    title: "A one-time windfall, a permanent extraction",
-    blurb:
-      "The authorities made no profit on $3.95 billion of 2022 revenue. A private operator has to find 15–20 percent more, every year.",
-    chart: "contribution",
-  },
-  {
-    id: "books",
-    label: "The books",
-    title: "The accounts privatisation would close",
-    blurb:
-      "The 2025 statements of the three busiest airports, from the CLC report's own tables. This is the disclosure a private owner would no longer owe anyone.",
-    chart: "contribution",
-  },
-  {
-    id: "record",
-    label: "The record",
-    title: "Five countries, three decades, one direction",
-    blurb:
-      "Every measured outcome in the record, with the 2023 study's benefits included rather than buried.",
-    chart: "contribution",
-  },
+export const VIEWS: { id: ViewId; chart: ChartView }[] = [
+  { id: "cost", chart: "waterline" },
+  { id: "charges", chart: "contribution" },
+  { id: "ticket", chart: "stacked" },
+  { id: "revenue", chart: "contribution" },
+  { id: "books", chart: "contribution" },
+  { id: "record", chart: "contribution" },
 ];
-
-/**
- * The 2025 accounts of the three busiest airports, in $ millions. Drawn from the
- * report's revenue and expense tables, which it compiled from each authority's
- * consolidated financial statements.
- */
-export const BOOKS = {
-  revenue: [
-    { key: "aeronautical", label: "Aeronautical", colour: "#1a5fb4" },
-    { key: "nonAeronautical", label: "Non-aeronautical", colour: "#4a90d9" },
-    { key: "aif", label: "Improvement Fees", colour: "#d0021b" },
-  ],
-  expenses: [
-    { key: "wages", label: "Salaries, wages, benefits", colour: "#7a3fa0" },
-    { key: "rent", label: "Transport Canada rent", colour: "#e8853f" },
-  ],
-} as const;
 
 /** Cumulative revenue extraction, in $ millions, after `year` years. */
 export function extractionAt(year: number): number {
@@ -162,10 +98,14 @@ export function summaryFor(
   view: ViewId,
   rows: YearCosts[],
   year: number,
+  t: (key: string, options?: Record<string, unknown>) => string,
 ): { heading: string; lines: SummaryLine[] } {
   const active = rows[Math.min(year, rows.length - 1)];
   const now = rows[0];
-  const yearLabel = year === 0 ? "At signing" : `${year} years in · ${ANNOUNCEMENT_YEAR + year}`;
+  const yearLabel =
+    year === 0
+      ? t("summary.atSigning")
+      : t("summary.yearsIn", { count: year, calendar: ANNOUNCEMENT_YEAR + year });
 
   if (view === "charges") {
     const grew = active.extrasTotal - now.extrasTotal;
@@ -175,17 +115,24 @@ export function summaryFor(
       heading: yearLabel,
       lines: [
         {
-          text: `Non-ticket charges reach ${cad(active.extrasTotal)} of a ${cad(active.tripTotal)} trip${
-            grew > 1 ? `, up ${cad(grew)} since signing` : ""
-          }.`,
+          text: t("summary.chargesReach", {
+            extras: cad(active.extrasTotal),
+            trip: cad(active.tripTotal),
+            grew: grew > 1 ? t("summary.andGrew", { amount: cad(grew) }) : "",
+          }),
           tone: grew > 1 ? "bad" : "muted",
         },
-        { text: `Parking leads at ${cad(active.parking)}, then food at ${cad(active.food)}.` },
+        {
+          text: t("summary.parkingLeads", {
+            parking: cad(active.parking),
+            food: cad(active.food),
+          }),
+        },
         {
           text:
             year >= 20
-              ? "The ramp is finished: from here these prices only follow inflation."
-              : `Five years on it climbs another ${cad(total5)}.`,
+              ? t("summary.rampFinished")
+              : t("summary.fiveMore", { amount: cad(total5) }),
           tone: "muted",
         },
       ],
@@ -198,15 +145,19 @@ export function summaryFor(
       heading: yearLabel,
       lines: [
         {
-          text: `The fare reaches ${cad(active.ticketTotal)}${
-            added > 1 ? `, up ${cad(added)} on ${cad(now.ticketTotal)} at signing` : ""
-          }.`,
+          text: t("summary.fareReaches", {
+            ticket: cad(active.ticketTotal),
+            added:
+              added > 1
+                ? t("summary.andAdded", { amount: cad(added), base: cad(now.ticketTotal) })
+                : "",
+          }),
           tone: added > 1 ? "bad" : "muted",
         },
         {
-          text: `The Improvement Fee is the fastest climber at ${cad(active.aif)}; taxes stay fixed at ${cad(active.taxes)}.`,
+          text: t("summary.aifFastest", { aif: cad(active.aif), taxes: cad(active.taxes) }),
         },
-        { text: "The airline fare moves with inflation, not with the concession.", tone: "muted" },
+        { text: t("summary.fareInflation"), tone: "muted" },
       ],
     };
   }
@@ -217,13 +168,13 @@ export function summaryFor(
       heading: yearLabel,
       lines: [
         {
-          text: `Investors need about $${Math.round(needed).toLocaleString()}M of extra revenue this year.`,
+          text: t("summary.investorsNeed", { amount: Math.round(needed).toLocaleString() }),
           tone: "bad",
         },
         {
-          text: `That is $${Math.round(extractionAt(year)).toLocaleString()}M taken out since signing — against a one-time windfall.`,
+          text: t("summary.takenOut", { amount: Math.round(extractionAt(year)).toLocaleString() }),
         },
-        { text: "Out of a $3.95B revenue base that made no profit at all.", tone: "muted" },
+        { text: t("summary.baseNoProfit"), tone: "muted" },
       ],
     };
   }
@@ -232,9 +183,9 @@ export function summaryFor(
     return {
       heading: yearLabel,
       lines: [
-        { text: "Five countries, three decades: higher charges, pressure on workers, lost public value.", tone: "bad" },
-        { text: "Sydney cut 40% of its workforce once protections expired; Perth's charges rose 60% per passenger." },
-        { text: "One 2023 study found 50% fewer cancellations — and $20 more in fees per passenger.", tone: "muted" },
+        { text: t("summary.recordLine1"), tone: "bad" },
+        { text: t("summary.recordLine2") },
+        { text: t("summary.recordLine3"), tone: "muted" },
       ],
     };
   }
@@ -246,19 +197,29 @@ export function summaryFor(
     heading: yearLabel,
     lines: [
       {
-        text: added > 1
-          ? `The trip costs ${cad(active.tripTotal)}, up ${cad(added)} on ${cad(now.tripTotal)} at signing.`
-          : `The trip costs ${cad(active.tripTotal)} before the concession bites.`,
+        text:
+          added > 1
+            ? t("summary.tripCosts", {
+                total: cad(active.tripTotal),
+                amount: cad(added),
+                base: cad(now.tripTotal),
+              })
+            : t("summary.tripBefore", { total: cad(active.tripTotal) }),
         tone: added > 1 ? "bad" : "muted",
       },
       {
-        text: `Off-ticket charges are now ${cad(active.extrasTotal)} — ${share.toFixed(0)}% of what you pay.`,
+        text: t("summary.offTicketShare", {
+          amount: cad(active.extrasTotal),
+          share: share.toFixed(0),
+        }),
       },
       {
         text:
           added > 1
-            ? `The fare itself accounts for only ${cad(active.ticketTotal - now.ticketTotal)} of that increase.`
-            : "Switch on a charge on the left to see it land.",
+            ? t("summary.fareOnlyPart", {
+                amount: cad(active.ticketTotal - now.ticketTotal),
+              })
+            : t("summary.switchOn"),
         tone: "muted",
       },
     ],
@@ -278,6 +239,7 @@ export function Chart({
   setYear,
   enabled,
   summary,
+  ariaLabel,
   width,
   height,
 }: {
@@ -287,6 +249,7 @@ export function Chart({
   setYear: (year: number) => void;
   enabled: string[];
   summary?: { heading: string; lines: SummaryLine[] };
+  ariaLabel: string;
   width: number;
   height: number;
 }) {
@@ -355,7 +318,7 @@ export function Chart({
       viewBox={`0 0 ${width} ${height}`}
       className="block h-full w-full"
       role="img"
-      aria-label="Costs by year since the concession was signed"
+      aria-label={ariaLabel}
     >
       {[0, 0.5, 1].map((fraction) => (
         <g key={`grid-${fraction}`}>
@@ -544,12 +507,16 @@ export function YearAxis({
   values,
   onPlay,
   playing,
+  labels,
+  ariaLabel,
 }: {
   year: number;
   setYear: (year: number) => void;
   values: number[];
   onPlay: () => void;
   playing: boolean;
+  labels: { play: string; pause: string; drag: string; year: (year: number) => string };
+  ariaLabel: string;
 }) {
   const max = Math.max(...values, 1);
   const min = Math.min(...values, 0);
@@ -572,10 +539,10 @@ export function YearAxis({
           aria-pressed={playing}
           className="flex cursor-pointer items-center gap-1.5 border border-ink px-2 py-0.5 font-sans text-[0.68rem] font-bold uppercase tracking-wide transition hover:bg-ink hover:text-white"
         >
-          {playing ? "Pause" : "Play"}
+          {playing ? labels.pause : labels.play}
         </button>
         <span className="font-sans text-[0.7rem] uppercase tracking-wide text-ink-4">
-          Drag the years
+          {labels.drag}
         </span>
       </div>
 
@@ -583,7 +550,7 @@ export function YearAxis({
         className="relative h-16 border-t border-ink"
         role="slider"
         tabIndex={0}
-        aria-label="Year of the concession"
+        aria-label={ariaLabel}
         aria-valuemin={ANNOUNCEMENT_YEAR}
         aria-valuemax={ANNOUNCEMENT_YEAR + HORIZON}
         aria-valuenow={ANNOUNCEMENT_YEAR + year}
@@ -608,7 +575,7 @@ export function YearAxis({
                 onPointerEnter={(event) => {
                   if (event.buttons === 1) setYear(index);
                 }}
-                aria-label={`Year ${ANNOUNCEMENT_YEAR + index}`}
+                aria-label={labels.year(ANNOUNCEMENT_YEAR + index)}
                 title={`${ANNOUNCEMENT_YEAR + index}`}
                 className="group relative flex-1 cursor-pointer"
               >

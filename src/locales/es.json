@@ -1,0 +1,178 @@
+{
+  "app": {
+    "title": "Un aeropuerto para todos",
+    "kicker": "El expediente de la concesión"
+  },
+  "controls": {
+    "airport": "Elige un aeropuerto",
+    "airportAria": "Aeropuerto",
+    "inScope": "Incluidos en la concesión",
+    "notNamed": "No mencionados en el anuncio",
+    "ticketAria": "Precio del billete de ida y vuelta",
+    "readArticle": "Lee el artículo",
+    "concessionYear": "Año de la concesión",
+    "signed": "Firmada",
+    "yearsIn": "{{count}} años después",
+    "emptyHeading": "Elige un aeropuerto para empezar",
+    "emptyBody": "Después introduce lo que pagaste. El panel compara tu billete con todo el viaje, a veinte años vista.",
+    "emptyAction": "Mejor lee el artículo",
+    "daysParked": "Días de aparcamiento",
+    "travellers": "Viajeros",
+    "kerbside": "Min. en la acera",
+    "decrease": "Reducir {{label}}",
+    "increase": "Aumentar {{label}}",
+    "chartHint": "arrastra el gráfico o los años · flechas del teclado"
+  },
+  "chart": {
+    "aria": "Costes por año desde la firma de la concesión"
+  },
+  "axis": {
+    "label": "Año de la concesión",
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "drag": "Arrastra los años",
+    "yearAria": "Año {{year}}"
+  },
+  "views": {
+    "cost": "Coste del viaje",
+    "charges": "Cargos",
+    "ticket": "En tu billete",
+    "revenue": "A dónde va",
+    "books": "Las cuentas",
+    "record": "Los antecedentes"
+  },
+  "viewTitles": {
+    "cost": "La tarifa apenas se mueve. El viaje, sí.",
+    "charges": "Qué cargo crece y a qué ritmo",
+    "ticket": "Dentro del billete, año a año",
+    "revenue": "Un ingreso único, una extracción permanente",
+    "books": "Las cuentas que cerraría la privatización",
+    "record": "Cinco países, tres décadas, una sola dirección"
+  },
+  "viewBlurbs": {
+    "cost": "Tu billete frente a todo lo demás que pagas: aparcamiento, bajada de pasajeros, comida y comercio. La diferencia es lo que añade un operador privado.",
+    "charges": "Cada cargo fuera del billete, por separado. Desactívalos para ver de qué depende el total.",
+    "ticket": "Los cuatro componentes declarados de una tarifa canadiense, apilados. Desactiva cualquiera para desmontarla.",
+    "revenue": "Las autoridades no ganaron nada con $3.95B de ingresos en 2022. Un operador privado tiene que sacar un 15–20% más, cada año.",
+    "books": "Las cuentas de 2025 de los tres aeropuertos más transitados, tomadas de las tablas del propio informe. Es la información que un propietario privado ya no tendría que dar a nadie.",
+    "record": "Todos los resultados medidos en los antecedentes, con los beneficios del estudio de 2023 incluidos y no enterrados."
+  },
+  "series": {
+    "parking": "Aparcamiento",
+    "food": "Comida y comercio",
+    "drop": "Bajada de pasajeros",
+    "aif": "Tasa de mejora aeroportuaria",
+    "aeronautical": "Aeronáuticos",
+    "airfare": "Tarifa aérea",
+    "taxes": "Impuestos y tasas"
+  },
+  "panels": {
+    "charges": "Cargos",
+    "insideFare": "Dentro de la tarifa"
+  },
+  "summary": {
+    "atSigning": "En la firma",
+    "yearsIn": "{{count}} años después · {{calendar}}",
+    "chargesReach": "Los cargos fuera del billete llegan a {{extras}} de un viaje de {{trip}}{{grew}}.",
+    "andGrew": ", un {{amount}} más desde la firma",
+    "parkingLeads": "El aparcamiento va primero, con {{parking}}, y luego la comida, con {{food}}.",
+    "rampFinished": "La rampa ya ha terminado: a partir de aquí estos precios solo siguen la inflación.",
+    "fiveMore": "Cinco años después sube otro {{amount}}.",
+    "fareReaches": "La tarifa llega a {{ticket}}{{added}}.",
+    "andAdded": ", un {{amount}} más que los {{base}} de la firma",
+    "aifFastest": "La tasa de mejora aeroportuaria es la que más sube, con {{aif}}; los impuestos siguen fijos en {{taxes}}.",
+    "fareInflation": "La tarifa aérea sigue la inflación, no la concesión.",
+    "investorsNeed": "Los inversores necesitan unos ${{amount}}M más de ingresos este año.",
+    "takenOut": "Eso es ${{amount}}M extraídos desde la firma — frente a un ingreso único.",
+    "baseNoProfit": "De una base de ingresos de $3.95B que no dio ningún beneficio.",
+    "booksLine1": "Pearson ingresó $2.08B en 2025, Montréal-Trudeau $961M y Vancouver $717M — y publicó cada línea.",
+    "booksLine2": "Los salarios son el mayor coste controlable: $297M, $108M y $139M. Alquiler a Ottawa: $236M, $107M y $78M.",
+    "booksLine3": "Un aeropuerto en manos privadas no debe al público ninguna información así.",
+    "recordLine1": "Cinco países, tres décadas: más cargos, presión sobre los trabajadores y valor público perdido.",
+    "recordLine2": "Sydney recortó el 40% de su plantilla al vencer las protecciones — el mismo año en que ganó A$376M.",
+    "recordLine3": "Se determinó que Auckland obtenía NZ$190–200M de beneficio excesivo; los cargos de Portugal superaban el coste en un 30%.",
+    "tripCosts": "El viaje cuesta {{total}}, un {{amount}} más que los {{base}} de la firma.",
+    "tripBefore": "El viaje cuesta {{total}} antes de que la concesión haga mella.",
+    "offTicketShare": "Los cargos fuera del billete son ahora {{amount}} — el {{share}}% de lo que pagas.",
+    "fareOnlyPart": "La tarifa en sí solo explica {{amount}} de ese aumento.",
+    "switchOn": "Activa un cargo de la izquierda para ver su efecto."
+  },
+  "metrics": {
+    "tripIn": "Viaje en {{calendar}}",
+    "sameTripAtSigning": "El mismo viaje en la firma",
+    "addedByConcession": "Añadido por la concesión",
+    "aboveCurrent": "Por encima del modelo actual",
+    "ticketIn": "Billete en {{calendar}}",
+    "addedToFare": "Añadido a la tarifa",
+    "improvementFee": "Tasa de mejora aeroportuaria",
+    "taxesAndFees": "Impuestos y tasas",
+    "parking": "Aparcamiento",
+    "dropOff": "Bajada de pasajeros",
+    "foodRetail": "Comida y comercio",
+    "addedSinceSigning": "Añadido desde la firma",
+    "free": "Gratis",
+    "revenueNeeded": "Necesarios en {{calendar}}",
+    "extractedSinceSigning": "Extraído desde la firma",
+    "revenue2022": "Ingresos de 2022, sin ningún beneficio",
+    "annualRent": "Alquiler anual a Ottawa",
+    "canadaRank": "Puesto de Canadá en asequibilidad",
+    "sydneyCut": "Recorte de plantilla en Sydney",
+    "perthPerPax": "Perth por pasajero, una década",
+    "studyFees": "Tasas del estudio de 2023 — con un 50% menos de cancelaciones",
+    "taxShareOfTicket": "Del billete son impuestos y tasas",
+    "revenueShareAif": "De los ingresos es la tasa de mejora aeroportuaria",
+    "concessionYears": "Años de concesión",
+    "pearsonRevenue": "Ingresos de Pearson en 2025",
+    "trudeauRevenue": "Ingresos de Montréal-Trudeau",
+    "vancouverRevenue": "Ingresos de Vancouver",
+    "rentSince1994": "Alquiler pagado a Ottawa desde 1994"
+  },
+  "books": {
+    "title": "Cuentas de 2025",
+    "revenue": "Ingresos",
+    "expenses": "Gastos",
+    "aeronautical": "Aeronáuticos",
+    "nonAeronautical": "No aeronáuticos",
+    "improvementFees": "Tasas de mejora aeroportuaria",
+    "wages": "Salarios, sueldos y prestaciones",
+    "rent": "Alquiler a Transport Canada",
+    "feePerPassenger": "Tasa de mejora aeroportuaria de {{fee}} por pasajero de salida",
+    "source": "De los estados financieros consolidados de 2025, recopilados en el informe del Canadian Labour Congress, pp. 24–25."
+  },
+  "airportsPanel": {
+    "staffCut": "Plantilla → recorte"
+  },
+  "article": {
+    "readTitle": "El artículo completo",
+    "meta": "{{words}} palabras · {{citations}} citas · {{minutes}} min",
+    "backToBoard": "Volver al panel",
+    "kicker": "Proyección",
+    "byline": "Por",
+    "author": "La unidad de datos",
+    "dateline": "15 de septiembre de 2026",
+    "recordHeading": "Lo que muestran los antecedentes",
+    "recordLede": "La proyección se apoya en lo ocurrido en otros lugares. Los antecedentes abarcan cinco países y tres décadas; un estudio académico muestra beneficios reales junto a la factura.",
+    "counterargument": "El contraargumento",
+    "sourcesHeading": "{{total}} fuentes, {{cited}} citadas en el texto",
+    "sourcesLede": "La investigación incluye un bloque de notas con 15 fuentes y una lista final de 20. Se muestran las dos.",
+    "openSource": "Abrir",
+    "footer": "Cada párrafo anterior procede de la investigación; las proyecciones se anclan a sus cifras y se identifican como modeladas.",
+    "seeYear": "Ver este año en el panel"
+  },
+  "sources": {
+    "kind": {
+      "think-tank": "Centro de estudios",
+      "labour": "Sindical",
+      "news": "Prensa",
+      "academic": "Académico",
+      "government": "Gobierno",
+      "legal": "Jurídico"
+    },
+    "listedOnly": "en la lista, sin citar en el texto",
+    "anchors": "Datos de referencia: Perth +60% por pasajero en una década, el aparcamiento en el Reino Unido a £98 al día, una exigencia de un 15–20% a los inversores y un recorte del 40% de la plantilla en Sydney."
+  },
+  "language": {
+    "label": "Idioma",
+    "switch": "Cambiar de idioma"
+  }
+}

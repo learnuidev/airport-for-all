@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import type { ParsedArticle } from "@/lib/article";
 import { ArticleProvider, TripProvider, useTrip } from "@/components/editorial/ArticleContext";
 import { ArticleOverlay } from "./ArticleOverlay";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import {
   Chart,
   SERIES,
@@ -32,6 +34,26 @@ import {
  * The board: information on the left, the chart on the right, the years
  * along the bottom. One screen, everything reachable.
  * ------------------------------------------------------------------ */
+
+/** Currency and number formatting follow the reading language. */
+function useMoney() {
+  const { i18n } = useTranslation();
+  const tag = { en: "en-CA", fr: "fr-CA", es: "es-ES", zh: "zh-CN" }[i18n.language?.slice(0, 2) ?? "en"] ?? "en-CA";
+  return useMemo(
+    () => ({
+      /** Full currency, e.g. $1,502 — no cents. */
+      money: (value: number) =>
+        new Intl.NumberFormat(tag, {
+          style: "currency",
+          currency: "CAD",
+          maximumFractionDigits: 0,
+        }).format(value),
+      /** Grouped integer. */
+      number: (value: number) => new Intl.NumberFormat(tag).format(value),
+    }),
+    [tag],
+  );
+}
 
 export function Dashboard({ article }: { article: ParsedArticle }) {
   const params = useSearchParams();
@@ -61,6 +83,8 @@ export function Dashboard({ article }: { article: ParsedArticle }) {
 
 function Board({ article }: { article: ParsedArticle }) {
   const trip = useTrip();
+  const { t } = useTranslation();
+  const { money, number } = useMoney();
   const [view, setView] = useState<ViewId>("cost");
   const [enabled, setEnabled] = useState<string[]>(["trip", "ticket", "parking", "drop", "food"]);
   const [articleOpen, setArticleOpen] = useState(false);
@@ -92,8 +116,9 @@ function Board({ article }: { article: ParsedArticle }) {
   const activeView = VIEWS.find((item) => item.id === view) ?? VIEWS[0];
   const axis = useMemo(() => axisValues(view, rows, trip.ticket), [view, rows, trip.ticket]);
   const summary = useMemo(
-    () => (rows ? summaryFor(view, rows, trip.year) : undefined),
-    [view, rows, trip.year],
+    () => (rows ? summaryFor(view, rows, trip.year, t) : undefined),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [view, rows, trip.year, t],
   );
 
   const toggle = useCallback((key: string) => {
@@ -122,10 +147,10 @@ function Board({ article }: { article: ParsedArticle }) {
       <header className="border-b border-ink">
         <div className="mx-auto flex w-full max-w-[104rem] flex-wrap items-center gap-x-5 gap-y-2 px-4 py-2.5 sm:px-6">
           <span className="font-serif text-[0.98rem] font-bold tracking-tight">
-            Airport for All
+            {t("app.title")}
           </span>
           <span className="hidden font-sans text-[0.68rem] uppercase tracking-[0.09em] text-ink-4 md:inline">
-            The concession dossier
+            {t("app.kicker")}
           </span>
 
           <label className="flex items-center gap-2">
@@ -133,18 +158,18 @@ function Board({ article }: { article: ParsedArticle }) {
             <select
               value={trip.airport?.code ?? ""}
               onChange={(event) => trip.setAirport(event.target.value)}
-              aria-label="Airport"
+              aria-label={t("controls.airportAria")}
               className="cursor-pointer border-b border-ink bg-transparent py-0.5 font-sans text-[0.86rem] outline-none"
             >
-              <option value="">Choose an airport</option>
-              <optgroup label="In scope for the concession">
+              <option value="">{t("controls.airport")}</option>
+              <optgroup label={t("controls.inScope")}>
                 {AIRPORTS.filter((a) => a.inScope).map((a) => (
                   <option key={a.code} value={a.code}>
                     {a.code} — {a.city}
                   </option>
                 ))}
               </optgroup>
-              <optgroup label="Not named in the announcement">
+              <optgroup label={t("controls.notNamed")}>
                 {AIRPORTS.filter((a) => !a.inScope).map((a) => (
                   <option key={a.code} value={a.code}>
                     {a.code} — {a.city}
@@ -165,7 +190,7 @@ function Board({ article }: { article: ParsedArticle }) {
               onChange={(event) =>
                 trip.setTicket(Math.min(3000, Math.max(80, Number(event.target.value) || 0)))
               }
-              aria-label="Round-trip ticket price"
+              aria-label={t("controls.ticketAria")}
               className="w-20 border-b border-ink bg-transparent py-0.5 font-sans text-[0.86rem] tabular outline-none"
             />
           </label>
@@ -175,8 +200,9 @@ function Board({ article }: { article: ParsedArticle }) {
             onClick={() => setArticleOpen(true)}
             className="ml-auto cursor-pointer border border-ink px-3 py-1 font-sans text-[0.74rem] font-bold uppercase tracking-wide transition hover:bg-ink hover:text-white"
           >
-            Read the article
+            {t("controls.readArticle")}
           </button>
+          <LanguageSwitcher />
         </div>
       </header>
 
@@ -198,11 +224,11 @@ function Board({ article }: { article: ParsedArticle }) {
           <section className="flex min-h-[26rem] flex-col pb-4 lg:min-h-0 lg:pb-32">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <p className="font-sans text-[0.68rem] font-bold uppercase tracking-[0.09em] text-ink-4">
-                {activeView.label}
+                {t(`views.${activeView.id}`)}
                 {trip.airport ? ` · ${trip.airport.code}` : ""} · {ANNOUNCEMENT_YEAR + trip.year}
               </p>
               <p className="font-sans text-[0.72rem] text-ink-4">
-                drag the plot or the years · arrow keys
+                {t("controls.chartHint")}
               </p>
             </div>
 
@@ -215,6 +241,7 @@ function Board({ article }: { article: ParsedArticle }) {
                   setYear={trip.setYear}
                   enabled={enabled}
                   summary={summary}
+                  ariaLabel={t("chart.aria")}
                   width={size.width}
                   height={size.height}
                 />
@@ -235,6 +262,13 @@ function Board({ article }: { article: ParsedArticle }) {
             values={axis}
             playing={playback.playing}
             onPlay={playback.toggle}
+            ariaLabel={t("axis.label")}
+            labels={{
+              play: t("axis.play"),
+              pause: t("axis.pause"),
+              drag: t("axis.drag"),
+              year: (value: number) => t("axis.yearAria", { year: value }),
+            }}
           />
         </div>
       </div>
@@ -268,6 +302,7 @@ function Info({
   atSigning: YearCosts | null;
 }) {
   const trip = useTrip();
+  const { t } = useTranslation();
   const activeView = VIEWS.find((item) => item.id === view) ?? VIEWS[0];
 
   return (
@@ -289,17 +324,17 @@ function Info({
           max={20}
           value={trip.year}
           onChange={(event) => trip.setYear(Number(event.target.value))}
-          aria-label="Concession year"
+          aria-label={t("controls.concessionYear")}
           className="mt-2 h-1 w-full cursor-pointer appearance-none bg-rule [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-ink"
         />
       </div>
 
       {/* Trip detail */}
       <div className="grid grid-cols-3 gap-3">
-        <Mini label="Days parked" value={trip.days} min={0} max={21} onChange={trip.setDays} />
-        <Mini label="Travellers" value={trip.travellers} min={1} max={6} onChange={trip.setTravellers} />
+        <Mini label={t("controls.daysParked")} value={trip.days} min={0} max={21} onChange={trip.setDays} />
+        <Mini label={t("controls.travellers")} value={trip.travellers} min={1} max={6} onChange={trip.setTravellers} />
         <Mini
-          label="Kerbside"
+          label={t("controls.kerbside")}
           value={trip.dropOffMinutes}
           min={0}
           max={90}
@@ -322,15 +357,15 @@ function Info({
                 : "border-transparent text-ink-4 hover:text-ink",
             ].join(" ")}
           >
-            {item.label}
+            {t(`views.${item.id}`)}
           </button>
         ))}
       </div>
 
       <div>
-        <h2 className="font-serif text-[1.28rem] font-bold leading-tight">{activeView.title}</h2>
+        <h2 className="font-serif text-[1.28rem] font-bold leading-tight">{t(`viewTitles.${activeView.id}`)}</h2>
         <p className="mt-1.5 font-sans text-[0.78rem] leading-relaxed text-ink-3">
-          {activeView.blurb}
+          {t(`viewBlurbs.${activeView.id}`)}
         </p>
       </div>
 
@@ -340,7 +375,7 @@ function Info({
       {active && (view === "cost" || view === "charges") ? (
         <div className="border-t border-rule pt-3">
           <p className="font-sans text-[0.66rem] font-bold uppercase tracking-[0.09em] text-ink-4">
-            Charges
+            {t("panels.charges")}
           </p>
           <ul className="mt-1.5 space-y-0.5">
             {(["parking", "drop", "food"] as const).map((key) => {
@@ -385,7 +420,7 @@ function Info({
       {active && view === "ticket" ? (
         <div className="border-t border-rule pt-3">
           <p className="font-sans text-[0.66rem] font-bold uppercase tracking-[0.09em] text-ink-4">
-            Inside the fare
+            {t("panels.insideFare")}
           </p>
           <ul className="mt-1.5 space-y-0.5">
             {(["airfare", "aif", "aeronautical", "taxes"] as const).map((key) => {
@@ -437,9 +472,7 @@ function Info({
       {view === "books" ? <Books /> : null}
 
       <p className="mt-auto border-t border-rule pt-2.5 font-sans text-[0.68rem] leading-relaxed text-ink-4">
-        Reported anchors: Perth +60 percent per passenger over a decade, UK parking
-        at £98 a day and £28 for 30 minutes at Stansted, a 15–20 percent investor requirement, and
-        a 40 percent workforce cut at Sydney.
+        {t("sources.anchors")}
       </p>
     </>
   );
@@ -455,77 +488,78 @@ function Figures({
   atSigning: YearCosts | null;
 }) {
   const trip = useTrip();
+  const { t } = useTranslation();
 
   const cells: { value: string; label: string; tone?: "red" | "green" }[] =
     view === "record"
       ? [
-          { value: "101st/116", label: "Canada's affordability rank", tone: "red" },
-          { value: "40%", label: "Sydney's workforce cut", tone: "red" },
-          { value: "+60%", label: "Perth per passenger, one decade" },
-          { value: "+$20", label: "2023 study fees — with 50% fewer cancellations", tone: "green" },
+          { value: "101st/116", label: t("metrics.canadaRank"), tone: "red" },
+          { value: "40%", label: t("metrics.sydneyCut"), tone: "red" },
+          { value: "+60%", label: t("metrics.perthPerPax") },
+          { value: "+$20", label: t("metrics.studyFees"), tone: "green" },
         ]
       : view === "books"
         ? [
-            { value: "$2.08B", label: "Pearson's 2025 revenue" },
-            { value: "$961M", label: "Montréal-Trudeau's revenue" },
-            { value: "$717M", label: "Vancouver's revenue" },
-            { value: "$7.3B", label: "Rent paid to Ottawa since 1994", tone: "red" },
+            { value: "$2.08B", label: t("metrics.pearsonRevenue") },
+            { value: "$961M", label: t("metrics.trudeauRevenue") },
+            { value: "$717M", label: t("metrics.vancouverRevenue") },
+            { value: "$7.3B", label: t("metrics.rentSince1994"), tone: "red" },
           ]
       : view === "revenue"
         ? [
-            { value: "$3.95B", label: "2022 revenue, no profit at all" },
-            { value: "$525M", label: "Annual rent to Ottawa" },
+            { value: "$3.95B", label: t("metrics.revenue2022") },
+            { value: "$525M", label: t("metrics.annualRent") },
             {
               value: `+$${Math.round(3.95 * Math.pow(1.03, trip.year) * 0.175 * 1000).toLocaleString()}M`,
-              label: `Needed in ${ANNOUNCEMENT_YEAR + trip.year}`,
+              label: t("metrics.revenueNeeded", { calendar: ANNOUNCEMENT_YEAR + trip.year }),
               tone: "red",
             },
             {
               value: `$${Math.round(extractionAt(trip.year)).toLocaleString()}M`,
-              label: "Extracted since signing",
+              label: t("metrics.extractedSinceSigning"),
               tone: "red",
             },
           ]
         : !active || !atSigning
           ? [
-              { value: "101st/116", label: "Canada's affordability rank", tone: "red" },
-              { value: "25–35%", label: "Of a ticket is taxes and fees" },
-              { value: "37%", label: "Of revenue is the Improvement Fee" },
-              { value: "50–99", label: "Years of concession" },
+              { value: "101st/116", label: t("metrics.canadaRank"), tone: "red" },
+              { value: "25–35%", label: t("metrics.taxShareOfTicket") },
+              { value: "37%", label: t("metrics.revenueShareAif") },
+              { value: "50–99", label: t("metrics.concessionYears") },
             ]
           : view === "charges"
             ? [
-                { value: cad(active.parking), label: "Parking", tone: "red" },
-                { value: active.dropOff > 0 ? cad(active.dropOff) : "Free", label: "Drop-off" },
-                { value: cad(active.food), label: "Food and retail" },
+                { value: cad(active.parking), label: t("metrics.parking"), tone: "red" },
+                { value: active.dropOff > 0 ? cad(active.dropOff) : t("metrics.free"), label: t("metrics.dropOff") },
+                { value: cad(active.food), label: t("metrics.foodRetail") },
                 {
                   value: `+${cad(active.extrasTotal - atSigning.extrasTotal)}`,
-                  label: "Added since signing",
+                  label: t("metrics.addedSinceSigning"),
                   tone: "red",
                 },
               ]
             : view === "ticket"
               ? [
-                  { value: cad(active.ticketTotal), label: `Ticket in ${active.calendar}` },
+                  { value: cad(active.ticketTotal), label: t("metrics.ticketIn", { calendar: active.calendar }) },
                   {
                     value: `+${cad(active.ticketTotal - atSigning.ticketTotal)}`,
-                    label: "Added to the fare",
+                    label: t("metrics.addedToFare"),
                     tone: "red",
                   },
-                  { value: cad(active.aif), label: "Improvement Fee" },
-                  { value: cad(active.taxes), label: "Taxes and fees" },
+                  { value: cad(active.aif), label: t("metrics.improvementFee") },
+                  { value: cad(active.taxes), label: t("metrics.taxesAndFees") },
                 ]
               : [
-                  { value: cad(active.tripTotal), label: `Trip in ${active.calendar}`, tone: "red" },
-                  { value: cad(atSigning.tripTotal), label: "The same trip at signing", tone: "green" },
+                  { value: cad(active.tripTotal), label: t("metrics.tripIn", { calendar: active.calendar }), tone: "red" },
+                  { value: cad(atSigning.tripTotal), label: t("metrics.sameTripAtSigning"), tone: "green" },
                   {
                     value: `+${cad(active.tripTotal - atSigning.tripTotal)}`,
-                    label: "Added by the concession",
+                    label: t("metrics.addedByConcession"),
                     tone: "red",
                   },
                   {
                     value: `${(((active.tripTotal - atSigning.tripTotal) / atSigning.tripTotal) * 100).toFixed(0)}%`,
-                    label: "Above the current model",
+                    label: t("metrics.aboveCurrent"),
                     tone: "red",
                   },
                 ];
@@ -562,6 +596,7 @@ function Mini({
   max: number;
   onChange: (value: number) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <p className="font-sans text-[0.62rem] uppercase tracking-wide text-ink-4">{label}</p>
@@ -569,7 +604,7 @@ function Mini({
         <button
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}
-          aria-label={`Decrease ${label}`}
+          aria-label={t("controls.decrease", { label })}
           className="h-5 w-5 cursor-pointer border border-rule font-sans text-[0.7rem] transition hover:border-ink"
         >
           −
@@ -578,7 +613,7 @@ function Mini({
         <button
           type="button"
           onClick={() => onChange(Math.min(max, value + 1))}
-          aria-label={`Increase ${label}`}
+          aria-label={t("controls.increase", { label })}
           className="h-5 w-5 cursor-pointer border border-rule font-sans text-[0.7rem] transition hover:border-ink"
         >
           +
@@ -620,25 +655,26 @@ function Record() {
  * non-profit ownership requires and private ownership would not.
  */
 function Books() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"revenue" | "expenses">("revenue");
 
   const rowsFor = (airport: (typeof FINANCIALS)[number]) =>
     tab === "revenue"
       ? [
-          { label: "Aeronautical", value: airport.aeronautical, base: airport.totalRevenue, colour: "#1a5fb4" },
-          { label: "Non-aeronautical", value: airport.nonAeronautical, base: airport.totalRevenue, colour: "#4a90d9" },
-          { label: "Improvement Fees", value: airport.aif, base: airport.totalRevenue, colour: "#d0021b" },
+          { label: t("books.aeronautical"), value: airport.aeronautical, base: airport.totalRevenue, colour: "#1a5fb4" },
+          { label: t("books.nonAeronautical"), value: airport.nonAeronautical, base: airport.totalRevenue, colour: "#4a90d9" },
+          { label: t("books.improvementFees"), value: airport.aif, base: airport.totalRevenue, colour: "#d0021b" },
         ]
       : [
-          { label: "Salaries, wages, benefits", value: airport.wages, base: airport.totalExpenses, colour: "#7a3fa0" },
-          { label: "Transport Canada rent", value: airport.rent, base: airport.totalExpenses, colour: "#e8853f" },
+          { label: t("books.wages"), value: airport.wages, base: airport.totalExpenses, colour: "#7a3fa0" },
+          { label: t("books.rent"), value: airport.rent, base: airport.totalExpenses, colour: "#e8853f" },
         ];
 
   return (
     <div className="border-t border-rule pt-3">
       <div className="flex items-baseline justify-between">
         <p className="font-sans text-[0.66rem] font-bold uppercase tracking-[0.09em] text-ink-4">
-          2025 accounts
+          {t("books.title")}
         </p>
         <div className="flex gap-3">
           {(["revenue", "expenses"] as const).map((option) => (
@@ -654,7 +690,7 @@ function Books() {
                   : "border-transparent text-ink-4 hover:text-ink",
               ].join(" ")}
             >
-              {option === "revenue" ? "Revenue" : "Expenses"}
+              {option === "revenue" ? t("books.revenue") : t("books.expenses")}
             </button>
           ))}
         </div>
@@ -696,7 +732,7 @@ function Books() {
               </ul>
               {tab === "revenue" ? (
                 <p className="mt-1 font-sans text-[0.64rem] text-ink-4">
-                  Improvement Fee ${airport.aifPerTicket.toFixed(2)} per departing passenger
+                  {t("books.feePerPassenger", { fee: `$${airport.aifPerTicket.toFixed(2)}` })}
                 </p>
               ) : null}
             </li>
@@ -705,14 +741,14 @@ function Books() {
       </ul>
 
       <p className="mt-2.5 font-sans text-[0.64rem] leading-relaxed text-ink-4">
-        From the 2025 consolidated financial statements, as compiled in the Canadian Labour
-        Congress report. <cite className="not-italic">Public Runways, Private Profits</cite>, p. 24–25.
+        {t("books.source")}
       </p>
     </div>
   );
 }
 
 function Airports() {
+  const { t } = useTranslation();
   const inScope = AIRPORTS.filter((airport) => airport.inScope);
   return (
     <ul className="space-y-1.5 border-t border-rule pt-3">
@@ -737,19 +773,19 @@ function Airports() {
 }
 
 function EmptyBoard({ onOpen }: { onOpen: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="flex h-full flex-col items-center justify-center border border-dashed border-rule px-6 text-center">
-      <p className="font-serif text-[1.3rem] font-bold">Choose an airport to begin</p>
+      <p className="font-serif text-[1.3rem] font-bold">{t("controls.emptyHeading")}</p>
       <p className="mt-2 max-w-sm font-sans text-[0.82rem] leading-relaxed text-ink-3">
-        Then enter what you paid. The board shows your ticket against the whole trip, twenty years
-        out.
+        {t("controls.emptyBody")}
       </p>
       <button
         type="button"
         onClick={onOpen}
         className="mt-4 cursor-pointer font-sans text-[0.8rem] text-data-b hover:underline"
       >
-        Read the article instead
+        {t("controls.emptyAction")}
       </button>
     </div>
   );

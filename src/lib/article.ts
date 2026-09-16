@@ -1,10 +1,10 @@
 /**
- * article.md is the single source of truth for this app.
+ * The source document is the single source of truth for this app.
  *
  * This module parses it at build time and produces a fully structured
  * representation (blocks + inline runs + citations). Nothing in the narrative
  * — headlines, decks, paragraph text, quotes, bullets, year ranges — is
- * hard-coded in a component. If you edit `article.md`, the page changes.
+ * hard-coded in a component. If you edit the source, the page changes.
  */
 
 export type SectionId =
@@ -27,7 +27,7 @@ export type InlineRun =
   | {
       kind: "citation";
       refId: number;
-      /** The marker exactly as written in article.md, e.g. "[^14]" or "[citation:2]". */
+      /** The marker exactly as written in the source, e.g. "[^14]" or "[citation:2]". */
       raw: string;
     }
   | { kind: "link"; value: string; href: string };
@@ -95,10 +95,10 @@ export type Reference = {
   kind: "think-tank" | "labour" | "news" | "academic" | "government" | "legal";
   /** True when this reference is cited by the prose that this app renders. */
   cited: boolean;
-  /** Alternate marker used in the second draft inside article.md, if any. */
+  /** Alternate marker used in the source's second draft, if any. */
   legacyId: number | null;
   /**
-   * Groups references that point at the same underlying work (article.md lists
+   * Groups references that point at the same underlying work (the source lists
    * the Brazilian airfare study twice, as [^5] and [^12]). Used so counts in the
    * source ledger do not double-count a single source.
    */
@@ -214,7 +214,7 @@ function parseInline(input: string): InlineRun[] {
  * ------------------------------------------------------------------ */
 
 /**
- * article.md ships two drafts. The first uses footnote markers `[^n]`
+ * The source ships two drafts. The first uses footnote markers `[^n]`
  * (15 sources); the second uses `[citation:n]` (20 sources). This app renders
  * the first draft's prose, so its `[^n]` numbering is canonical, and the
  * second draft's numbers are tracked as `legacyId` for cross-checking.
@@ -388,7 +388,7 @@ export function parseArticle(markdown: string): ParsedArticle {
       flushList();
       flushSection();
       const heading = trimmed.slice(3).trim();
-      // The trailing "## References" heading opens article.md's footnote block;
+      // The trailing "## References" heading opens the source's footnote block;
       // that block is already captured by refs.ts, so parsing stops there.
       if (/^references$/i.test(heading)) break;
       const [kickerRaw, ...rest] = heading.split(":");
@@ -727,7 +727,7 @@ function buildReferences(cited: Set<number>): Reference[] {
 
   const all = [...canonical, ...report, ...extras];
 
-  // article.md lists the Brazilian airfare study twice ([^5] in prose, [^12] in
+  // The source lists the Brazilian airfare study twice ([^5] in prose, [^12] in
   // the footnote block). Collapse references that share a legacy marker or a URL
   // onto one group key so the ledger can report an honest distinct-source count.
   const byLegacy = new Map<number, number>();

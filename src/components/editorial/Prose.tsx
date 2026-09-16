@@ -44,7 +44,7 @@ function Runs({ runs }: { runs: InlineRun[] }) {
 
 /**
  * The article body. One column, one measure, no furniture — the way a newspaper
- * sets running text. `**Label:**` paragraphs from article.md become a small
+ * sets running text. `**Label:**` paragraphs from the source become a small
  * sans-serif kicker above an indented block, which is how the source structures
  * each year: what happens, the precedent, the Canadian projection.
  */

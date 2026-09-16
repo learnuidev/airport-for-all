@@ -8,7 +8,7 @@ import { parseArticle, type ParsedArticle } from "./article";
  * can be imported by client components without pulling in node:fs.
  *
  * `cache` dedupes the read within a single request, so the layout's metadata and
- * the page's props can never disagree — which matters because article.md is the
+ * the page's props can never disagree — which matters because the source document is the
  * source of truth for both.
  */
 export const getArticle = cache((): ParsedArticle => {

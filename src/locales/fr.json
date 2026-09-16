@@ -1,0 +1,178 @@
+{
+  "app": {
+    "title": "Airport for All",
+    "kicker": "The concession dossier"
+  },
+  "controls": {
+    "airport": "Choose an airport",
+    "airportAria": "Airport",
+    "inScope": "In scope for the concession",
+    "notNamed": "Not named in the announcement",
+    "ticketAria": "Round-trip ticket price",
+    "readArticle": "Read the article",
+    "concessionYear": "Concession year",
+    "signed": "Signed",
+    "yearsIn": "{{count}} years in",
+    "emptyHeading": "Choose an airport to begin",
+    "emptyBody": "Then enter what you paid. The board shows your ticket against the whole trip, twenty years out.",
+    "emptyAction": "Read the article instead",
+    "daysParked": "Days parked",
+    "travellers": "Travellers",
+    "kerbside": "Kerbside",
+    "decrease": "Decrease {{label}}",
+    "increase": "Increase {{label}}",
+    "chartHint": "drag the plot or the years · arrow keys"
+  },
+  "chart": {
+    "aria": "Costs by year since the concession was signed"
+  },
+  "axis": {
+    "label": "Year of the concession",
+    "play": "Play",
+    "pause": "Pause",
+    "drag": "Drag the years",
+    "yearAria": "Year {{year}}"
+  },
+  "views": {
+    "cost": "Trip cost",
+    "charges": "Charges",
+    "ticket": "In your ticket",
+    "revenue": "Where it goes",
+    "books": "The books",
+    "record": "The record"
+  },
+  "viewTitles": {
+    "cost": "The fare barely moves. The trip does.",
+    "charges": "Which charge grows, and how fast",
+    "ticket": "Inside the ticket, year by year",
+    "revenue": "A one-time windfall, a permanent extraction",
+    "books": "The accounts privatisation would close",
+    "record": "Five countries, three decades, one direction"
+  },
+  "viewBlurbs": {
+    "cost": "Your ticket against everything else you pay — parking, drop-off, food and retail. The gap is what a private operator adds.",
+    "charges": "Each non-ticket charge on its own. Switch them off to see what the total depends on.",
+    "ticket": "The four reported components of a Canadian fare, stacked. Switch any of them off to strip the fare back.",
+    "revenue": "The authorities made no profit on $3.95 billion of 2022 revenue. A private operator has to find 15–20 percent more, every year.",
+    "books": "The 2025 statements of the three busiest airports, from the report's own tables. This is the disclosure a private owner would no longer owe anyone.",
+    "record": "Every measured outcome in the record, with the 2023 study's benefits included rather than buried."
+  },
+  "series": {
+    "parking": "Parking",
+    "food": "Food and retail",
+    "drop": "Drop-off",
+    "aif": "Improvement Fee",
+    "aeronautical": "Aeronautical",
+    "airfare": "Airline fare",
+    "taxes": "Taxes and fees"
+  },
+  "panels": {
+    "charges": "Charges",
+    "insideFare": "Inside the fare"
+  },
+  "summary": {
+    "atSigning": "At signing",
+    "yearsIn": "{{count}} years in · {{calendar}}",
+    "chargesReach": "Non-ticket charges reach {{extras}} of a {{trip}} trip{{grew}}.",
+    "andGrew": ", up {{amount}} since signing",
+    "parkingLeads": "Parking leads at {{parking}}, then food at {{food}}.",
+    "rampFinished": "The ramp is finished: from here these prices only follow inflation.",
+    "fiveMore": "Five years on it climbs another {{amount}}.",
+    "fareReaches": "The fare reaches {{ticket}}{{added}}.",
+    "andAdded": ", up {{amount}} on {{base}} at signing",
+    "aifFastest": "The Improvement Fee is the fastest climber at {{aif}}; taxes stay fixed at {{taxes}}.",
+    "fareInflation": "The airline fare moves with inflation, not with the concession.",
+    "investorsNeed": "Investors need about ${{amount}}M of extra revenue this year.",
+    "takenOut": "That is ${{amount}}M taken out since signing — against a one-time windfall.",
+    "baseNoProfit": "Out of a $3.95B revenue base that made no profit at all.",
+    "booksLine1": "Pearson took in $2.08B in 2025, Montréal-Trudeau $961M, Vancouver $717M — and published every line.",
+    "booksLine2": "Wages are the largest controllable cost: $297M, $108M and $139M. Rent to Ottawa: $236M, $107M, $78M.",
+    "booksLine3": "A privately held airport owes the public no such disclosure.",
+    "recordLine1": "Five countries, three decades: higher charges, pressure on workers, lost public value.",
+    "recordLine2": "Sydney cut 40% of its workforce once protections expired — the same year it made A$376M profit.",
+    "recordLine3": "Auckland was found to be earning NZ$190–200M in excess profit; Portugal's charges ran 30% above cost.",
+    "tripCosts": "The trip costs {{total}}, up {{amount}} on {{base}} at signing.",
+    "tripBefore": "The trip costs {{total}} before the concession bites.",
+    "offTicketShare": "Off-ticket charges are now {{amount}} — {{share}}% of what you pay.",
+    "fareOnlyPart": "The fare itself accounts for only {{amount}} of that increase.",
+    "switchOn": "Switch on a charge on the left to see it land."
+  },
+  "metrics": {
+    "tripIn": "Trip in {{calendar}}",
+    "sameTripAtSigning": "The same trip at signing",
+    "addedByConcession": "Added by the concession",
+    "aboveCurrent": "Above the current model",
+    "ticketIn": "Ticket in {{calendar}}",
+    "addedToFare": "Added to the fare",
+    "improvementFee": "Improvement Fee",
+    "taxesAndFees": "Taxes and fees",
+    "parking": "Parking",
+    "dropOff": "Drop-off",
+    "foodRetail": "Food and retail",
+    "addedSinceSigning": "Added since signing",
+    "free": "Free",
+    "revenueNeeded": "Needed in {{calendar}}",
+    "extractedSinceSigning": "Extracted since signing",
+    "revenue2022": "2022 revenue, no profit at all",
+    "annualRent": "Annual rent to Ottawa",
+    "canadaRank": "Canada's affordability rank",
+    "sydneyCut": "Sydney's workforce cut",
+    "perthPerPax": "Perth per passenger, one decade",
+    "studyFees": "2023 study fees — with 50% fewer cancellations",
+    "taxShareOfTicket": "Of a ticket is taxes and fees",
+    "revenueShareAif": "Of revenue is the Improvement Fee",
+    "concessionYears": "Years of concession",
+    "pearsonRevenue": "Pearson's 2025 revenue",
+    "trudeauRevenue": "Montréal-Trudeau's revenue",
+    "vancouverRevenue": "Vancouver's revenue",
+    "rentSince1994": "Rent paid to Ottawa since 1994"
+  },
+  "books": {
+    "title": "2025 accounts",
+    "revenue": "Revenue",
+    "expenses": "Expenses",
+    "aeronautical": "Aeronautical",
+    "nonAeronautical": "Non-aeronautical",
+    "improvementFees": "Improvement Fees",
+    "wages": "Salaries, wages, benefits",
+    "rent": "Transport Canada rent",
+    "feePerPassenger": "Improvement Fee {{fee}} per departing passenger",
+    "source": "From the 2025 consolidated financial statements, as compiled in the Canadian Labour Congress report, pp. 24–25."
+  },
+  "airportsPanel": {
+    "staffCut": "Staff → cut"
+  },
+  "article": {
+    "readTitle": "The full article",
+    "meta": "{{words}} words · {{citations}} citations · {{minutes}} min",
+    "backToBoard": "Back to the board",
+    "kicker": "Projection",
+    "byline": "By",
+    "author": "The Data Desk",
+    "dateline": "15 September 2026",
+    "recordHeading": "What the record shows",
+    "recordLede": "The projection rests on what happened elsewhere. The record covers five countries and three decades; one academic study shows genuine benefits alongside the bill.",
+    "counterargument": "The counterargument",
+    "sourcesHeading": "{{total}} sources, {{cited}} cited in the text",
+    "sourcesLede": "The reporting carries a footnote block of 15 sources and a closing list of 20. Both are shown.",
+    "openSource": "Open",
+    "footer": "Every paragraph above comes from the reporting; the projections are anchored to its figures and labelled as modelled.",
+    "seeYear": "See this year on the board"
+  },
+  "sources": {
+    "kind": {
+      "think-tank": "Think tank",
+      "labour": "Labour",
+      "news": "News",
+      "academic": "Academic",
+      "government": "Government",
+      "legal": "Legal"
+    },
+    "listedOnly": "listed, not cited in the text",
+    "anchors": "Reported anchors: Perth +60 percent per passenger over a decade, UK parking at £98 a day, a 15–20 percent investor requirement, and a 40 percent workforce cut at Sydney."
+  },
+  "language": {
+    "label": "Language",
+    "switch": "Change language"
+  }
+}
