@@ -158,7 +158,8 @@
     "openSource": "Abrir",
     "footer": "Cada párrafo anterior procede de la investigación; las proyecciones se anclan a sus cifras y se identifican como modeladas.",
     "seeYear": "Ver este año en el panel",
-    "englishOnly": "El texto de este artículo está en inglés."
+    "englishOnly": "El texto de este artículo está en inglés.",
+    "figureLabel": "Los datos"
   },
   "sources": {
     "kind": {
@@ -297,5 +298,9 @@
   },
   "units": {
     "million": "millones"
+  },
+  "nav": {
+    "chart": "El gráfico",
+    "chartCta": "Abrir el gráfico interactivo"
   }
 }

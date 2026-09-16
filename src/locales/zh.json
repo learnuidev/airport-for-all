@@ -158,7 +158,8 @@
     "openSource": "打开",
     "footer": "以上每一段都来自原报道；测算部分以报道中的数字为依据，并标注为模型推算。",
     "seeYear": "在看板上查看这一年",
-    "englishOnly": "本文正文为英文。"
+    "englishOnly": "本文正文为英文。",
+    "figureLabel": "数据"
   },
   "sources": {
     "kind": {
@@ -297,5 +298,9 @@
   },
   "units": {
     "million": "百万"
+  },
+  "nav": {
+    "chart": "互动图表",
+    "chartCta": "打开互动图表"
   }
 }

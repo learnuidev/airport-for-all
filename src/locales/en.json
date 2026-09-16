@@ -158,7 +158,8 @@
     "openSource": "Open",
     "footer": "Every paragraph above comes from the reporting; the projections are anchored to its figures and labelled as modelled.",
     "seeYear": "See this year on the board",
-    "englishOnly": ""
+    "englishOnly": "",
+    "figureLabel": "The numbers"
   },
   "sources": {
     "kind": {
@@ -297,5 +298,9 @@
   },
   "units": {
     "million": "million"
+  },
+  "nav": {
+    "chart": "The chart",
+    "chartCta": "Open the interactive chart"
   }
 }

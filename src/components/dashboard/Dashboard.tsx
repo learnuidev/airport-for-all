@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import type { ParsedArticle } from "@/lib/article";
 import { ArticleProvider, TripProvider, useTrip } from "@/components/editorial/ArticleContext";
-import { ArticleOverlay } from "./ArticleOverlay";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import {
   Chart,
@@ -100,10 +100,9 @@ function Board({
   const { money } = useMoney();
   const [view, setView] = useState<ViewId>("cost");
   const [enabled, setEnabled] = useState<string[]>(["trip", "ticket", "parking", "drop", "food"]);
-  const [articleOpen, setArticleOpen] = useState(false);
 
   const playback = usePlayback(trip.year, trip.setYear);
-  useYearKeys(trip.year, trip.setYear, !articleOpen);
+  useYearKeys(trip.year, trip.setYear, true);
 
   useEffect(() => {
     const stop = () => playback.stop();
@@ -208,13 +207,12 @@ function Board({
             />
           </label>
 
-          <button
-            type="button"
-            onClick={() => setArticleOpen(true)}
+          <Link
+            href="/"
             className="ml-auto cursor-pointer border border-ink px-3 py-1 font-sans text-[0.74rem] font-bold uppercase tracking-wide transition hover:bg-ink hover:text-white"
           >
             {t("controls.readArticle")}
-          </button>
+          </Link>
           <LanguageSwitcher />
         </div>
       </header>
@@ -259,7 +257,7 @@ function Board({
                   height={size.height}
                 />
               ) : (
-                <EmptyBoard onOpen={() => setArticleOpen(true)} />
+                <EmptyBoard />
               )}
             </div>
           </section>
@@ -285,15 +283,6 @@ function Board({
           />
         </div>
       </div>
-
-      {articleOpen ? (
-        <ArticleOverlay
-          article={article}
-          locale={locale}
-          translated={translated}
-          onClose={() => setArticleOpen(false)}
-        />
-      ) : null}
     </div>
   );
 }
@@ -793,7 +782,7 @@ function Airports() {
   );
 }
 
-function EmptyBoard({ onOpen }: { onOpen: () => void }) {
+function EmptyBoard() {
   const { t } = useTranslation();
   return (
     <div className="flex h-full flex-col items-center justify-center border border-dashed border-rule px-6 text-center">
@@ -801,13 +790,9 @@ function EmptyBoard({ onOpen }: { onOpen: () => void }) {
       <p className="mt-2 max-w-sm font-sans text-[0.82rem] leading-relaxed text-ink-3">
         {t("controls.emptyBody")}
       </p>
-      <button
-        type="button"
-        onClick={onOpen}
-        className="mt-4 cursor-pointer font-sans text-[0.8rem] text-data-b hover:underline"
-      >
+      <Link href="/" className="mt-4 font-sans text-[0.8rem] text-data-b hover:underline">
         {t("controls.emptyAction")}
-      </button>
+      </Link>
     </div>
   );
 }

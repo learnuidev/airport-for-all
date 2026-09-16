@@ -158,7 +158,8 @@
     "openSource": "Ouvrir",
     "footer": "Chaque paragraphe ci-dessus provient du reportage ; les projections s’appuient sur ses chiffres et sont signalées comme modélisées.",
     "seeYear": "Voir cette année dans le tableau",
-    "englishOnly": "Le texte de cet article est en anglais."
+    "englishOnly": "Le texte de cet article est en anglais.",
+    "figureLabel": "Les chiffres"
   },
   "sources": {
     "kind": {
@@ -297,5 +298,9 @@
   },
   "units": {
     "million": "millions"
+  },
+  "nav": {
+    "chart": "Le graphique",
+    "chartCta": "Ouvrir le graphique interactif"
   }
 }
