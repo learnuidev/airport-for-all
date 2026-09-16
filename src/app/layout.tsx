@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4, Source_Code_Pro } from "next/font/google";
 import "./globals.css";
-import { getArticle } from "@/lib/article";
+import { getArticle } from "@/lib/article.server";
 
 const serif = Source_Serif_4({
   subsets: ["latin"],

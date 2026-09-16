@@ -42,6 +42,8 @@ export type TripState = {
   year: number;
 };
 
+const DEFAULT_TICKET = 430;
+
 type TripValue = TripState & {
   setAirport: (code: string) => void;
   setTicket: (value: number) => void;
@@ -56,33 +58,48 @@ type TripValue = TripState & {
 
 const TripContext = createContext<TripValue | null>(null);
 
-const DEFAULT_TICKET = 430;
-
 export function ArticleProvider({
   references,
-  initial,
   children,
 }: {
   references: Reference[];
-  initial?: Partial<TripState>;
   children: ReactNode;
 }) {
   const [active, setActive] = useState<number | null>(null);
-  const [airport, setAirportState] = useState<Airport | null>(null);
+  const byId = useMemo(
+    () => new Map(references.map((reference) => [reference.id, reference])),
+    [references],
+  );
+
+  return (
+    <CitationContext.Provider value={{ byId, references, active, setActive }}>
+      {children}
+    </CitationContext.Provider>
+  );
+}
+
+/**
+ * Holds the reader's two answers. Initial state is passed in so a linked board
+ * (`/?airport=YYZ&ticket=430&year=10`) renders populated on first paint.
+ */
+export function TripProvider({
+  initial,
+  children,
+}: {
+  initial?: { airport?: string | null; ticket?: number | null; days?: number | null; travellers?: number | null; dropOffMinutes?: number | null; year?: number | null };
+  children: ReactNode;
+}) {
+  const [airport, setAirportState] = useState<Airport | null>(() =>
+    initial?.airport ? AIRPORTS.find((item) => item.code === initial.airport) ?? null : null,
+  );
   const [ticket, setTicketState] = useState<number>(initial?.ticket ?? DEFAULT_TICKET);
   const [days, setDaysState] = useState<number>(initial?.days ?? 4);
   const [travellers, setTravellersState] = useState<number>(initial?.travellers ?? 1);
   const [dropOffMinutes, setDropOffState] = useState<number>(initial?.dropOffMinutes ?? 25);
   const [year, setYearState] = useState<number>(initial?.year ?? 0);
 
-  const byId = useMemo(
-    () => new Map(references.map((reference) => [reference.id, reference])),
-    [references],
-  );
-
   const setAirport = useCallback((code: string) => {
-    const found = AIRPORTS.find((item) => item.code === code) ?? null;
-    setAirportState(found);
+    setAirportState(AIRPORTS.find((item) => item.code === code) ?? null);
   }, []);
 
   const reset = useCallback(() => {
@@ -94,7 +111,7 @@ export function ArticleProvider({
     setYearState(0);
   }, []);
 
-  const trip: TripValue = {
+  const value: TripValue = {
     airport,
     ticket,
     days,
@@ -111,11 +128,7 @@ export function ArticleProvider({
     reset,
   };
 
-  return (
-    <CitationContext.Provider value={{ byId, references, active, setActive }}>
-      <TripContext.Provider value={trip}>{children}</TripContext.Provider>
-    </CitationContext.Provider>
-  );
+  return <TripContext.Provider value={value}>{children}</TripContext.Provider>;
 }
 
 export function useCitations(): CitationValue {

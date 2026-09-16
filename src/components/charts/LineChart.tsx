@@ -1,7 +1,24 @@
 "use client";
 
-import { useId } from "react";
-import { useElementWidth } from "@/lib/hooks";
+import { useEffect, useId, useRef, useState } from "react";
+
+/** Local width measurement, so this chart stays self-contained. */
+function useElementWidth<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  const [width, setWidth] = useState(720);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new ResizeObserver((entries) => {
+      const rect = entries[0]?.contentRect;
+      if (rect) setWidth(Math.max(320, rect.width));
+    });
+    observer.observe(node);
+    setWidth(Math.max(320, node.clientWidth));
+    return () => observer.disconnect();
+  }, []);
+  return { ref, width };
+}
 
 export type Series = {
   id: string;

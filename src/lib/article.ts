@@ -742,19 +742,3 @@ export function countDistinctSources(references: Reference[]): number {
   }
   return works.size;
 }
-
-/* ------------------------------------------------------------------ *
- * Loader
- * ------------------------------------------------------------------ */
-
-let cached: ParsedArticle | null = null;
-
-export function getArticle(): ParsedArticle {
-  if (cached) return cached;
-  // Read at build time (server components only). `process.cwd()` is the repo root.
-  const fs = require("node:fs") as typeof import("node:fs");
-  const path = require("node:path") as typeof import("node:path");
-  const file = path.join(process.cwd(), "article.md");
-  cached = parseArticle(fs.readFileSync(file, "utf8"));
-  return cached;
-}
