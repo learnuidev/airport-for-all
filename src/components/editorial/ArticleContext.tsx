@@ -43,6 +43,8 @@ export type TripState = {
 };
 
 const DEFAULT_TICKET = 430;
+/** Montréal–Trudeau is the default board, so the page arrives populated. */
+const DEFAULT_AIRPORT = "YUL";
 
 type TripValue = TripState & {
   setAirport: (code: string) => void;
@@ -90,7 +92,7 @@ export function TripProvider({
   children: ReactNode;
 }) {
   const [airport, setAirportState] = useState<Airport | null>(() =>
-    initial?.airport ? AIRPORTS.find((item) => item.code === initial.airport) ?? null : null,
+    AIRPORTS.find((item) => item.code === (initial?.airport ?? DEFAULT_AIRPORT)) ?? null,
   );
   const [ticket, setTicketState] = useState<number>(initial?.ticket ?? DEFAULT_TICKET);
   const [days, setDaysState] = useState<number>(initial?.days ?? 4);
@@ -103,7 +105,7 @@ export function TripProvider({
   }, []);
 
   const reset = useCallback(() => {
-    setAirportState(null);
+    setAirportState(AIRPORTS.find((item) => item.code === DEFAULT_AIRPORT) ?? null);
     setTicketState(DEFAULT_TICKET);
     setDaysState(4);
     setTravellersState(1);
