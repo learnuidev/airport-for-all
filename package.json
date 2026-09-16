@@ -2,13 +2,15 @@
   "name": "airport-for-all",
   "version": "1.0.0",
   "private": true,
-  "description": "An immersive, data-driven reading of article.md — what happens to Canada if its airports are privatized.",
+  "description": "An immersive, data-driven reading of article.md \u2014 what happens to Canada if its airports are privatized.",
   "scripts": {
     "dev": "next dev -p 4310",
     "build": "next build",
     "start": "next start -p 4310",
     "typecheck": "tsc --noEmit",
-    "verify:sources": "node --experimental-strip-types scripts/verify-sources.ts"
+    "verify:sources": "node --experimental-strip-types scripts/verify-sources.ts",
+    "verify:locales": "node scripts/verify-locales.mjs",
+    "verify": "npm run verify:sources && npm run verify:locales"
   },
   "dependencies": {
     "i18next": "^26.4.2",

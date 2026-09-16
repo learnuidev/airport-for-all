@@ -157,6 +157,26 @@ export function staffEstimate(airport: Airport) {
   return { staff, cut: Math.round(staff * SYDNEY_CUT) };
 }
 
+/**
+ * Currency formatting that follows the reading language. The currency stays
+ * Canadian dollars wherever the reader is; the grouping, decimal separator and
+ * symbol placement follow their locale.
+ */
+export function money(value: number, decimals = 0, locale = "en-CA"): string {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: "CAD",
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
+
+/** Locale tag for a two-letter language code. */
+export function localeTag(language: string | undefined): string {
+  const code = (language ?? "en").slice(0, 2);
+  return { en: "en-CA", fr: "fr-CA", es: "es-ES", zh: "zh-CN" }[code] ?? "en-CA";
+}
+
 export function cad(value: number, decimals = 0): string {
   return new Intl.NumberFormat("en-CA", {
     style: "currency",

@@ -23,6 +23,8 @@ import { AIRPORTS, FINANCIALS, PRECEDENTS } from "@/lib/sourced";
 import {
   ANNOUNCEMENT_YEAR,
   cad,
+  localeTag,
+  money,
   costsFor,
   seriesFor,
   staffEstimate,
@@ -38,24 +40,27 @@ import {
 /** Currency and number formatting follow the reading language. */
 function useMoney() {
   const { i18n } = useTranslation();
-  const tag = { en: "en-CA", fr: "fr-CA", es: "es-ES", zh: "zh-CN" }[i18n.language?.slice(0, 2) ?? "en"] ?? "en-CA";
+  const tag = localeTag(i18n.language);
   return useMemo(
     () => ({
-      /** Full currency, e.g. $1,502 — no cents. */
-      money: (value: number) =>
-        new Intl.NumberFormat(tag, {
-          style: "currency",
-          currency: "CAD",
-          maximumFractionDigits: 0,
-        }).format(value),
-      /** Grouped integer. */
+      money: (value: number, decimals = 0) => money(value, decimals, tag),
       number: (value: number) => new Intl.NumberFormat(tag).format(value),
     }),
     [tag],
   );
 }
 
-export function Dashboard({ article }: { article: ParsedArticle }) {
+export function Dashboard({
+  article,
+  locale,
+  translated,
+}: {
+  article: ParsedArticle;
+  /** Which locale's prose was loaded. */
+  locale: string;
+  /** False when this locale has no translated article and English is shown. */
+  translated: boolean;
+}) {
   const params = useSearchParams();
 
   const initial = useMemo(() => {
@@ -75,16 +80,24 @@ export function Dashboard({ article }: { article: ParsedArticle }) {
   return (
     <ArticleProvider references={article.references}>
       <TripProvider initial={initial}>
-        <Board article={article} />
+        <Board article={article} locale={locale} translated={translated} />
       </TripProvider>
     </ArticleProvider>
   );
 }
 
-function Board({ article }: { article: ParsedArticle }) {
+function Board({
+  article,
+  locale,
+  translated,
+}: {
+  article: ParsedArticle;
+  locale: string;
+  translated: boolean;
+}) {
   const trip = useTrip();
   const { t } = useTranslation();
-  const { money, number } = useMoney();
+  const { money } = useMoney();
   const [view, setView] = useState<ViewId>("cost");
   const [enabled, setEnabled] = useState<string[]>(["trip", "ticket", "parking", "drop", "food"]);
   const [articleOpen, setArticleOpen] = useState(false);
@@ -116,7 +129,7 @@ function Board({ article }: { article: ParsedArticle }) {
   const activeView = VIEWS.find((item) => item.id === view) ?? VIEWS[0];
   const axis = useMemo(() => axisValues(view, rows, trip.ticket), [view, rows, trip.ticket]);
   const summary = useMemo(
-    () => (rows ? summaryFor(view, rows, trip.year, t) : undefined),
+    () => (rows ? summaryFor(view, rows, trip.year, t, money) : undefined),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [view, rows, trip.year, t],
   );
@@ -274,7 +287,12 @@ function Board({ article }: { article: ParsedArticle }) {
       </div>
 
       {articleOpen ? (
-        <ArticleOverlay article={article} onClose={() => setArticleOpen(false)} />
+        <ArticleOverlay
+          article={article}
+          locale={locale}
+          translated={translated}
+          onClose={() => setArticleOpen(false)}
+        />
       ) : null}
     </div>
   );
@@ -303,6 +321,7 @@ function Info({
 }) {
   const trip = useTrip();
   const { t } = useTranslation();
+  const { money } = useMoney();
   const activeView = VIEWS.find((item) => item.id === view) ?? VIEWS[0];
 
   return (
@@ -403,10 +422,10 @@ function Info({
                         on ? "text-ink" : "text-ink-4 line-through",
                       ].join(" ")}
                     >
-                      {SERIES[key].label}
+                      {t(`series.${key}`)}
                     </span>
                     <span className="font-sans text-[0.8rem] font-semibold tabular">
-                      {value > 0 ? cad(value) : "—"}
+                      {value > 0 ? money(value) : "—"}
                     </span>
                   </button>
                 </li>
@@ -454,10 +473,10 @@ function Info({
                         on ? "text-ink" : "text-ink-4 line-through",
                       ].join(" ")}
                     >
-                      {SERIES[key].label}
+                      {t(`series.${key}`)}
                     </span>
                     <span className="font-sans text-[0.8rem] font-semibold tabular">
-                      {cad(value)}
+                      {money(value)}
                     </span>
                   </button>
                 </li>
@@ -489,6 +508,7 @@ function Figures({
 }) {
   const trip = useTrip();
   const { t } = useTranslation();
+  const { money } = useMoney();
 
   const cells: { value: string; label: string; tone?: "red" | "green" }[] =
     view === "record"
@@ -529,31 +549,31 @@ function Figures({
             ]
           : view === "charges"
             ? [
-                { value: cad(active.parking), label: t("metrics.parking"), tone: "red" },
-                { value: active.dropOff > 0 ? cad(active.dropOff) : t("metrics.free"), label: t("metrics.dropOff") },
-                { value: cad(active.food), label: t("metrics.foodRetail") },
+                { value: money(active.parking), label: t("metrics.parking"), tone: "red" },
+                { value: active.dropOff > 0 ? money(active.dropOff) : t("metrics.free"), label: t("metrics.dropOff") },
+                { value: money(active.food), label: t("metrics.foodRetail") },
                 {
-                  value: `+${cad(active.extrasTotal - atSigning.extrasTotal)}`,
+                  value: `+${money(active.extrasTotal - atSigning.extrasTotal)}`,
                   label: t("metrics.addedSinceSigning"),
                   tone: "red",
                 },
               ]
             : view === "ticket"
               ? [
-                  { value: cad(active.ticketTotal), label: t("metrics.ticketIn", { calendar: active.calendar }) },
+                  { value: money(active.ticketTotal), label: t("metrics.ticketIn", { calendar: active.calendar }) },
                   {
-                    value: `+${cad(active.ticketTotal - atSigning.ticketTotal)}`,
+                    value: `+${money(active.ticketTotal - atSigning.ticketTotal)}`,
                     label: t("metrics.addedToFare"),
                     tone: "red",
                   },
-                  { value: cad(active.aif), label: t("metrics.improvementFee") },
-                  { value: cad(active.taxes), label: t("metrics.taxesAndFees") },
+                  { value: money(active.aif), label: t("metrics.improvementFee") },
+                  { value: money(active.taxes), label: t("metrics.taxesAndFees") },
                 ]
               : [
-                  { value: cad(active.tripTotal), label: t("metrics.tripIn", { calendar: active.calendar }), tone: "red" },
-                  { value: cad(atSigning.tripTotal), label: t("metrics.sameTripAtSigning"), tone: "green" },
+                  { value: money(active.tripTotal), label: t("metrics.tripIn", { calendar: active.calendar }), tone: "red" },
+                  { value: money(atSigning.tripTotal), label: t("metrics.sameTripAtSigning"), tone: "green" },
                   {
-                    value: `+${cad(active.tripTotal - atSigning.tripTotal)}`,
+                    value: `+${money(active.tripTotal - atSigning.tripTotal)}`,
                     label: t("metrics.addedByConcession"),
                     tone: "red",
                   },
@@ -656,6 +676,7 @@ function Record() {
  */
 function Books() {
   const { t } = useTranslation();
+  const { number: group } = useMoney();
   const [tab, setTab] = useState<"revenue" | "expenses">("revenue");
 
   const rowsFor = (airport: (typeof FINANCIALS)[number]) =>
@@ -704,14 +725,14 @@ function Books() {
               <div className="flex items-baseline justify-between">
                 <span className="font-mono text-[0.72rem] font-semibold">{airport.code}</span>
                 <span className="font-sans text-[0.72rem] tabular text-ink-3">
-                  ${total.toLocaleString()}M
+                  ${group(total)}M
                 </span>
               </div>
               <div className="mt-1 flex h-2.5 w-full overflow-hidden">
                 {rowsFor(airport).map((row) => (
                   <div
                     key={row.label}
-                    title={`${row.label}: $${row.value}M`}
+                    title={`${row.label}: $${group(row.value)}M`}
                     style={{ width: `${(row.value / total) * 100}%`, background: row.colour }}
                   />
                 ))}
@@ -722,7 +743,7 @@ function Books() {
                     <span className="h-2 w-2 shrink-0" style={{ background: row.colour }} />
                     <span className="flex-1 font-sans text-[0.68rem] text-ink-3">{row.label}</span>
                     <span className="font-sans text-[0.68rem] tabular text-ink-2">
-                      ${row.value}M
+                      ${group(row.value)}M
                     </span>
                     <span className="w-9 text-right font-sans text-[0.66rem] tabular text-ink-4">
                       {Math.round((row.value / row.base) * 100)}%

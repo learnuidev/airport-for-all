@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4, Source_Code_Pro } from "next/font/google";
-import "./globals.css";
 import { cookies } from "next/headers";
+import "./globals.css";
 import { getArticle } from "@/lib/article.server";
 import { LocaleProvider } from "@/components/i18n/LocaleProvider";
-import { DEFAULT_LOCALE, LOCALE_COOKIE, LOCALE_TAGS, isLocale } from "@/lib/locales";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale } from "@/lib/locales";
 
-// The headline comes from the source document, so metadata is read per request.
 export const dynamic = "force-dynamic";
 
 const serif = Source_Serif_4({
@@ -27,13 +26,14 @@ const mono = Source_Code_Pro({
   display: "swap",
 });
 
-const article = getArticle();
-
-export const metadata: Metadata = {
-  title: article.title,
-  description: article.deck,
-  openGraph: { title: article.title, description: article.deck, type: "article" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { article } = await getArticle();
+  return {
+    title: article.title,
+    description: article.deck,
+    openGraph: { title: article.title, description: article.deck, type: "article" },
+  };
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookie = await cookies();

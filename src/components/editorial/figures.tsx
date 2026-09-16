@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Cite } from "./Cite";
 import { Figure, StatCallout, StatRow } from "./Shell";
 import { useTrip } from "./ArticleContext";
 import { LineChart } from "@/components/charts/LineChart";
 import {
   ANNOUNCEMENT_YEAR,
+  localeTag,
+  money as moneyFor,
   HORIZON,
   SYDNEY_CUT,
   cad,
@@ -25,6 +28,7 @@ const DATA_GREEN = "#0f7b3e";
  * ------------------------------------------------------------------ */
 
 export function WorkforceFigure() {
+  const { t } = useTranslation();
   const inScope = AIRPORTS.filter((airport) => airport.inScope);
   const max = Math.max(...inScope.map((airport) => staffEstimate(airport).staff));
   const total = inScope.reduce((sum, airport) => sum + staffEstimate(airport).staff, 0);
@@ -32,13 +36,12 @@ export function WorkforceFigure() {
 
   return (
     <Figure
-      title="Cuts at Sydney's rate would remove about 3,400 jobs from the four airports"
-      deck="Sydney's new owners cut 40 percent of the workforce once post-sale protections expired. Applied to the airports in scope at typical staffing density, that is the scale of the exposure."
-      aside="Modelled"
+      title={t("figures.workforce.title")}
+      deck={t("figures.workforce.deck")}
+      aside={t("figures.modelled")}
       source={
         <>
-          Staffing modelled at 62 jobs per million annual passengers. The 40 percent cut is the
-          figure reported for Sydney Airport. <Cite id={14} />
+          {t("figures.workforce.source")} <Cite id={14} />
         </>
       }
     >
@@ -71,13 +74,13 @@ export function WorkforceFigure() {
 
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-rule pt-3">
         <span className="flex items-center gap-2 font-sans text-[0.76rem] text-ink-3">
-          <span className="h-3 w-4 bg-ink-4" /> workforce today
+          <span className="h-3 w-4 bg-ink-4" /> {t("figures.workforce.legendToday")}
         </span>
         <span className="flex items-center gap-2 font-sans text-[0.76rem] text-ink-3">
-          <span className="h-3 w-4 bg-data-a" /> in scope for a Sydney-scale cut
+          <span className="h-3 w-4 bg-data-a" /> {t("figures.workforce.legendCut")}
         </span>
         <span className="ml-auto font-sans text-[0.8rem] font-semibold tabular">
-          {total.toLocaleString()} → {cut.toLocaleString()} at risk
+          {total.toLocaleString()} → {cut.toLocaleString()} {t("figures.workforce.atRisk")}
         </span>
       </div>
     </Figure>
@@ -89,18 +92,19 @@ export function WorkforceFigure() {
  * ------------------------------------------------------------------ */
 
 export function TicketFigure() {
+  const { t } = useTranslation();
   const trip = useTrip();
 
   if (!trip.hasAirport || !trip.airport) {
     return (
       <Figure
-        title="Your ticket against your whole trip"
-        deck="Answer the two questions above to see this chart drawn with your airport and your fare."
-        source={<>Anchored to the reported Perth (+60% per passenger over a decade) and UK parking and drop-off charges. <Cite id={14} /><Cite id={13} /></>}
+        title={t("figures.ticketTitle")}
+        deck={t("figures.ticketEmpty")}
+        source={<>{t("figures.precedentNote")} <Cite id={14} /><Cite id={13} /></>}
       >
         <div className="flex h-40 items-center justify-center border border-dashed border-rule">
           <p className="font-sans text-[0.85rem] text-ink-4">
-            Waiting for your answers…
+            {t("figures.waiting")}
           </p>
         </div>
       </Figure>
@@ -119,30 +123,32 @@ export function TicketFigure() {
   const series = seriesFor(input, HORIZON);
 
   const parts = [
-    { id: "airfare", label: "Airline fare", value: now.airfare, colour: DATA_GREY },
-    { id: "aif", label: "Airport Improvement Fee", value: now.aif, colour: DATA_RED },
-    { id: "aero", label: "Aeronautical charges", value: now.aeronautical, colour: "#e8828f" },
-    { id: "taxes", label: "Taxes and fees", value: now.taxes, colour: "#555555" },
+    { id: "airfare", label: t("figures.ticketParts.airfare"), value: now.airfare, colour: DATA_GREY },
+    { id: "aif", label: t("figures.ticketParts.aif"), value: now.aif, colour: DATA_RED },
+    { id: "aero", label: t("figures.ticketParts.aeronautical"), value: now.aeronautical, colour: "#e8828f" },
+    { id: "taxes", label: t("figures.ticketParts.taxes"), value: now.taxes, colour: "#555555" },
   ];
   const partsTotal = parts.reduce((sum, part) => sum + part.value, 0);
 
   return (
     <div className="space-y-10">
       <Figure
-        title={`The fare barely moves. Everything around it does.`}
-        deck={`Your ${cad(trip.ticket)} fare at ${trip.airport.code} becomes a ${cad(now.tripTotal)} trip by ${now.calendar}. The green line is the ticket; the red line is everything you pay between the kerb and the gate.`}
+        title={t("figures.tripTitle")}
+        deck={t("figures.tripDeck", {
+          ticket: cad(trip.ticket),
+          code: trip.airport.code,
+          total: cad(now.tripTotal),
+          calendar: now.calendar,
+        })}
         aside={`${trip.airport.code} · ${trip.airport.city}`}
         source={
           <>
-            Green: airfare, Improvement Fee, aeronautical charges and taxes. Red adds parking,
-            drop-off, food and retail. Aeronautical charges rise at the rate that reproduces
-            Perth&rsquo;s reported +60 percent per passenger over a decade; non-ticket charges reach
-            the levels documented in the UK. <Cite id={14} /><Cite id={13} />
+            {t("figures.tripSource")} <Cite id={14} /><Cite id={13} />
           </>
         }
       >
         <LineChart
-          ariaLabel="Ticket cost against total trip cost as the concession matures"
+          ariaLabel={t("figures.series.ticketAria")}
           height={300}
           hover={trip.year}
           onHover={(value) => {
@@ -157,14 +163,14 @@ export function TicketFigure() {
           series={[
             {
               id: "ticket",
-              label: "The ticket alone",
+              label: t("figures.series.ticket"),
               color: DATA_GREEN,
               dashed: true,
               points: series.map((row) => ({ x: row.year, y: row.ticketTotal })),
             },
             {
               id: "trip",
-              label: "The whole trip",
+              label: t("figures.series.trip"),
               color: DATA_RED,
               area: true,
               points: series.map((row) => ({ x: row.year, y: row.tripTotal })),
@@ -176,31 +182,35 @@ export function TicketFigure() {
       <StatRow>
         <StatCallout
           value={cad(today.tripTotal)}
-          label="Your trip today"
-          detail={`${cad(trip.ticket)} fare, everything included`}
+          label={t("figures.stats.yourTripToday")}
+          detail={t("figures.stats.fareIncluded", { ticket: cad(trip.ticket) })}
         />
         <StatCallout
           value={cad(now.tripTotal)}
-          label={`Your trip in ${now.calendar}`}
-          detail={trip.year === 0 ? "Move the year slider to see it change" : `Year ${trip.year} of the concession`}
+          label={t("figures.stats.yourTripIn", { calendar: now.calendar })}
+          detail={
+            trip.year === 0
+              ? t("figures.stats.moveSlider")
+              : t("figures.stats.yearOfConcession", { count: trip.year })
+          }
         />
         <StatCallout
           tone="red"
           value={`+${cad(now.tripTotal - today.tripTotal)}`}
-          label="Added by the concession"
-          detail={`${(((now.tripTotal - today.tripTotal) / today.tripTotal) * 100).toFixed(0)} percent more than today`}
+          label={t("figures.stats.addedByConcession")}
+          detail={t("figures.stats.percentMore", {
+            percent: (((now.tripTotal - today.tripTotal) / today.tripTotal) * 100).toFixed(0),
+          })}
         />
       </StatRow>
 
       <Figure
-        title={`Inside your ${cad(now.ticketTotal)} ticket`}
-        deck="Reported figures, not projections: the Improvement Fee is $30–$40 a ticket and makes up 37 percent of large-airport revenue. Taxes and fees are 25–35 percent of a Canadian ticket and are set at 28 percent here."
-        aside="Per traveller"
+        title={t("figures.insideTitle", { total: cad(now.ticketTotal) })}
+        deck={t("figures.insideDeck")}
+        aside={t("figures.perTraveller")}
         source={
           <>
-            Improvement Fee range and revenue share from the Canadian Centre for Policy
-            Alternatives; tax and fee share and the affordability ranking from the Canadian Labour
-            Congress. <Cite id={1} /><Cite id={14} />
+            {t("figures.insideSource")} <Cite id={1} /><Cite id={14} />
           </>
         }
       >
@@ -236,6 +246,7 @@ export function TicketFigure() {
  * ------------------------------------------------------------------ */
 
 export function JourneyFigure() {
+  const { t } = useTranslation();
   const trip = useTrip();
   const [openId, setOpenId] = useState<string | null>("food");
 
@@ -254,46 +265,60 @@ export function JourneyFigure() {
   const stages = [
     {
       id: "drop",
-      when: "Kerbside",
-      title: "Drop-off charge",
+      when: t("figures.detail.kerbside"),
+      title: t("figures.detail.dropTitle"),
       cost: now.dropOff,
       was: today.dropOff,
       detail:
         trip.dropOffMinutes > trip.airport.freeDropOffMinutes
-          ? `${trip.dropOffMinutes} minutes at the kerb exceeds the ${trip.airport.freeDropOffMinutes} free minutes ${trip.airport.code} allows today. British airports charge up to $24 for exactly this.`
-          : `${trip.airport.code} allows ${trip.airport.freeDropOffMinutes} free minutes, so your ${trip.dropOffMinutes}-minute stop is free. British airports charge up to $24 for the same stop.`,
+          ? t("figures.detail.dropPaid", {
+              minutes: trip.dropOffMinutes,
+              free: trip.airport.freeDropOffMinutes,
+              code: trip.airport.code,
+            })
+          : t("figures.detail.dropFree", {
+              minutes: trip.dropOffMinutes,
+              free: trip.airport.freeDropOffMinutes,
+              code: trip.airport.code,
+            }),
       refs: [14],
       status: "modelled",
     },
     {
       id: "security",
-      when: "Security",
-      title: "Queue lengths and safety",
+      when: t("figures.detail.security"),
+      title: t("figures.detail.securityTitle"),
       cost: 0,
       was: 0,
       detail:
-        "The charge that never appears on a receipt. The CCPA warns that cutting staff and staff pay “isn't only about comfort in an airport, it can also be about traveller safety.”",
+        t("figures.detail.securityBody"),
       refs: [1],
       status: "warning",
     },
     {
       id: "food",
-      when: "Concourse",
-      title: "Food and retail",
+      when: t("figures.detail.concourse"),
+      title: t("figures.detail.foodTitle"),
       cost: now.food,
       was: today.food,
       detail:
-        "Rents rise, so the sandwich does. Modelled from 6 percent of your ticket today to the 19 percent share UK travellers pay once retail is optimised for profit.",
+        t("figures.detail.foodBody"),
       refs: [1, 13],
       status: "modelled",
     },
     {
       id: "parking",
-      when: "On return",
-      title: `Parking, ${trip.days} ${trip.days === 1 ? "day" : "days"}`,
+      when: t("figures.detail.onReturn"),
+      title: t("figures.detail.parkingTitle", {
+        days: trip.days,
+        unit: t(trip.days === 1 ? "figures.detail.day" : "figures.detail.days"),
+      }),
       cost: now.parking,
       was: today.parking,
-      detail: `${cad(trip.airport.parkingPerDay)} a day at ${trip.airport.code} today, moving toward Heathrow-scale pricing of $59 a day. Five English airports collected £751 million in parking fees in 2025 alone.`,
+      detail: t("figures.detail.parkingBody", {
+        price: cad(trip.airport.parkingPerDay),
+        code: trip.airport.code,
+      }),
       refs: [13],
       status: "modelled",
     },
@@ -301,13 +326,12 @@ export function JourneyFigure() {
 
   return (
     <Figure
-      title="The charges, in the order you meet them"
-      deck="Privatisation does not raise one price. It raises a series of small ones, each of which is defensible on its own."
-      aside="Tap a row"
+      title={t("figures.journeyTitle")}
+      deck={t("figures.journeyDeck")}
+      aside={t("figures.tapRow")}
       source={
         <>
-          Drop-off and parking levels from the UK evidence; the safety warning from the Canadian
-          Centre for Policy Alternatives. <Cite id={13} /><Cite id={1} />
+          {t("figures.journeySource")} <Cite id={13} /><Cite id={1} />
         </>
       }
     >
@@ -345,7 +369,7 @@ export function JourneyFigure() {
                     {stage.detail}
                   </p>
                   <p className="mt-2 flex items-center gap-2 font-sans text-[0.72rem] uppercase tracking-wide text-ink-4">
-                    {stage.status === "warning" ? "Not priced" : stage.status}
+                    {stage.status === "warning" ? t("figures.detail.notPriced") : t(`figures.detail.${stage.status}`)}
                     <span className="flex gap-0.5 normal-case">
                       {stage.refs.map((id) => (
                         <Cite key={`${stage.id}-${id}`} id={id} />
@@ -372,6 +396,18 @@ export function JourneyFigure() {
  * ------------------------------------------------------------------ */
 
 export function RevenueFigure() {
+  const { t, i18n } = useTranslation();
+  /** Compact currency for the headline billions, e.g. $3.95B / 3,95 G$. */
+  const compact = (value: number) =>
+    new Intl.NumberFormat(localeTag(i18n.language), {
+      style: "currency",
+      currency: "CAD",
+      notation: "compact",
+      maximumFractionDigits: 2,
+    }).format(value);
+  // The interpolated amount is formatted for the reading language, so French
+  // reads "691 M$" and English "$691M" without a hardcoded symbol in JSX.
+  const money = (value: number) => moneyFor(value, 0, localeTag(i18n.language));
   const [year, setYear] = useState(10);
   const growth = Math.pow(1.03, year);
   const revenueB = 3.95 * growth;
@@ -384,44 +420,41 @@ export function RevenueFigure() {
 
   return (
     <Figure
-      title="A one-time windfall against a permanent extraction"
-      deck="Airport authorities made no profit at all off the $3.95 billion they took in during 2022 — expenses and revenues were effectively identical. A private operator has to do the opposite."
-      aside="Modelled"
+      title={t("figures.revenueTitle")}
+      deck={t("figures.revenueDeck")}
+      aside={t("figures.modelled")}
       source={
         <>
-          Revenue base and the $525 million annual rent from the reporting. The 15–20 percent
-          investor return is the Canadian Labour Congress estimate; the 37 percent Improvement Fee
-          share is the CCPA&rsquo;s. <Cite id={1} /><Cite id={14} />
+          {t("figures.revenueSource")} <Cite id={1} /><Cite id={14} />
         </>
       }
     >
       <div className="grid gap-8 sm:grid-cols-2">
         <div className="border-t-2 border-ink pt-3">
           <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.08em] text-ink-4">
-            Not-for-profit authority
+            {t("figures.revenue.public")}
           </p>
           <p className="mt-2 font-serif text-[2.4rem] font-bold leading-none tabular">
-            $3.95B
+            {compact(3.95e9)}
           </p>
           <p className="mt-2 font-sans text-[0.84rem] leading-relaxed text-ink-3">
-            Revenue in 2022. Surpluses go back into the airports, and about{" "}
-            <strong className="font-semibold">$525 million a year</strong> returns to the federal
-            government as rent.
+            {t("figures.revenue.publicBodyA")}{" "}
+            <strong className="font-semibold">{t("figures.revenue.publicBodyStrong")}</strong>{" "}
+            {t("figures.revenue.publicBodyB")}
           </p>
         </div>
 
         <div className="border-t-2 border-data-a pt-3">
           <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.08em] text-data-a">
-            Under a private concession
+            {t("figures.revenue.private")}
           </p>
           <p className="mt-2 font-serif text-[2.4rem] font-bold leading-none tabular text-data-a">
-            +${(revenueB * requirement).toFixed(2)}B
+            +{compact(revenueB * requirement * 1e9)}
           </p>
           <p className="mt-2 font-sans text-[0.84rem] leading-relaxed text-ink-3">
-            Extra revenue needed every year, at 17.5 percent of revenue — the midpoint of the
-            15–20 percent band. That is{" "}
-            <strong className="font-semibold">${Math.round(perYear).toLocaleString()} million</strong>{" "}
-            a year, every year, found from airlines, retailers or passengers.
+            {t("figures.revenue.privateBodyA")}{" "}
+            <strong className="font-semibold">{money(perYear * 1e6)}</strong>{" "}
+            {t("figures.revenue.privateBodyB")}
           </p>
         </div>
       </div>
@@ -429,10 +462,10 @@ export function RevenueFigure() {
       <div className="mt-8">
         <div className="flex items-baseline justify-between">
           <label htmlFor="revenue-year" className="font-sans text-[0.86rem] font-semibold">
-            Concession year
+            {t("controls.concessionYear")}
           </label>
           <span className="font-sans text-[0.8rem] tabular text-ink-3">
-            Year {year} · {ANNOUNCEMENT_YEAR + year}
+            {t("figures.yearOf", { year, calendar: ANNOUNCEMENT_YEAR + year })}
           </span>
         </div>
         <input
@@ -446,13 +479,13 @@ export function RevenueFigure() {
         />
         <div className="mt-4 grid grid-cols-2 gap-6 border-t border-rule pt-3">
           <p className="font-sans text-[0.84rem] text-ink-3">
-            This year{" "}
+            {t("figures.thisYear")}{" "}
             <span className="ml-1 font-serif text-[1.3rem] font-bold tabular text-ink">
               ${Math.round(perYear).toLocaleString()}M
             </span>
           </p>
           <p className="font-sans text-[0.84rem] text-ink-3">
-            Since signing{" "}
+            {t("figures.sinceSigning")}{" "}
             <span className="ml-1 font-serif text-[1.3rem] font-bold tabular text-data-a">
               ${Math.round(cumulative).toLocaleString()}M
             </span>
@@ -468,52 +501,46 @@ export function RevenueFigure() {
  * ------------------------------------------------------------------ */
 
 export function ServiceFigure() {
+  const { t } = useTranslation();
   return (
     <Figure
-      title="The study that cuts both ways"
-      deck="A 2023 University of Alberta study is the strongest evidence in the article for privatisation. It found real improvements — and it found the bill."
-      aside="Both effects, same study"
+      title={t("figures.serviceTitle")}
+      deck={t("figures.serviceDeck")}
+      aside={t("figures.bothEffects")}
       source={
         <>
-          University of Alberta study as reported, and the Canadian Labour Congress
-          review. <Cite id={14} />
+          {t("figures.serviceSource")} <Cite id={14} />
         </>
       }
     >
       <div className="grid gap-8 sm:grid-cols-2">
         <div className="border-t-2 border-data-green pt-3">
           <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.08em] text-data-green">
-            What improved
+            {t("figures.improved")}
           </p>
           <p className="mt-2 font-serif text-[2.6rem] font-bold leading-none tabular text-data-green">
             −50%
           </p>
           <p className="mt-2 font-sans text-[0.86rem] leading-relaxed text-ink-2">
-            Flight cancellations under private equity ownership, alongside higher customer
-            satisfaction and better terminals.
+            {t("figures.serviceImprovedBody")}
           </p>
         </div>
         <div className="border-t-2 border-data-a pt-3">
           <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.08em] text-data-a">
-            What it cost
+            {t("figures.cost")}
           </p>
           <p className="mt-2 font-serif text-[2.6rem] font-bold leading-none tabular text-data-a">
             +$20
           </p>
           <p className="mt-2 font-sans text-[0.86rem] leading-relaxed text-ink-2">
-            More in fees per passenger, confirmed by the same research. The study did not show one
-            effect without the other.
+            {t("figures.serviceCostBody")}
           </p>
         </div>
       </div>
 
       <div className="mt-7 border-t border-rule pt-4">
         <p className="max-w-[42rem] font-serif text-[1.05rem] leading-relaxed text-ink-2">
-          The Australian Competition and Consumer Commission put the risk plainly: under price-cap
-          regulation there may be incentives to increase profits by reducing costs, and
-          &ldquo;in some cases such cost cutting may lead to a lower quality of service.&rdquo; The
-          commission built service-quality monitoring specifically to detect it.{" "}
-          <Cite id={4} /><Cite id={11} />
+          {t("figures.serviceAccc")} <Cite id={4} /><Cite id={11} />
         </p>
       </div>
     </Figure>
@@ -527,17 +554,17 @@ export function ServiceFigure() {
 const TERMS = [50, 65, 75, 99];
 
 export function LockInFigure() {
+  const { t } = useTranslation();
   const [term, setTerm] = useState(75);
 
   return (
     <Figure
-      title="A contract longer than most careers, mortgages and governments"
-      deck="The concessions described run 50 to 99 years. Once signed, buying the contract back is prohibitively expensive."
-      aside="Reported term"
+      title={t("figures.lockTitle")}
+      deck={t("figures.lockDeck")}
+      aside={t("figures.reportedTerm")}
       source={
         <>
-          Concession length and the P3 warning from the Canadian Centre for Policy Alternatives.{" "}
-          <Cite id={1} />
+          {t("figures.lockSource")} <Cite id={1} />
         </>
       }
     >
@@ -555,7 +582,7 @@ export function LockInFigure() {
                 : "border-transparent text-ink-4 hover:text-ink",
             ].join(" ")}
           >
-            {option} years
+            {t("figures.yearsOption", { count: option })}
           </button>
         ))}
       </div>
@@ -569,13 +596,13 @@ export function LockInFigure() {
           <div
             className="absolute inset-y-0 border-l-2 border-dashed border-ink"
             style={{ left: `${(HORIZON / 99) * 100}%` }}
-            title="Where this article's 20-year projection stops"
+            title={t("figures.projectionStops")}
           />
         </div>
         <div className="mt-2 flex justify-between font-sans text-[0.72rem] tabular text-ink-4">
-          <span>{ANNOUNCEMENT_YEAR} signed</span>
+          <span>{t("figures.signedYear", { year: ANNOUNCEMENT_YEAR })}</span>
           <span className="hidden sm:inline">
-            {ANNOUNCEMENT_YEAR + HORIZON} this article&rsquo;s horizon
+            {t("figures.horizon", { year: ANNOUNCEMENT_YEAR + HORIZON })}
           </span>
           <span>{ANNOUNCEMENT_YEAR + 99}</span>
         </div>
@@ -583,22 +610,22 @@ export function LockInFigure() {
 
       <div className="mt-6 grid gap-x-8 gap-y-4 border-t border-rule pt-4 sm:grid-cols-3">
         <p className="font-sans text-[0.84rem] text-ink-3">
-          Concession ends{" "}
+          {t("figures.concessionEnds")}{" "}
           <span className="ml-1 font-serif text-[1.2rem] font-bold tabular text-ink">
             {ANNOUNCEMENT_YEAR + term}
           </span>
         </p>
         <p className="font-sans text-[0.84rem] text-ink-3">
-          Evidence covers{" "}
+          {t("figures.evidenceCovers")}{" "}
           <span className="ml-1 font-serif text-[1.2rem] font-bold tabular text-ink">
             {((HORIZON / term) * 100).toFixed(0)}%
           </span>{" "}
-          of the term
+          {t("figures.ofTerm")}
         </p>
         <p className="font-sans text-[0.84rem] text-ink-3">
-          Negotiation takes{" "}
+          {t("figures.negotiationTakes")}{" "}
           <span className="ml-1 font-serif text-[1.2rem] font-bold tabular text-ink">6–9</span>{" "}
-          months
+          {t("figures.months")}
         </p>
       </div>
     </Figure>
@@ -610,13 +637,14 @@ export function LockInFigure() {
  * ------------------------------------------------------------------ */
 
 export function EvidenceFigure() {
+  const { t } = useTranslation();
   const [direction, setDirection] = useState<"all" | "cost" | "benefit">("all");
   const rows = PRECEDENTS.filter((p) => direction === "all" || p.direction === direction);
 
   return (
     <Figure
-      title="Five countries, three decades, one direction"
-      deck="A consistent pattern across Australia, New Zealand, Portugal, the United Kingdom and the United States: higher charges, pressure on workers and the loss of long-term public value."
+      title={t("viewTitles.record")}
+      deck={t("figures.evidenceDeck")}
       aside={
         <span className="flex gap-3">
           {(["all", "cost", "benefit"] as const).map((option) => (
@@ -629,14 +657,14 @@ export function EvidenceFigure() {
                 direction === option ? "font-bold text-ink" : "text-ink-4 hover:text-ink",
               ].join(" ")}
             >
-              {option}
+              {t(`figures.filter.${option}`)}
             </button>
           ))}
         </span>
       }
       source={
         <>
-          All figures as reported. <Cite id={14} /><Cite id={13} /><Cite id={5} />
+          {t("figures.evidenceSource")} <Cite id={14} /><Cite id={13} /><Cite id={5} />
         </>
       }
     >
@@ -673,12 +701,13 @@ export function EvidenceFigure() {
  * ------------------------------------------------------------------ */
 
 const PROMISE_LABEL = {
-  supported: { text: "Backed by evidence", colour: "text-data-green" },
-  unproven: { text: "Unproven", colour: "text-ink-4" },
-  "at-risk": { text: "At risk", colour: "text-data-a" },
+  supported: { key: "figures.promises.supported", colour: "text-data-green" },
+  unproven: { key: "figures.promises.unproven", colour: "text-ink-4" },
+  "at-risk": { key: "figures.promises.atRisk", colour: "text-data-a" },
 } as const;
 
 export function PromisesFigure() {
+  const { t } = useTranslation();
   const [openId, setOpenId] = useState<string | null>(null);
   const counts = {
     supported: PROMISES.filter((p) => p.status === "supported").length,
@@ -688,13 +717,17 @@ export function PromisesFigure() {
 
   return (
     <Figure
-      title="Eight commitments, held against the record"
-      deck={`${counts["at-risk"]} of the eight claims made for the deal have a documented failure mode in the record; ${counts.unproven} are unproven; ${counts.supported} are backed by evidence.`}
-      aside="Tap a row"
+      title={t("figures.promisesTitle", { total: PROMISES.length })}
+      deck={t("figures.promisesDeck", {
+        total: PROMISES.length,
+        atRisk: counts["at-risk"],
+        unproven: counts.unproven,
+        supported: counts.supported,
+      })}
+      aside={t("figures.tapRow")}
       source={
         <>
-          Statuses are this article&rsquo;s judgement, drawn from what the reporting shows about the
-          same claims in Australia, the United Kingdom and Brazil.
+          {t("figures.promisesSource")}
         </>
       }
     >
@@ -719,7 +752,7 @@ export function PromisesFigure() {
                 <span
                   className={`text-left font-sans text-[0.72rem] font-bold uppercase tracking-wide sm:text-right ${label.colour}`}
                 >
-                  {label.text}
+                  {t(label.key)}
                 </span>
               </button>
               {open ? (

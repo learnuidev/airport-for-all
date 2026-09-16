@@ -157,7 +157,8 @@
     "sourcesLede": "The reporting carries a footnote block of 15 sources and a closing list of 20. Both are shown.",
     "openSource": "Open",
     "footer": "Every paragraph above comes from the reporting; the projections are anchored to its figures and labelled as modelled.",
-    "seeYear": "See this year on the board"
+    "seeYear": "See this year on the board",
+    "englishOnly": ""
   },
   "sources": {
     "kind": {
@@ -174,5 +175,127 @@
   "language": {
     "label": "Language",
     "switch": "Change language"
+  },
+  "figures": {
+    "modelled": "Modelled",
+    "reportedTerm": "Reported term",
+    "tapRow": "Tap a row",
+    "perTraveller": "Per traveller",
+    "bothEffects": "Both effects, same study",
+    "improved": "What improved",
+    "cost": "What it cost",
+    "waiting": "Waiting for your answers…",
+    "thisYear": "This year",
+    "sinceSigning": "Since signing",
+    "ofTerm": "of the term",
+    "months": "months",
+    "signedYear": "{{year}} signed",
+    "horizon": "{{year}} this article’s horizon",
+    "concessionEnds": "Concession ends",
+    "evidenceCovers": "Evidence covers",
+    "negotiationTakes": "Negotiation takes",
+    "yearsOption": "{{count}} years",
+    "yearOf": "Year {{year}} · {{calendar}}",
+    "projectionStops": "Where this article’s 20-year projection stops",
+    "tripTitle": "The fare barely moves. Everything around it does.",
+    "tripDeck": "Your {{ticket}} fare at {{code}} becomes a {{total}} trip by {{calendar}}. The green line is the ticket; the red line is everything you pay between the kerb and the gate.",
+    "tripSource": "Green: airfare, Improvement Fee, aeronautical charges and taxes. Red adds parking, drop-off, food and retail. Aeronautical charges rise at the rate that reproduces Perth’s reported +60 percent per passenger over a decade; non-ticket charges reach the levels documented in the UK.",
+    "ticketTitle": "Your ticket against your whole trip",
+    "ticketEmpty": "Answer the two questions above to see this chart drawn with your airport and your fare.",
+    "insideTitle": "Inside your {{total}} ticket",
+    "insideDeck": "Reported figures, not projections: the Improvement Fee is charged per departing passenger and makes up about a third of large-airport revenue. Taxes and fees are 25–35 percent of a Canadian ticket and are set at 28 percent here.",
+    "insideSource": "Improvement Fee and revenue shares from the 2025 statements; tax and fee share and the affordability ranking from the Canadian Labour Congress.",
+    "workforce": {
+      "title": "Cuts at Sydney’s rate would remove about 3,400 jobs from the four airports",
+      "deck": "Sydney’s new owners cut 40 percent of the workforce once post-sale protections expired. Applied to the airports in scope at typical staffing density, that is the scale of the exposure.",
+      "source": "Staffing modelled at 62 jobs per million annual passengers. The 40 percent cut is the figure reported for Sydney Airport.",
+      "legendToday": "workforce today",
+      "legendCut": "in scope for a Sydney-scale cut",
+      "atRisk": "at risk"
+    },
+    "journeyTitle": "The charges, in the order you meet them",
+    "journeyDeck": "Privatisation does not raise one price. It raises a series of small ones, each of which is defensible on its own.",
+    "journeySource": "Drop-off and parking levels from the UK evidence; the safety warning from the Canadian Centre for Policy Alternatives.",
+    "revenueTitle": "A one-time windfall against a permanent extraction",
+    "revenueDeck": "Airport authorities made no profit at all off the $3.95 billion they took in during 2022 — expenses and revenues were effectively identical. A private operator has to do the opposite.",
+    "revenueSource": "Revenue base and the $525 million annual rent from the reporting. The 15–20 percent investor return is the Canadian Labour Congress estimate; the 37 percent Improvement Fee share is the CCPA’s.",
+    "revenue": {
+      "public": "Not-for-profit authority",
+      "private": "Under a private concession",
+      "publicBodyA": "Revenue in 2022. Surpluses go back into the airports, and about",
+      "publicBodyStrong": "$525 million a year",
+      "publicBodyB": "returns to the federal government as rent.",
+      "privateBodyA": "Extra revenue needed every year, at 17.5 percent of revenue — the midpoint of the 15–20 percent band. That is",
+      "privateBodyB": "a year, every year, found from airlines, retailers or passengers."
+    },
+    "serviceTitle": "The study that cuts both ways",
+    "serviceDeck": "A 2023 University of Alberta study is the strongest evidence in the article for privatisation. It found real improvements — and it found the bill.",
+    "serviceSource": "University of Alberta study as reported, and the Canadian Labour Congress review.",
+    "serviceImprovedBody": "Flight cancellations under private equity ownership, alongside higher customer satisfaction and better terminals.",
+    "serviceCostBody": "More in fees per passenger, confirmed by the same research. The study did not show one effect without the other.",
+    "serviceAccc": "The Australian Competition and Consumer Commission put the risk plainly: under price-cap regulation there may be incentives to increase profits by reducing costs, and “in some cases such cost cutting may lead to a lower quality of service.” The commission built service-quality monitoring specifically to detect it.",
+    "lockTitle": "A contract longer than most careers, mortgages and governments",
+    "lockDeck": "The concessions described run 50 to 99 years. Once signed, buying the contract back is prohibitively expensive.",
+    "lockSource": "Concession length and the P3 warning from the Canadian Centre for Policy Alternatives.",
+    "evidenceDeck": "A consistent pattern across Australia, New Zealand, Portugal, the United Kingdom and the United States: higher charges, pressure on workers and the loss of long-term public value.",
+    "evidenceSource": "All figures as reported.",
+    "filter": {
+      "all": "all",
+      "cost": "cost",
+      "benefit": "benefit"
+    },
+    "promisesTitle": "{{total}} commitments, held against the record",
+    "promisesDeck": "Of the {{total}} claims made for the deal, {{atRisk}} with a documented failure mode in the record, {{unproven}} unproven, and {{supported}} backed by evidence.",
+    "promisesSource": "Statuses are this article’s judgement, drawn from what the reporting shows about the same claims in Australia, the United Kingdom and Brazil.",
+    "detail": {
+      "kerbside": "Kerbside",
+      "security": "Security",
+      "concourse": "Concourse",
+      "onReturn": "On return",
+      "dropTitle": "Drop-off charge",
+      "dropFree": "{{code}} allows {{free}} free minutes, so your {{minutes}}-minute stop is free. British airports charge up to $24 for the same stop.",
+      "dropPaid": "{{minutes}} minutes at the kerb exceeds the {{free}} free minutes {{code}} allows today. British airports charge up to $24 for exactly this.",
+      "securityTitle": "Queue lengths and safety",
+      "securityBody": "The charge that never appears on a receipt. The CCPA warns that cutting staff and staff pay “isn’t only about comfort in an airport, it can also be about traveller safety.”",
+      "foodTitle": "Food and retail",
+      "foodBody": "Rents rise, so the sandwich does. Modelled from 6 percent of your ticket today to the 19 percent share UK travellers pay once retail is optimised for profit.",
+      "parkingTitle": "Parking, {{days}} {{unit}}",
+      "parkingBody": "{{price}} a day at {{code}} today, moving toward Heathrow-scale pricing of $59 a day. Five English airports collected £751 million in parking fees in 2025 alone.",
+      "day": "day",
+      "days": "days",
+      "notPriced": "Not priced",
+      "modelled": "modelled",
+      "today": "today",
+      "warning": "warning"
+    },
+    "stats": {
+      "yourTripToday": "Your trip today",
+      "yourTripIn": "Your trip in {{calendar}}",
+      "moveSlider": "Move the year slider to see it change",
+      "yearOfConcession": "Year {{count}} of the concession",
+      "addedByConcession": "Added by the concession",
+      "percentMore": "{{percent}} percent more than today",
+      "fareIncluded": "{{ticket}} fare, everything included"
+    },
+    "series": {
+      "ticket": "The ticket alone",
+      "trip": "The whole trip",
+      "ticketAria": "Ticket cost against total trip cost as the concession matures"
+    },
+    "promises": {
+      "supported": "Backed by evidence",
+      "unproven": "Unproven",
+      "atRisk": "At risk"
+    },
+    "ticketParts": {
+      "airfare": "Airline fare",
+      "aif": "Airport Improvement Fee",
+      "aeronautical": "Aeronautical charges",
+      "taxes": "Taxes and fees"
+    },
+    "precedentNote": "Anchored to the reported Perth (+60% per passenger over a decade) and UK parking and drop-off charges."
+  },
+  "units": {
+    "million": "million"
   }
 }

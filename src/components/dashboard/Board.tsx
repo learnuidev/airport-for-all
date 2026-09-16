@@ -1,20 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ANNOUNCEMENT_YEAR, HORIZON, cad, type YearCosts } from "@/components/editorial/model";
+import { ANNOUNCEMENT_YEAR, HORIZON, type YearCosts } from "@/components/editorial/model";
 
 /* ------------------------------------------------------------------ *
  * Series colours and names. Used only inside the chart.
  * ------------------------------------------------------------------ */
 
-export const SERIES: Record<string, { label: string; colour: string }> = {
-  parking: { label: "Parking", colour: "#d0021b" },
-  food: { label: "Food and retail", colour: "#e8853f" },
-  drop: { label: "Drop-off", colour: "#7a3fa0" },
-  aif: { label: "Improvement Fee", colour: "#1a5fb4" },
-  aeronautical: { label: "Aeronautical", colour: "#4a90d9" },
-  airfare: { label: "Airline fare", colour: "#c9c9c9" },
-  taxes: { label: "Taxes and fees", colour: "#666666" },
+export const SERIES: Record<string, { colour: string }> = {
+  parking: { colour: "#d0021b" },
+  food: { colour: "#e8853f" },
+  drop: { colour: "#7a3fa0" },
+  aif: { colour: "#1a5fb4" },
+  aeronautical: { colour: "#4a90d9" },
+  airfare: { colour: "#c9c9c9" },
+  taxes: { colour: "#666666" },
 };
 
 export const TICKET_KEYS = ["airfare", "aif", "aeronautical", "taxes"] as const;
@@ -94,11 +94,43 @@ export function axisValues(view: ViewId, rows: YearCosts[] | null, ticket: numbe
 
 export type SummaryLine = { text: string; tone?: "bad" | "good" | "muted" };
 
+/**
+ * Approximate rendered width of a string in an SVG <text> element, accounting
+ * for the fact that CJK glyphs are roughly twice as wide as Latin ones. Used
+ * because the summary box must be sized in advance and the text cannot wrap.
+ */
+export function measureText(text: string, fontSize: number, uppercase = false): number {
+  const scale = fontSize / 11;
+  let units = 0;
+  for (const char of text) {
+    const code = char.codePointAt(0) ?? 0;
+    const wide =
+      (code >= 0x1100 && code <= 0x115f) || // Hangul Jamo
+      (code >= 0x2e80 && code <= 0xa4cf) || // CJK radicals through Yi
+      (code >= 0xac00 && code <= 0xd7a3) || // Hangul syllables
+      (code >= 0xf900 && code <= 0xfaff) || // CJK compatibility ideographs
+      (code >= 0xfe30 && code <= 0xfe6f) || // CJK compatibility forms
+      (code >= 0xff00 && code <= 0xff60) || // Full-width forms
+      (code >= 0xffe0 && code <= 0xffe6) ||
+      (code >= 0x20000 && code <= 0x3fffd); // Extension planes
+    if (wide) units += 12.4;
+    else if (/[ ,.]/.test(char)) units += 3.4;
+    else if (/[iljtfIr|]/.test(char)) units += 4.2;
+    else if (/[A-Z0-9$%]/.test(char)) units += 6.6;
+    else units += 6.1;
+  }
+  // Headings are letter-spaced and set in bold caps.
+  if (uppercase) units *= 1.16;
+  return units * scale;
+}
+
 export function summaryFor(
   view: ViewId,
   rows: YearCosts[],
   year: number,
   t: (key: string, options?: Record<string, unknown>) => string,
+  /** Locale-aware currency formatter, so amounts match the reading language. */
+  fmt: (value: number) => string,
 ): { heading: string; lines: SummaryLine[] } {
   const active = rows[Math.min(year, rows.length - 1)];
   const now = rows[0];
@@ -116,23 +148,23 @@ export function summaryFor(
       lines: [
         {
           text: t("summary.chargesReach", {
-            extras: cad(active.extrasTotal),
-            trip: cad(active.tripTotal),
-            grew: grew > 1 ? t("summary.andGrew", { amount: cad(grew) }) : "",
+            extras: fmt(active.extrasTotal),
+            trip: fmt(active.tripTotal),
+            grew: grew > 1 ? t("summary.andGrew", { amount: fmt(grew) }) : "",
           }),
           tone: grew > 1 ? "bad" : "muted",
         },
         {
           text: t("summary.parkingLeads", {
-            parking: cad(active.parking),
-            food: cad(active.food),
+            parking: fmt(active.parking),
+            food: fmt(active.food),
           }),
         },
         {
           text:
             year >= 20
               ? t("summary.rampFinished")
-              : t("summary.fiveMore", { amount: cad(total5) }),
+              : t("summary.fiveMore", { amount: fmt(total5) }),
           tone: "muted",
         },
       ],
@@ -146,16 +178,16 @@ export function summaryFor(
       lines: [
         {
           text: t("summary.fareReaches", {
-            ticket: cad(active.ticketTotal),
+            ticket: fmt(active.ticketTotal),
             added:
               added > 1
-                ? t("summary.andAdded", { amount: cad(added), base: cad(now.ticketTotal) })
+                ? t("summary.andAdded", { amount: fmt(added), base: fmt(now.ticketTotal) })
                 : "",
           }),
           tone: added > 1 ? "bad" : "muted",
         },
         {
-          text: t("summary.aifFastest", { aif: cad(active.aif), taxes: cad(active.taxes) }),
+          text: t("summary.aifFastest", { aif: fmt(active.aif), taxes: fmt(active.taxes) }),
         },
         { text: t("summary.fareInflation"), tone: "muted" },
       ],
@@ -200,16 +232,16 @@ export function summaryFor(
         text:
           added > 1
             ? t("summary.tripCosts", {
-                total: cad(active.tripTotal),
-                amount: cad(added),
-                base: cad(now.tripTotal),
+                total: fmt(active.tripTotal),
+                amount: fmt(added),
+                base: fmt(now.tripTotal),
               })
-            : t("summary.tripBefore", { total: cad(active.tripTotal) }),
+            : t("summary.tripBefore", { total: fmt(active.tripTotal) }),
         tone: added > 1 ? "bad" : "muted",
       },
       {
         text: t("summary.offTicketShare", {
-          amount: cad(active.extrasTotal),
+          amount: fmt(active.extrasTotal),
           share: share.toFixed(0),
         }),
       },
@@ -217,7 +249,7 @@ export function summaryFor(
         text:
           added > 1
             ? t("summary.fareOnlyPart", {
-                amount: cad(active.ticketTotal - now.ticketTotal),
+                amount: fmt(active.ticketTotal - now.ticketTotal),
               })
             : t("summary.switchOn"),
         tone: "muted",
@@ -290,13 +322,16 @@ export function Chart({
     setYear(Math.round(ratio * HORIZON));
   };
 
-  /** The summary box: top-right of the plot, sized to its longest line. */
+  /** The summary box: bottom-right of the plot, sized to its longest line. */
   const box = useMemo(() => {
     if (!summary || plotW < 360) return null;
-    const charWidth = 5.62;
+    // SVG text neither wraps nor clips, so the box has to be wide enough for
+    // the longest line. Glyph widths differ: CJK characters are close to full
+    // em at this size, Latin averages about half.
+    const widthOf = (text: string) => measureText(text, 11);
     const longest = Math.max(
-      summary.heading.length * 5.6,
-      ...summary.lines.map((line) => line.text.length * charWidth),
+      measureText(summary.heading, 10, true),
+      ...summary.lines.map((line) => widthOf(line.text)),
     );
     const boxWidth = Math.min(plotW - 24, Math.max(220, longest + 24));
     const boxHeight = 42 + summary.lines.length * 15;
@@ -650,4 +685,3 @@ export function usePlayback(year: number, setYear: (year: number) => void) {
   };
 }
 
-export { cad };

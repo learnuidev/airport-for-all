@@ -157,7 +157,8 @@
     "sourcesLede": "La investigación incluye un bloque de notas con 15 fuentes y una lista final de 20. Se muestran las dos.",
     "openSource": "Abrir",
     "footer": "Cada párrafo anterior procede de la investigación; las proyecciones se anclan a sus cifras y se identifican como modeladas.",
-    "seeYear": "Ver este año en el panel"
+    "seeYear": "Ver este año en el panel",
+    "englishOnly": "El texto de este artículo está en inglés."
   },
   "sources": {
     "kind": {
@@ -174,5 +175,127 @@
   "language": {
     "label": "Idioma",
     "switch": "Cambiar de idioma"
+  },
+  "figures": {
+    "modelled": "Modelado",
+    "reportedTerm": "Plazo declarado",
+    "tapRow": "Toca una fila",
+    "perTraveller": "Por viajero",
+    "bothEffects": "Los dos efectos, el mismo estudio",
+    "improved": "Lo que mejoró",
+    "cost": "Lo que costó",
+    "waiting": "Esperando tus respuestas…",
+    "thisYear": "Este año",
+    "sinceSigning": "Desde la firma",
+    "ofTerm": "del plazo",
+    "months": "meses",
+    "signedYear": "Firmada en {{year}}",
+    "horizon": "{{year}}, horizonte del artículo",
+    "concessionEnds": "Fin de la concesión",
+    "evidenceCovers": "La evidencia cubre",
+    "negotiationTakes": "La negociación dura",
+    "yearsOption": "{{count}} años",
+    "yearOf": "Año {{year}} · {{calendar}}",
+    "projectionStops": "Donde termina la proyección de 20 años del artículo",
+    "tripTitle": "La tarifa apenas se mueve. Todo lo que la rodea, sí.",
+    "tripDeck": "Tu tarifa de {{ticket}} en {{code}} se convierte en un viaje de {{total}} en {{calendar}}. La línea verde es el billete; la roja, todo lo que pagas entre la acera y la puerta de embarque.",
+    "tripSource": "Verde: tarifa aérea, tasa de mejora aeroportuaria, cargos aeronáuticos e impuestos. El rojo añade aparcamiento, bajada de pasajeros, comida y comercio. Los cargos aeronáuticos suben al ritmo que reproduce el +60% por pasajero en una década declarado en Perth; los cargos fuera del billete alcanzan los niveles documentados en el Reino Unido.",
+    "ticketTitle": "Tu billete frente a todo el viaje",
+    "ticketEmpty": "Responde a las dos preguntas de arriba para ver este gráfico con tu aeropuerto y tu tarifa.",
+    "insideTitle": "Dentro de tu billete de {{total}}",
+    "insideDeck": "Cifras declaradas, no proyecciones: la tasa de mejora aeroportuaria se cobra por pasajero de salida y supone cerca de un tercio de los ingresos de los grandes aeropuertos. Los impuestos y tasas son el 25–35% de un billete canadiense y aquí se fijan en el 28%.",
+    "insideSource": "La tasa de mejora aeroportuaria y su peso en los ingresos, de las cuentas de 2025; el peso de impuestos y tasas y el puesto en asequibilidad, del Canadian Labour Congress.",
+    "workforce": {
+      "title": "Recortes al ritmo de Sydney eliminarían unos 3.400 puestos en los cuatro aeropuertos",
+      "deck": "Los nuevos dueños de Sydney recortaron el 40% de la plantilla al expirar las protecciones posteriores a la venta. Aplicado a los aeropuertos incluidos en la concesión, con una densidad de personal típica, esa es la magnitud de la exposición.",
+      "source": "Dotación modelada en 62 puestos por millón de pasajeros anuales. El recorte del 40% es la cifra declarada para el aeropuerto de Sydney.",
+      "legendToday": "plantilla actual",
+      "legendCut": "expuestos a un recorte tipo Sydney",
+      "atRisk": "en riesgo"
+    },
+    "journeyTitle": "Los cargos, en el orden en que los encuentras",
+    "journeyDeck": "La privatización no sube un precio. Sube una serie de precios pequeños, cada uno defendible por separado.",
+    "journeySource": "Los niveles de bajada de pasajeros y de aparcamiento, de la evidencia del Reino Unido; la advertencia sobre la seguridad, del Canadian Centre for Policy Alternatives.",
+    "revenueTitle": "Un ingreso único frente a una extracción permanente",
+    "revenueDeck": "Las autoridades aeroportuarias no ganaron absolutamente nada con los $3.95 mil millones que ingresaron en 2022 — gastos e ingresos eran prácticamente idénticos. Un operador privado tiene que hacer lo contrario.",
+    "revenueSource": "La base de ingresos y los $525 millones de alquiler anual, según la investigación. El retorno del 15–20% para los inversores es la estimación del Canadian Labour Congress; el 37% de peso de la tasa de mejora aeroportuaria es del CCPA.",
+    "revenue": {
+      "public": "Autoridad sin ánimo de lucro",
+      "private": "Bajo una concesión privada",
+      "publicBodyA": "Ingresos en 2022. Los excedentes vuelven a los aeropuertos y unos",
+      "publicBodyStrong": "$525 millones al año",
+      "publicBodyB": "vuelven al Gobierno federal en forma de alquiler.",
+      "privateBodyA": "Ingresos extra que hacen falta cada año, un 17.5% de los ingresos — el punto medio de la banda del 15–20%. Es decir:",
+      "privateBodyB": "al año, todos los años, sacados de las aerolíneas, los comercios o los pasajeros."
+    },
+    "serviceTitle": "El estudio que corta en ambos sentidos",
+    "serviceDeck": "Un estudio de 2023 de la Universidad de Alberta es la evidencia más sólida del artículo a favor de la privatización. Encontró mejoras reales — y también encontró la factura.",
+    "serviceSource": "El estudio de la Universidad de Alberta, según lo publicado, y la revisión del Canadian Labour Congress.",
+    "serviceImprovedBody": "Menos cancelaciones de vuelos con la propiedad de capital privado, junto a una mayor satisfacción de los clientes y mejores terminales.",
+    "serviceCostBody": "Más tasas por pasajero, confirmado por la misma investigación. El estudio no mostró un efecto sin el otro.",
+    "serviceAccc": "La Australian Competition and Consumer Commission planteó el riesgo sin rodeos: con una regulación de precios máximos puede haber incentivos para aumentar los beneficios recortando costes, y «en algunos casos esos recortes de costes pueden degradar la calidad del servicio». La comisión creó un seguimiento específico de la calidad del servicio para detectarlo.",
+    "lockTitle": "Un contrato más largo que la mayoría de las carreras, las hipotecas y los gobiernos",
+    "lockDeck": "Las concesiones descritas van de 50 a 99 años. Una vez firmadas, recomprar el contrato tiene un coste prohibitivo.",
+    "lockSource": "La duración de la concesión y la advertencia sobre las APP, del Canadian Centre for Policy Alternatives.",
+    "evidenceDeck": "Un patrón constante en Australia, Nueva Zelanda, Portugal, el Reino Unido y Estados Unidos: más cargos, presión sobre los trabajadores y pérdida de valor público a largo plazo.",
+    "evidenceSource": "Todas las cifras, tal como se publicaron.",
+    "filter": {
+      "all": "todo",
+      "cost": "coste",
+      "benefit": "beneficio"
+    },
+    "promisesTitle": "{{total}} promesas, contrastadas con los antecedentes",
+    "promisesDeck": "De las {{total}} promesas del acuerdo, {{atRisk}} con un modo de fallo documentado en los antecedentes, {{unproven}} sin probar y {{supported}} con evidencia.",
+    "promisesSource": "Las clasificaciones son un juicio del artículo, basado en lo que la investigación muestra sobre esas mismas promesas en Australia, el Reino Unido y Brasil.",
+    "detail": {
+      "kerbside": "Acera",
+      "security": "Seguridad",
+      "concourse": "Vestíbulo",
+      "onReturn": "A la vuelta",
+      "dropTitle": "Cargo por bajada de pasajeros",
+      "dropFree": "{{code}} permite {{free}} minutos gratis, así que tu parada de {{minutes}} minutos es gratis. Los aeropuertos británicos cobran hasta $24 por la misma parada.",
+      "dropPaid": "{{minutes}} minutos en la acera superan los {{free}} minutos gratis que {{code}} permite hoy. Los aeropuertos británicos cobran hasta $24 por exactamente esto.",
+      "securityTitle": "Colas y seguridad",
+      "securityBody": "El cargo que nunca aparece en un recibo. El CCPA advierte de que recortar la plantilla y los salarios «no solo tiene que ver con la comodidad en un aeropuerto, también puede tener que ver con la seguridad de los viajeros».",
+      "foodTitle": "Comida y comercio",
+      "foodBody": "Los alquileres suben, y el bocadillo también. Modelado: del 6% de tu billete hoy al 19% que pagan los viajeros británicos cuando el comercio se optimiza para el beneficio.",
+      "parkingTitle": "Aparcamiento, {{days}} {{unit}}",
+      "parkingBody": "{{price}} al día en {{code}} hoy, camino de los precios tipo Heathrow de $59 al día. Cinco aeropuertos ingleses recaudaron £751 millones en tasas de aparcamiento solo en 2025.",
+      "day": "día",
+      "days": "días",
+      "notPriced": "Sin precio",
+      "modelled": "modelado",
+      "today": "hoy",
+      "warning": "aviso"
+    },
+    "stats": {
+      "yourTripToday": "Tu viaje hoy",
+      "yourTripIn": "Tu viaje en {{calendar}}",
+      "moveSlider": "Mueve el deslizador de años para ver cómo cambia",
+      "yearOfConcession": "Año {{count}} de la concesión",
+      "addedByConcession": "Añadido por la concesión",
+      "percentMore": "{{percent}}% más que hoy",
+      "fareIncluded": "Tarifa de {{ticket}}, todo incluido"
+    },
+    "series": {
+      "ticket": "Solo el billete",
+      "trip": "Todo el viaje",
+      "ticketAria": "Coste del billete frente al coste total del viaje a medida que avanza la concesión"
+    },
+    "promises": {
+      "supported": "Con evidencia",
+      "unproven": "Sin probar",
+      "atRisk": "En riesgo"
+    },
+    "ticketParts": {
+      "airfare": "Tarifa aérea",
+      "aif": "Tasa de mejora aeroportuaria",
+      "aeronautical": "Cargos aeronáuticos",
+      "taxes": "Impuestos y tasas"
+    },
+    "precedentNote": "Anclado a los datos declarados de Perth (+60% por pasajero en una década) y a los cargos de aparcamiento y de bajada de pasajeros del Reino Unido."
+  },
+  "units": {
+    "million": "millones"
   }
 }

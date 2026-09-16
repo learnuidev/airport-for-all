@@ -82,8 +82,8 @@
     "andAdded": "，比签约时的{{base}}上涨{{amount}}",
     "aifFastest": "机场改善费涨得最快，达{{aif}}；税费则固定在{{taxes}}。",
     "fareInflation": "机票价格随通胀走，与特许经营无关。",
-    "investorsNeed": "投资者今年需要多挣约${{amount}}M的营收。",
-    "takenOut": "这是签约以来被抽走的${{amount}}M——换来的只是一次性的横财。",
+    "investorsNeed": "投资者今年需要约${{amount}}M的额外营收。",
+    "takenOut": "签约以来已被抽走${{amount}}M——换来的只有一次性的横财。",
     "baseNoProfit": "而这$3.95B的营收基数，本来一分钱利润都没有。",
     "booksLine1": "多伦多皮尔逊2025年收入$2.08B，蒙特利尔特鲁多$961M，温哥华$717M——而且每一行都公布了。",
     "booksLine2": "工资是最大的一项可控成本：$297M、$108M和$139M。上缴渥太华的租金：$236M、$107M、$78M。",
@@ -157,7 +157,8 @@
     "sourcesLede": "原报道的脚注区列出15个来源，文末清单列出20个。这里两者都呈现。",
     "openSource": "打开",
     "footer": "以上每一段都来自原报道；测算部分以报道中的数字为依据，并标注为模型推算。",
-    "seeYear": "在看板上查看这一年"
+    "seeYear": "在看板上查看这一年",
+    "englishOnly": "本文正文为英文。"
   },
   "sources": {
     "kind": {
@@ -174,5 +175,127 @@
   "language": {
     "label": "语言",
     "switch": "切换语言"
+  },
+  "figures": {
+    "modelled": "模型测算",
+    "reportedTerm": "报道中的期限",
+    "tapRow": "点击一行",
+    "perTraveller": "每位旅客",
+    "bothEffects": "同一项研究的两面",
+    "improved": "改善之处",
+    "cost": "代价",
+    "waiting": "等待你的答案…",
+    "thisYear": "今年",
+    "sinceSigning": "签约以来",
+    "ofTerm": "的期限",
+    "months": "个月",
+    "signedYear": "{{year}}年签约",
+    "horizon": "{{year}}年 · 本文测算终点",
+    "concessionEnds": "特许经营结束于",
+    "evidenceCovers": "证据仅覆盖",
+    "negotiationTakes": "谈判耗时",
+    "yearsOption": "{{count}}年",
+    "yearOf": "第{{year}}年 · {{calendar}}",
+    "projectionStops": "本文20年测算的终点",
+    "tripTitle": "机票几乎不动，围绕它的一切都在涨。",
+    "tripDeck": "你在{{code}}买的{{ticket}}机票，到{{calendar}}年会变成{{total}}的整趟行程。绿线是机票，红线是你从路边到登机口之间要付的所有钱。",
+    "tripSource": "绿色：机票、机场改善费、航空性收费和税费。红色再加停车、落客、餐饮零售。航空性收费按报道中珀斯人均十年涨60%的速度上涨；非票务收费达到英国有据可查的水平。",
+    "ticketTitle": "你的机票与整趟行程对比",
+    "ticketEmpty": "回答上面两个问题，这张图就会按你的机场和票价画出来。",
+    "insideTitle": "拆开你{{total}}的机票",
+    "insideDeck": "这些是报道里的数字，不是测算：机场改善费按每位出发旅客收取，约占大型机场营收的三分之一。税费占加拿大机票的25%到35%，这里按28%计算。",
+    "insideSource": "机场改善费与营收占比来自2025年财报；税费占比与可负担性排名来自加拿大劳工大会。",
+    "workforce": {
+      "title": "按悉尼的裁员比例，四家机场将减少约3,400个岗位",
+      "deck": "悉尼的新东主在售后保护条款到期后裁掉了40%的员工。把这一比例按常见用工密度套用到涉及特许经营的机场，就是这样的暴露规模。",
+      "source": "用工量按每百万年旅客62个岗位推算。40%的裁员比例是悉尼机场的报道数据。",
+      "legendToday": "现有员工",
+      "legendCut": "可能被悉尼式裁减",
+      "atRisk": "面临裁减"
+    },
+    "journeyTitle": "各项收费，按你遇到的顺序",
+    "journeyDeck": "私有化不是抬高一项费用，而是抬高一连串小额费用，每一项单独看都说得过去。",
+    "journeySource": "落客和停车水平来自英国的经验；安全警告来自Canadian Centre for Policy Alternatives。",
+    "revenueTitle": "一次性的横财，抵不过永久性的抽取",
+    "revenueDeck": "2022年机场当局营收$3.95B，却没有一分钱利润——支出与收入几乎完全相抵。私营运营商必须反过来做。",
+    "revenueSource": "营收基数与每年$525M的租金来自原报道。15%到20%的投资者回报是加拿大劳工大会的估算；37%的机场改善费占比来自CCPA。",
+    "revenue": {
+      "public": "非营利机场当局",
+      "private": "私营特许经营之下",
+      "publicBodyA": "2022年的营收。盈余全部投回机场，其中约",
+      "publicBodyStrong": "每年$525M",
+      "publicBodyB": "以租金形式上缴联邦政府。",
+      "privateBodyA": "每年必须多出的营收，相当于营收的17.5%——即15%到20%区间的中值。也就是",
+      "privateBodyB": "，年年如此，只能从航空公司、零售商或旅客身上找。"
+    },
+    "serviceTitle": "这项研究两面都说了",
+    "serviceDeck": "2023年阿尔伯塔大学的一项研究，是报道中支持私有化的最强证据。它发现了实实在在的改善——也发现了代价。",
+    "serviceSource": "据原报道引述的阿尔伯塔大学研究，以及加拿大劳工大会的评述。",
+    "serviceImprovedBody": "私募股权控股后航班取消更少，同时客户满意度更高、航站楼更好。",
+    "serviceCostBody": "每位旅客的费用更高，同一项研究也证实了这一点。研究没有只呈现其中一面。",
+    "serviceAccc": "澳大利亚竞争与消费者委员会把风险说得很直白：在价格上限管制下，运营商可能有动力通过削减成本来增加利润，「某些情况下这种削减可能导致服务质量下降」。该委员会专门建立了服务质量监测来发现这一点。",
+    "lockTitle": "一份比多数人的职业生涯、房贷和政府任期都长的合同",
+    "lockDeck": "报道中的特许经营期为50到99年。一旦签约，想把合同买回来，代价高得无法承受。",
+    "lockSource": "特许经营期限与P3警示来自Canadian Centre for Policy Alternatives。",
+    "evidenceDeck": "澳大利亚、新西兰、葡萄牙、英国和美国呈现出一致的规律：收费更高，员工承压，长期公共价值流失。",
+    "evidenceSource": "所有数字均为报道中的原始数据。",
+    "filter": {
+      "all": "全部",
+      "cost": "成本",
+      "benefit": "收益"
+    },
+    "promisesTitle": "{{total}}项承诺，逐条对照记录",
+    "promisesDeck": "支持这笔交易的{{total}}项说法中，{{atRisk}}项在记录里已有明确记载的失败先例，{{unproven}}项尚无证据，{{supported}}项有证据支持。",
+    "promisesSource": "这些判定是本文的判断，依据是原报道对澳大利亚、英国和巴西同类说法的记录。",
+    "detail": {
+      "kerbside": "路边落客",
+      "security": "安检",
+      "concourse": "候机厅",
+      "onReturn": "回程",
+      "dropTitle": "落客费",
+      "dropFree": "{{code}}允许免费停{{free}}分钟，所以你的{{minutes}}分钟停留是免费的。英国机场同样的停留最多收$24。",
+      "dropPaid": "路边停{{minutes}}分钟，已超出{{free}}分钟免费时长——这是{{code}}今天的上限。英国机场正是这种情况，最多收$24。",
+      "securityTitle": "排队长度与安全",
+      "securityBody": "这项收费永远不会出现在收据上。CCPA警告，削减员工和员工薪酬「不只是机场的舒适度问题，还关系到旅客安全」。",
+      "foodTitle": "餐饮零售",
+      "foodBody": "租金上涨，三明治自然跟着涨。测算：从今天占你机票的6%，到零售按利润最大化后英国旅客所付的19%。",
+      "parkingTitle": "停车，{{days}}{{unit}}",
+      "parkingBody": "{{price}}一天，这就是{{code}}今天的价格，正朝着希思罗每天$59的水平走。仅2025年，英格兰五家机场就收了7.51亿英镑停车费。",
+      "day": "天",
+      "days": "天",
+      "notPriced": "未定价",
+      "modelled": "模型测算",
+      "today": "今天",
+      "warning": "警告"
+    },
+    "stats": {
+      "yourTripToday": "你今天的行程",
+      "yourTripIn": "你在{{calendar}}年的行程",
+      "moveSlider": "拖动年份滑块看它变化",
+      "yearOfConcession": "特许经营第{{count}}年",
+      "addedByConcession": "特许经营带来的增量",
+      "percentMore": "比今天多{{percent}}%",
+      "fareIncluded": "{{ticket}}机票，全部包含在内"
+    },
+    "series": {
+      "ticket": "仅机票",
+      "trip": "整趟行程",
+      "ticketAria": "特许经营推进过程中，机票花费与整趟行程花费的对比"
+    },
+    "promises": {
+      "supported": "有证据支持",
+      "unproven": "尚无证据",
+      "atRisk": "有风险"
+    },
+    "ticketParts": {
+      "airfare": "机票",
+      "aif": "机场改善费",
+      "aeronautical": "航空性收费",
+      "taxes": "税费"
+    },
+    "precedentNote": "以报道中的珀斯（十年人均上涨+60%）和英国停车费、落客费为依据。"
+  },
+  "units": {
+    "million": "百万"
   }
 }

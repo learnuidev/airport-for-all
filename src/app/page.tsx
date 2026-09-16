@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
  * One page. The board carries the interaction; the written article opens over
  * it, so nothing is ever more than one screen away.
  */
-export default function Page() {
-  const article = getArticle();
+export default async function Page() {
+  const { article, locale, translated } = await getArticle();
 
 
   return (
@@ -21,7 +21,7 @@ export default function Page() {
         </div>
       }
     >
-      <Dashboard article={article} />
+      <Dashboard article={article} locale={locale} translated={translated} />
     </Suspense>
   );
 }

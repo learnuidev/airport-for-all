@@ -7,15 +7,7 @@
  * hard-coded in a component. If you edit the source, the page changes.
  */
 
-export type SectionId =
-  | "year-1-2"
-  | "year-3-5"
-  | "year-5-10"
-  | "year-10-15"
-  | "year-15-25"
-  | "year-25-plus"
-  | "counterargument";
-
+export type SectionId = string;
 /* ------------------------------------------------------------------ *
  * Inline runs
  * ------------------------------------------------------------------ */
@@ -105,9 +97,19 @@ export type Reference = {
   groupKey: string;
 };
 
+export type ParsedReference = {
+  publisher: string;
+  title: string;
+  date: string;
+  url: string | null;
+  kind: Reference["kind"];
+};
+
 export type ParsedArticle = {
   title: string;
   deck: string;
+  /** Byline, if the source carries one. */
+  byline: string;
   /** Opening standfirst paragraphs before the first section. */
   standfirst: Block[];
   sections: Section[];
@@ -243,15 +245,17 @@ const LEGACY_CITED = new Set(Object.values(LEGACY_BY_CANONICAL));
  * Sections
  * ------------------------------------------------------------------ */
 
-const SECTION_IDS: Record<string, SectionId> = {
-  "Year 1–2: The Deal is Signed, Protections Expire": "year-1-2",
-  "Year 3–5: The First Fee Increases": "year-3-5",
-  'Year 5–10: The "Nickel-and-Dime" Era': "year-5-10",
-  "Year 10–15: Profits Flow Out, Investment Flows In (Selectively)": "year-10-15",
-  "Year 15–25: The Service Quality Question": "year-15-25",
-  "Year 25+: The Monopoly Locks In": "year-25-plus",
-  "The Counterargument: What Could Go Right": "counterargument",
-};
+/**
+ * A stable id for a heading, so sections can be linked to and looked up by
+ * reading order or by slug without a hardcoded table.
+ */
+function slugifyHeading(heading: string): string {
+  return heading
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
 
 function parseKicker(kicker: string): {
   startYear: number | null;
@@ -305,11 +309,14 @@ export function parseArticle(markdown: string): ParsedArticle {
 
   let title = "";
   let deck = "";
+  let byline = "";
+  const referenceBuffer: string[] = [];
   const standfirst: Block[] = [];
   const sections: Section[] = [];
 
   let current: Section | null = null;
   const citedRefIds = new Set<number>();
+  let parsedReferences: ParsedReference[] = [];
   let paragraphCount = 0;
 
   const pushBlock = (block: Block) => {
@@ -338,6 +345,7 @@ export function parseArticle(markdown: string): ParsedArticle {
   };
 
   let listBuffer: string[] = [];
+  // (referenceBuffer is declared with byline above)
   const flushList = () => {
     if (!listBuffer.length) return;
     const items = listBuffer.map((item) => {
@@ -349,6 +357,12 @@ export function parseArticle(markdown: string): ParsedArticle {
     const refs = [...new Set(items.flatMap((i) => i.refs))];
     pushBlock({ type: "list", items, refs });
     listBuffer = [];
+  };
+
+  const flushReferences = () => {
+    if (!referenceBuffer.length) return;
+    parsedReferences = referenceBuffer.map((line) => parseReferenceLine(line));
+    referenceBuffer.length = 0;
   };
 
   const flushSection = () => {
@@ -388,18 +402,26 @@ export function parseArticle(markdown: string): ParsedArticle {
       flushList();
       flushSection();
       const heading = trimmed.slice(3).trim();
-      // The trailing "## References" heading opens the source's footnote block;
-      // that block is already captured by refs.ts, so parsing stops there.
-      if (/^references$/i.test(heading)) break;
-      const [kickerRaw, ...rest] = heading.split(":");
-      const kicker = kickerRaw.trim();
+      // "## References" opens the source block. Keep reading: the numbered lines
+      // below it are the reference list, collected by the numbered-list branch.
+      // It is not a narrative section, so it produces no chapter.
+      if (/^references$/i.test(heading)) {
+        flushReferences();
+        continue;
+      }
+      // A heading may be "Kicker: Title" or just a title. The kicker colon is
+      // followed by a space; the colon in "4:40 in the morning" is not, so that
+      // heading stays intact instead of splitting into "4" and "40 in …".
+      const match = /^([^:]{2,40}):\s+(.+)$/s.exec(heading);
+      const kicker = match ? match[1].trim() : heading;
+      const title = match ? match[2].trim() : heading;
       const { startYear, endYear, openEnded } = parseKicker(kicker);
       current = {
-        id: SECTION_IDS[heading] ?? "counterargument",
+        id: slugifyHeading(heading),
         index: sections.length,
         heading,
         kicker,
-        title: rest.join(":").trim() || heading,
+        title,
         startYear,
         endYear,
         openEnded,
@@ -413,12 +435,27 @@ export function parseArticle(markdown: string): ParsedArticle {
 
     if (trimmed === "---") {
       flushList();
+      flushReferences();
       pushBlock({ type: "divider" });
       continue;
     }
 
     if (trimmed.startsWith("- ")) {
+      // A single bullet directly under the H1 is the byline, not a list item.
+      if (!sections.length && !standfirst.length && !byline) {
+        byline = trimmed.slice(2).trim();
+        continue;
+      }
       listBuffer.push(trimmed.slice(2).trim());
+      continue;
+    }
+
+    // A numbered reference list ("1. Publisher, \"Title\", date. url") is the
+    // source block. The narrative uses no inline markers, so this is where the
+    // reader is pointed for provenance.
+    const numbered = /^\d{1,2}\.\s+(\S.*)$/.exec(trimmed);
+    if (numbered) {
+      referenceBuffer.push(numbered[1].trim());
       continue;
     }
 
@@ -432,6 +469,7 @@ export function parseArticle(markdown: string): ParsedArticle {
   }
 
   flushList();
+  flushReferences();
   flushSection();
 
   const wordCount =
@@ -441,7 +479,17 @@ export function parseArticle(markdown: string): ParsedArticle {
       0,
     ) + sections.reduce((total, s) => total + s.wordCount, 0);
 
-  const references = buildReferences(citedRefIds);
+  const references =
+    parsedReferences.length > 0
+      ? parsedReferences.map((reference, index) => ({
+          ...reference,
+          id: index + 1,
+          // With no inline markers, every listed source is part of the record.
+          cited: true,
+          legacyId: null,
+          groupKey: reference.url ?? slugKey(`${reference.publisher} ${reference.title}`),
+        }))
+      : buildReferences(citedRefIds);
 
   // Recount citations from the final block tree so the number reported in the
   // byline matches exactly what is rendered.
@@ -461,6 +509,7 @@ export function parseArticle(markdown: string): ParsedArticle {
   return {
     title,
     deck,
+    byline,
     standfirst,
     sections,
     references,
@@ -742,6 +791,37 @@ function buildReferences(cited: Set<number>): Reference[] {
   }
 
   return all;
+}
+
+/**
+ * Parses one line of a numbered reference list:
+ *   Publisher, "Title," date. https://…
+ */
+function parseReferenceLine(line: string): ParsedReference {
+  const url = /https?:\/\/\S+/.exec(line)?.[0] ?? null;
+  const withoutUrl = url ? line.replace(url, "").trim() : line;
+  const quoted = /"([^"]+)"/.exec(withoutUrl);
+  const title = quoted ? quoted[1].replace(/[.,]$/, "").trim() : "";
+  const publisher = withoutUrl
+    .slice(0, quoted ? quoted.index : withoutUrl.length)
+    .replace(/[,\s]+$/, "")
+    .trim();
+  const date = /([A-Z][a-z]+ \d{1,2}, \d{4}|[A-Z][a-z]+ \d{4}|\d{4})/.exec(withoutUrl)?.[1] ?? "";
+
+  const haystack = `${publisher} ${title}`.toLowerCase();
+  const kind: Reference["kind"] = /labour|congress|union|ctc|clc/.test(haystack)
+    ? "labour"
+    : /university|study|research|policy|journal|media research/.test(haystack)
+      ? "academic"
+      : /parliament|competition|commission|government|transport canada/.test(haystack)
+        ? "government"
+        : /law|legal|gowling|llp/.test(haystack)
+          ? "legal"
+          : /centre for policy|institute|foundation/.test(haystack)
+            ? "think-tank"
+            : "news";
+
+  return { publisher: publisher || line, title: title || line, date, url, kind };
 }
 
 function slugKey(input: string): string {
