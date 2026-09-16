@@ -21,7 +21,8 @@
     "kerbside": "Dépose-minute",
     "decrease": "Diminuer {{label}}",
     "increase": "Augmenter {{label}}",
-    "chartHint": "Faites glisser le graphique ou les années · flèches"
+    "chartHint": "Faites glisser le graphique ou les années · flèches",
+    "formula": "Ouvrir la formule"
   },
   "chart": {
     "aria": "Coûts par année depuis la signature de la concession"
@@ -302,5 +303,82 @@
   "nav": {
     "chart": "Le graphique",
     "chartCta": "Ouvrir le graphique interactif"
+  },
+  "formula": {
+    "kicker": "L'atelier des formules",
+    "kickerNote": "Tous les paramètres et toutes les expressions derrière la projection du tableau. Modifiez ce que vous voulez, le tableau des années suit.",
+    "tabs": {
+      "formulas": "Formules",
+      "params": "Paramètres",
+      "reference": "Référence"
+    },
+    "backToBoard": "Retour au tableau",
+    "applied": "Appliqué",
+    "dirty": "Modifications non appliquées",
+    "run": "Appliquer",
+    "runHint": "Appliquez pour porter la projection sur vos modifications.",
+    "share": "Copier le lien",
+    "copied": "Lien copié — il porte vos formules.",
+    "copyHint": "Copiez la barre d'adresse pour partager ces formules.",
+    "presetsTitle": "Points de départ",
+    "apply": "Appliquer",
+    "paramsTitle": "Paramètres",
+    "paramsBody": "Les nombres que lisent les formules. Tous sont aussi accessibles par P.<clé> dans une expression.",
+    "shippedValue": "livré : {{value}}",
+    "varsTitle": "Noms lisibles par une formule",
+    "functionsTitle": "Fonctions",
+    "functionsNote": "Rien d'autre n'est disponible : ni la page, ni le réseau, ni le navigateur. Une formule ne peut donc faire que du calcul.",
+    "syntaxTitle": "Syntaxe",
+    "syntax": {
+      "math": "arithmétique, avec parenthèses et ** pour les puissances",
+      "ternary": "une condition, puis une valeur ou l'autre",
+      "logic": "et, ou, non",
+      "member": "un champ d'une table ou de l'aéroport",
+      "yearly": "toute la série d'une étape jusqu'à maintenant — pour les cumuls"
+    },
+    "inputsTitle": "Le voyage modélisé",
+    "airport": "Aéroport",
+    "ticket": "Billet, CAD",
+    "days": "Jours de stationnement",
+    "travellers": "Voyageurs",
+    "dropOff": "Dépose-minute, minutes",
+    "year": "Année de la concession",
+    "switchesTitle": "Interrupteurs lisibles par les formules",
+    "switchesNote": "Chaque interrupteur parvient à une formule sous le nom enabled… — par exemple enabledFood. Une formule qui l'ignore facture ce poste quoi qu'il arrive.",
+    "figuresTitle": "Ce que dit la formule",
+    "figures": {
+      "trip": "Voyage complet, {{calendar}}",
+      "growth": "Par rapport au jour de la signature",
+      "atSigning": "Le même voyage à la signature",
+      "extrasShare": "Du voyage est hors billet",
+      "ticket": "Billet, par voyageur",
+      "extras": "Hors billet",
+      "needed": "Besoin des investisseurs, {{calendar}}",
+      "extracted": "Sorti depuis la signature",
+      "finalYear": "Voyage complet, {{calendar}}",
+      "added": "Ajouté par la concession"
+    },
+    "drift": "Écart avec le modèle livré : {{amount}}",
+    "matchesShipped": "Cette formule reproduit exactement le modèle livré.",
+    "versusShipped": "{{amount}} par rapport au modèle livré cette année.",
+    "chartTitle": "Année par année",
+    "chartAria": "La formule modifiée, tracée année par année",
+    "showShipped": "Modèle livré",
+    "tableTitle": "Chaque année, chaque étape",
+    "tableNote": "Les {{horizon}} années de la formule appliquée. Montants en dollars canadiens.",
+    "tableYear": "Année",
+    "tableVsShipped": "vs livré",
+    "signed": "Signé",
+    "tableFooter": "La colonne de droite compare le voyage complet de cette formule à celui du modèle livré, année par année. Un tiret signifie qu'ils concordent ; une couleur, que vous avez changé quelque chose.",
+    "errorsTitle": "{{count}} étape ne produit pas de nombre",
+    "errorsBody": "Ces étapes retombent à zéro pour que le reste de la projection tourne encore. Le champ fautif est marqué en rouge.",
+    "cyclesTitle": "Deux étapes dépendent l'une de l'autre",
+    "cyclesBody": "Ces étapes se lisent mutuellement, aucune ne peut donc être calculée en premier : {{keys}}. Brisez la boucle en faisant lire un paramètre ou une donnée d'entrée à l'une d'elles.",
+    "restore": "Rétablir les valeurs par défaut",
+    "restoreDone": "Valeurs par défaut rétablies — l'atelier est revenu au modèle livré.",
+    "restoreCleared": "Les valeurs par défaut sont de retour et la formule enregistrée a été effacée de ce navigateur.",
+    "saved": "Enregistré dans ce navigateur",
+    "savedAt": "Enregistré dans ce navigateur à {{time}}",
+    "savedNote": "Chaque paramètre, expression, donnée d'entrée, interrupteur et réglage de graphique est conservé dans le stockage local de ce navigateur et restauré à votre retour. Copiez le lien pour transporter une formule vers un autre navigateur."
   }
 }

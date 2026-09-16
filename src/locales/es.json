@@ -21,7 +21,8 @@
     "kerbside": "Min. en la acera",
     "decrease": "Reducir {{label}}",
     "increase": "Aumentar {{label}}",
-    "chartHint": "arrastra el gráfico o los años · flechas del teclado"
+    "chartHint": "arrastra el gráfico o los años · flechas del teclado",
+    "formula": "Abrir la fórmula"
   },
   "chart": {
     "aria": "Costes por año desde la firma de la concesión"
@@ -302,5 +303,82 @@
   "nav": {
     "chart": "El gráfico",
     "chartCta": "Abrir el gráfico interactivo"
+  },
+  "formula": {
+    "kicker": "El taller de fórmulas",
+    "kickerNote": "Todos los parámetros y todas las expresiones que hay detrás de la proyección del tablero. Edite lo que quiera y la tabla de años lo sigue.",
+    "tabs": {
+      "formulas": "Fórmulas",
+      "params": "Parámetros",
+      "reference": "Referencia"
+    },
+    "backToBoard": "Volver al tablero",
+    "applied": "Aplicado",
+    "dirty": "Cambios sin aplicar",
+    "run": "Aplicar",
+    "runHint": "Aplique para llevar la proyección a sus cambios.",
+    "share": "Copiar enlace",
+    "copied": "Enlace copiado: lleva sus fórmulas.",
+    "copyHint": "Copie la barra de direcciones para compartir estas fórmulas.",
+    "presetsTitle": "Puntos de partida",
+    "apply": "Aplicar",
+    "paramsTitle": "Parámetros",
+    "paramsBody": "Los números que leen las fórmulas. Todos son accesibles también como P.<clave> dentro de una expresión.",
+    "shippedValue": "publicado: {{value}}",
+    "varsTitle": "Nombres que puede leer una fórmula",
+    "functionsTitle": "Funciones",
+    "functionsNote": "No hay nada más: ni la página, ni la red, ni el navegador. Una fórmula no puede hacer más que aritmética.",
+    "syntaxTitle": "Sintaxis",
+    "syntax": {
+      "math": "aritmética, con paréntesis y ** para potencias",
+      "ternary": "una condición y, después, un valor u otro",
+      "logic": "y, o, no",
+      "member": "un campo de una tabla o del aeropuerto",
+      "yearly": "toda la serie de un paso hasta ahora — para los acumulados"
+    },
+    "inputsTitle": "El viaje modelado",
+    "airport": "Aeropuerto",
+    "ticket": "Billete, CAD",
+    "days": "Días de aparcamiento",
+    "travellers": "Viajeros",
+    "dropOff": "Zona de bajada, minutos",
+    "year": "Año de la concesión",
+    "switchesTitle": "Interruptores que leen las fórmulas",
+    "switchesNote": "Cada interruptor llega a una fórmula como enabled… — por ejemplo enabledFood. Una fórmula que lo ignore cobrará ese concepto pase lo que pase.",
+    "figuresTitle": "Lo que dice la fórmula",
+    "figures": {
+      "trip": "Viaje completo, {{calendar}}",
+      "growth": "Frente al día de la firma",
+      "atSigning": "El mismo viaje en la firma",
+      "extrasShare": "Del viaje está fuera del billete",
+      "ticket": "Billete, por viajero",
+      "extras": "Fuera del billete",
+      "needed": "Necesitan los inversores, {{calendar}}",
+      "extracted": "Extraído desde la firma",
+      "finalYear": "Viaje completo, {{calendar}}",
+      "added": "Añadido por la concesión"
+    },
+    "drift": "Diferencia con el modelo publicado: {{amount}}",
+    "matchesShipped": "Esta fórmula reproduce exactamente el modelo publicado.",
+    "versusShipped": "{{amount}} frente al modelo publicado este año.",
+    "chartTitle": "Año por año",
+    "chartAria": "La fórmula editada, trazada año por año",
+    "showShipped": "Modelo publicado",
+    "tableTitle": "Cada año, cada paso",
+    "tableNote": "Los {{horizon}} años de la fórmula aplicada. Importes en dólares canadienses.",
+    "tableYear": "Año",
+    "tableVsShipped": "vs publicado",
+    "signed": "Firmado",
+    "tableFooter": "La columna de la derecha compara el viaje completo de esta fórmula con el del modelo publicado, año por año. Un guion significa que coinciden; el color, que usted ha cambiado algo.",
+    "errorsTitle": "{{count}} paso no produce un número",
+    "errorsBody": "Esos pasos vuelven a cero para que el resto de la proyección siga funcionando. El campo con el problema aparece en rojo.",
+    "cyclesTitle": "Dos pasos dependen el uno del otro",
+    "cyclesBody": "Estos pasos se leen entre sí, así que ninguno puede calcularse primero: {{keys}}. Rompa el bucle haciendo que uno de ellos lea un parámetro o un dato de entrada.",
+    "restore": "Restaurar valores por defecto",
+    "restoreDone": "Valores por defecto restaurados: el taller vuelve al modelo publicado.",
+    "restoreCleared": "Los valores por defecto han vuelto y la fórmula guardada se ha borrado de este navegador.",
+    "saved": "Guardado en este navegador",
+    "savedAt": "Guardado en este navegador a las {{time}}",
+    "savedNote": "Cada parámetro, expresión, dato de entrada, interruptor y ajuste del gráfico se guarda en el almacenamiento local de este navegador y se restaura al volver. Copie el enlace para llevar una fórmula a otro navegador."
   }
 }

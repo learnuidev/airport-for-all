@@ -21,7 +21,8 @@
     "kerbside": "Kerbside",
     "decrease": "Decrease {{label}}",
     "increase": "Increase {{label}}",
-    "chartHint": "drag the plot or the years · arrow keys"
+    "chartHint": "drag the plot or the years · arrow keys",
+    "formula": "Open the formula"
   },
   "chart": {
     "aria": "Costs by year since the concession was signed"
@@ -302,5 +303,82 @@
   "nav": {
     "chart": "The chart",
     "chartCta": "Open the interactive chart"
+  },
+  "formula": {
+    "kicker": "The formula workbench",
+    "kickerNote": "Every parameter and every expression behind the board's projection. Edit anything, see all of it in the year table.",
+    "tabs": {
+      "formulas": "Formulas",
+      "params": "Parameters",
+      "reference": "Reference"
+    },
+    "backToBoard": "Back to the board",
+    "applied": "Applied",
+    "dirty": "Unapplied changes",
+    "run": "Apply",
+    "runHint": "Apply to move the projection onto your edits.",
+    "share": "Copy link",
+    "copied": "Link copied — it carries your formulas.",
+    "copyHint": "Copy the address bar to share these formulas.",
+    "presetsTitle": "Starting points",
+    "apply": "Apply",
+    "paramsTitle": "Parameters",
+    "paramsBody": "The numbers the formulas read. All of these are also reachable as P.<key> inside any expression.",
+    "shippedValue": "shipped: {{value}}",
+    "varsTitle": "Names a formula can read",
+    "functionsTitle": "Functions",
+    "functionsNote": "Nothing else is available: no access to the page, the network or the browser, so a formula cannot do more than arithmetic.",
+    "syntaxTitle": "Syntax",
+    "syntax": {
+      "math": "arithmetic, with brackets and ** for powers",
+      "ternary": "a condition, then one value or the other",
+      "logic": "and, or, not",
+      "member": "a field of a table or of the airport",
+      "yearly": "a step's whole series so far, year 0 to now — for running totals"
+    },
+    "inputsTitle": "The trip being modelled",
+    "airport": "Airport",
+    "ticket": "Ticket, CAD",
+    "days": "Days parked",
+    "travellers": "Travellers",
+    "dropOff": "Kerbside, minutes",
+    "year": "Concession year",
+    "switchesTitle": "Switches the formulas can read",
+    "switchesNote": "Each switch reaches a formula as enabled… — for example enabledFood. A formula that ignores its switch charges the reader for that item whatever the switch says.",
+    "figuresTitle": "What the formula says",
+    "figures": {
+      "trip": "Whole trip, {{calendar}}",
+      "growth": "Above signing day",
+      "atSigning": "The same trip at signing",
+      "extrasShare": "Of the trip is off-ticket",
+      "ticket": "Ticket, per traveller",
+      "extras": "Off the ticket",
+      "needed": "Investors need, {{calendar}}",
+      "extracted": "Taken out since signing",
+      "finalYear": "Whole trip, {{calendar}}",
+      "added": "Added by the concession"
+    },
+    "drift": "Difference from the shipped model: {{amount}}",
+    "matchesShipped": "This formula matches the shipped model exactly.",
+    "versusShipped": "{{amount}} against the shipped model this year.",
+    "chartTitle": "Year by year",
+    "chartAria": "The edited formula, drawn year by year",
+    "showShipped": "Shipped model",
+    "tableTitle": "Every year, every step",
+    "tableNote": "All {{horizon}} years of the applied formula. Amounts are in Canadian dollars.",
+    "tableYear": "Year",
+    "tableVsShipped": "vs shipped",
+    "signed": "Signed",
+    "tableFooter": "The right-hand column is this formula's whole trip against the shipped model's, year by year. Dashes mean the two agree; colour means you have changed something.",
+    "errorsTitle": "{{count}} step is not producing a number",
+    "errorsBody": "Those steps fall back to zero so the rest of the projection still runs. The field with the problem is marked in red.",
+    "cyclesTitle": "Two steps depend on each other",
+    "cyclesBody": "These steps read each other, so neither can be worked out first: {{keys}}. Break the loop by having one of them read a parameter or an input instead.",
+    "restore": "Restore default",
+    "restoreDone": "Defaults restored — the workbench is back to the shipped model.",
+    "restoreCleared": "Default is back, and the saved formula has been cleared from this browser.",
+    "saved": "Saved in this browser",
+    "savedAt": "Saved in this browser at {{time}}",
+    "savedNote": "Every parameter, expression, input, switch and chart setting is kept in this browser's local storage and restored when you come back. Copy the link to move a formula to another browser."
   }
 }

@@ -21,7 +21,8 @@
     "kerbside": "路边落客",
     "decrease": "减少{{label}}",
     "increase": "增加{{label}}",
-    "chartHint": "拖动图表或年份 · 方向键"
+    "chartHint": "拖动图表或年份 · 方向键",
+    "formula": "打开公式"
   },
   "chart": {
     "aria": "特许经营签约以来逐年的费用"
@@ -302,5 +303,82 @@
   "nav": {
     "chart": "互动图表",
     "chartCta": "打开互动图表"
+  },
+  "formula": {
+    "kicker": "公式工作台",
+    "kickerNote": "看板预测背后的每一个参数和每一条表达式。随意修改，年度表随你而变。",
+    "tabs": {
+      "formulas": "公式",
+      "params": "参数",
+      "reference": "参考"
+    },
+    "backToBoard": "返回看板",
+    "applied": "已应用",
+    "dirty": "有未应用的修改",
+    "run": "应用",
+    "runHint": "点“应用”，让预测采用你的修改。",
+    "share": "复制链接",
+    "copied": "链接已复制，其中包含你的公式。",
+    "copyHint": "复制地址栏即可分享这些公式。",
+    "presetsTitle": "起点",
+    "apply": "应用",
+    "paramsTitle": "参数",
+    "paramsBody": "公式读取的数值。在表达式中也可以用 P.<键名> 访问。",
+    "shippedValue": "出厂值：{{value}}",
+    "varsTitle": "公式可读取的名称",
+    "functionsTitle": "函数",
+    "functionsNote": "除此之外一无所有：无法访问页面、网络或浏览器，因此公式只能做算术。",
+    "syntaxTitle": "语法",
+    "syntax": {
+      "math": "四则运算，括号，** 表示乘方",
+      "ternary": "先判断条件，再取其中一个值",
+      "logic": "与、或、非",
+      "member": "表格或机场的某个字段",
+      "yearly": "某一步到目前为止的整条序列——用于累计"
+    },
+    "inputsTitle": "被建模的行程",
+    "airport": "机场",
+    "ticket": "票价（加元）",
+    "days": "停车天数",
+    "travellers": "旅客人数",
+    "dropOff": "落客区（分钟）",
+    "year": "特许经营年份",
+    "switchesTitle": "公式可读取的开关",
+    "switchesNote": "每个开关以 enabled… 的形式进入公式，例如 enabledFood。若公式忽略开关，无论开关如何都会向读者收取该项费用。",
+    "figuresTitle": "公式给出的结果",
+    "figures": {
+      "trip": "全程费用，{{calendar}}",
+      "growth": "相对签约当年",
+      "atSigning": "签约当年的同一趟行程",
+      "extrasShare": "行程中票外收费的比例",
+      "ticket": "票价（每位旅客）",
+      "extras": "票外收费",
+      "needed": "投资者当年所需，{{calendar}}",
+      "extracted": "签约以来被抽走的金额",
+      "finalYear": "全程费用，{{calendar}}",
+      "added": "特许经营带来的增加"
+    },
+    "drift": "与出厂模型的差异：{{amount}}",
+    "matchesShipped": "该公式与出厂模型完全一致。",
+    "versusShipped": "本年与出厂模型相差 {{amount}}。",
+    "chartTitle": "逐年变化",
+    "chartAria": "修改后的公式按年绘制的曲线",
+    "showShipped": "出厂模型",
+    "tableTitle": "每一年，每一步",
+    "tableNote": "已应用公式的 {{horizon}} 年结果。金额单位为加元。",
+    "tableYear": "年份",
+    "tableVsShipped": "对比出厂",
+    "signed": "签约",
+    "tableFooter": "最右列逐年比较该公式的全程费用与出厂模型。显示破折号表示两者一致；显示颜色表示你改动了某些东西。",
+    "errorsTitle": "有 {{count}} 个步骤没有算出数值",
+    "errorsBody": "这些步骤按 0 处理，好让其余预测照常运行。出问题的字段已标红。",
+    "cyclesTitle": "有两个步骤相互依赖",
+    "cyclesBody": "这些步骤互相读取，谁都无法先算出来：{{keys}}。让其中一个改读参数或输入即可解开循环。",
+    "restore": "恢复默认设置",
+    "restoreDone": "已恢复默认设置，工作台回到出厂模型。",
+    "restoreCleared": "默认设置已恢复，保存在此浏览器中的公式也已清除。",
+    "saved": "已保存在此浏览器",
+    "savedAt": "已于 {{time}} 保存在此浏览器",
+    "savedNote": "每个参数、表达式、输入、开关和图表设置都保存在此浏览器的本地存储中，下次回来会自动恢复。复制链接即可把公式带到其他浏览器。"
   }
 }

@@ -208,8 +208,14 @@ function Board({
           </label>
 
           <Link
+            href="/chart/formula"
+            className="ml-auto cursor-pointer border border-rule px-3 py-1 font-sans text-[0.74rem] font-bold uppercase tracking-wide transition hover:border-ink hover:bg-ink hover:text-white"
+          >
+            {t("controls.formula")}
+          </Link>
+          <Link
             href="/"
-            className="ml-auto cursor-pointer border border-ink px-3 py-1 font-sans text-[0.74rem] font-bold uppercase tracking-wide transition hover:bg-ink hover:text-white"
+            className="cursor-pointer border border-ink px-3 py-1 font-sans text-[0.74rem] font-bold uppercase tracking-wide transition hover:bg-ink hover:text-white"
           >
             {t("controls.readArticle")}
           </Link>
