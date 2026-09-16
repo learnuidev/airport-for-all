@@ -1,48 +1,80 @@
 /**
- * Integrity check: every `source` anchor declared in src/lib/sourced.ts must
- * exist verbatim in article.md at the line it claims.
+ * Integrity check for every figure the app draws.
+ *
+ * Markdown anchors must appear verbatim at the line they claim in article.md.
+ * PDF anchors must appear on the page they claim in the Canadian Labour
+ * Congress report. If either source moves, the build fails and names the chart
+ * data that is no longer supported.
  *
  * Run with:  npm run verify:sources
- *
- * This is what keeps "article.md is the source of truth" honest — if the
- * markdown moves, the build tells you which chart data is now unsupported.
  */
 import fs from "node:fs";
 import path from "node:path";
 import * as sourced from "../src/lib/sourced.ts";
+import { execFileSync } from "node:child_process";
 
-type Anchor = { path: string; quote: string; line: number };
+type Anchor = { path: string; quote: string; line?: number; page?: number };
 
 const anchors: Anchor[] = [];
 
 function walk(value: unknown, trail: string) {
   if (!value || typeof value !== "object") return;
   const record = value as Record<string, unknown>;
-  const source = record.source as { quote?: string; line?: number } | undefined;
-  if (source?.quote && typeof source.line === "number") {
-    anchors.push({ path: trail, quote: source.quote, line: source.line });
+  const source = record.source as { quote?: string; line?: number; page?: number } | undefined;
+  if (source?.quote && (typeof source.line === "number" || typeof source.page === "number")) {
+    anchors.push({ path: trail, quote: source.quote, line: source.line, page: source.page });
   }
   for (const [key, child] of Object.entries(record)) walk(child, `${trail}.${key}`);
 }
 
 walk(sourced, "sourced");
 
-const articlePath = path.join(process.cwd(), "article.md");
-const lines = fs.readFileSync(articlePath, "utf8").split("\n");
+const ARTICLE = path.join(process.cwd(), "article.md");
+const REPORT = path.join(process.cwd(), "public_runways_private_profits.pdf");
+const CACHE = path.join(process.cwd(), ".cache", "report-pages.json");
 
-const failures = anchors.filter((anchor) => {
-  const line = lines[anchor.line - 1] ?? "";
-  return !line.includes(anchor.quote);
-});
+const articleLines = fs.readFileSync(ARTICLE, "utf8").split("\n");
+
+/** Extracted pages of the report, cached so the check stays fast. */
+function reportPages(): string[] {
+  if (fs.existsSync(CACHE)) return JSON.parse(fs.readFileSync(CACHE, "utf8"));
+  const script = path.join(process.cwd(), "scripts", "extract-report.mjs");
+  if (!fs.existsSync(script)) {
+    console.error("✗ PDF anchors are declared but scripts/extract-report.mjs is missing.");
+    process.exit(1);
+  }
+  execFileSync("node", [script, REPORT, CACHE], { stdio: "inherit" });
+  return JSON.parse(fs.readFileSync(CACHE, "utf8"));
+}
+
+const needsPdf = anchors.some((anchor) => typeof anchor.page === "number");
+const pages = needsPdf ? reportPages() : [];
+
+const failures: { anchor: Anchor; found: string }[] = [];
+
+for (const anchor of anchors) {
+  if (typeof anchor.line === "number") {
+    const line = articleLines[anchor.line - 1] ?? "";
+    if (!line.includes(anchor.quote)) failures.push({ anchor, found: line.slice(0, 120) });
+  } else if (typeof anchor.page === "number") {
+    const page = pages[anchor.page - 1] ?? "";
+    if (!page.includes(anchor.quote)) failures.push({ anchor, found: page.replace(/\s+/g, " ").slice(0, 120) });
+  }
+}
 
 if (failures.length) {
-  console.error(`\n✗ ${failures.length} of ${anchors.length} source anchors no longer match article.md:\n`);
-  for (const failure of failures) {
-    console.error(`  ${failure.path}`);
-    console.error(`    expected on line ${failure.line}: ${JSON.stringify(failure.quote)}`);
-    console.error(`    found:                          ${JSON.stringify((lines[failure.line - 1] ?? "").slice(0, 120))}`);
+  console.error(`\n✗ ${failures.length} of ${anchors.length} source anchors no longer match:\n`);
+  for (const { anchor, found } of failures) {
+    const where = anchor.line ? `article.md line ${anchor.line}` : `report page ${anchor.page}`;
+    console.error(`  ${anchor.path}`);
+    console.error(`    expected in ${where}: ${JSON.stringify(anchor.quote)}`);
+    console.error(`    found:                 ${JSON.stringify(found)}`);
   }
   process.exit(1);
 }
 
-console.log(`✓ ${anchors.length} source anchors verified against article.md (${lines.length} lines)`);
+const mdCount = anchors.filter((a) => a.line).length;
+const pdfCount = anchors.filter((a) => a.page).length;
+console.log(
+  `✓ ${anchors.length} source anchors verified — ${mdCount} against article.md (${articleLines.length} lines), ${pdfCount} against runways report (${pages.length} pages)`,
+);

@@ -2,12 +2,16 @@ import { Suspense } from "react";
 import { getArticle } from "@/lib/article.server";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 
+// Read the markdown on every request so a link always reflects the current source.
+export const dynamic = "force-dynamic";
+
 /**
  * One page. The board carries the interaction; the written article opens over
  * it, so nothing is ever more than one screen away.
  */
 export default function Page() {
   const article = getArticle();
+
 
   return (
     <Suspense

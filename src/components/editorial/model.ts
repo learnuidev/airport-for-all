@@ -19,6 +19,22 @@
 
 import { AIRPORTS, type Airport } from "@/lib/sourced";
 
+/**
+ * The Improvement Fee actually charged per departing passenger in 2025, from
+ * the CLC report's reading of each authority's statements. The $30-$40 band in
+ * article.md is a national range; these are the real numbers.
+ */
+export const AIF_BY_AIRPORT: Record<string, number> = {
+  YYZ: 41.81,
+  YVR: 26.25,
+  YUL: 45.99,
+  YYC: 40,
+  YOW: 35,
+  YHZ: 35,
+  YWG: 35,
+  YEG: 35,
+};
+
 export const AIF_PER_TICKET = 35;
 export const TAX_SHARE = 0.28;
 export const AERO_PER_TICKET = 22;
@@ -65,6 +81,8 @@ export type TripInput = {
 export type YearCosts = {
   year: number;
   calendar: number;
+  /** The airport's Improvement Fee per departing passenger today. */
+  aifToday: number;
   airfare: number;
   aif: number;
   aeronautical: number;
@@ -83,11 +101,14 @@ export type YearCosts = {
 export function costsFor(input: TripInput, year: number): YearCosts {
   const { airport, ticket, days, travellers, dropOffMinutes } = input;
 
+  // Use this airport's real Improvement Fee where the CLC report gives one.
+  const aifToday = AIF_BY_AIRPORT[airport.code] ?? AIF_PER_TICKET;
+
   const taxes = ticket * TAX_SHARE;
   const aeronauticalToday = Math.min(AERO_PER_TICKET, ticket * 0.25);
-  const airfareToday = Math.max(0, ticket - AIF_PER_TICKET - aeronauticalToday - taxes);
+  const airfareToday = Math.max(0, ticket - aifToday - aeronauticalToday - taxes);
 
-  const aif = AIF_PER_TICKET * Math.pow(year < 3 ? 1.035 : 1.055, year);
+  const aif = aifToday * Math.pow(year < 3 ? 1.035 : 1.055, year);
   const aeronautical =
     year <= AERO_ANCHOR_YEARS
       ? aeronauticalToday * Math.pow(1 + AERO_ANNUAL, year)
@@ -112,6 +133,7 @@ export function costsFor(input: TripInput, year: number): YearCosts {
   return {
     year,
     calendar: ANNOUNCEMENT_YEAR + year,
+    aifToday,
     airfare,
     aif,
     aeronautical,

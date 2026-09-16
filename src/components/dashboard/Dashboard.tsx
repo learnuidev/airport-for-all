@@ -17,7 +17,7 @@ import {
   useYearKeys,
   type ViewId,
 } from "./Board";
-import { AIRPORTS, PRECEDENTS } from "@/lib/sourced";
+import { AIRPORTS, FINANCIALS, PRECEDENTS } from "@/lib/sourced";
 import {
   ANNOUNCEMENT_YEAR,
   cad,
@@ -434,6 +434,7 @@ function Info({
 
       {view === "record" ? <Record /> : null}
       {view === "ticket" ? <Airports /> : null}
+      {view === "books" ? <Books /> : null}
 
       <p className="mt-auto border-t border-rule pt-2.5 font-sans text-[0.68rem] leading-relaxed text-ink-4">
         Reported anchors in article.md: Perth +60 percent per passenger over a decade, UK parking
@@ -463,6 +464,13 @@ function Figures({
           { value: "+60%", label: "Perth per passenger, one decade" },
           { value: "+$20", label: "2023 study fees — with 50% fewer cancellations", tone: "green" },
         ]
+      : view === "books"
+        ? [
+            { value: "$2.08B", label: "Pearson's 2025 revenue" },
+            { value: "$961M", label: "Montréal-Trudeau's revenue" },
+            { value: "$717M", label: "Vancouver's revenue" },
+            { value: "$7.3B", label: "Rent paid to Ottawa since 1994", tone: "red" },
+          ]
       : view === "revenue"
         ? [
             { value: "$3.95B", label: "2022 revenue, no profit at all" },
@@ -602,6 +610,105 @@ function Record() {
         </li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * The report's own tables: what each airport earned in 2025 and what it spent,
+ * with the share of revenue and of operating expenses. The CLC compiled these
+ * from the 2025 consolidated statements — the disclosure that public,
+ * non-profit ownership requires and private ownership would not.
+ */
+function Books() {
+  const [tab, setTab] = useState<"revenue" | "expenses">("revenue");
+
+  const rowsFor = (airport: (typeof FINANCIALS)[number]) =>
+    tab === "revenue"
+      ? [
+          { label: "Aeronautical", value: airport.aeronautical, base: airport.totalRevenue, colour: "#1a5fb4" },
+          { label: "Non-aeronautical", value: airport.nonAeronautical, base: airport.totalRevenue, colour: "#4a90d9" },
+          { label: "Improvement Fees", value: airport.aif, base: airport.totalRevenue, colour: "#d0021b" },
+        ]
+      : [
+          { label: "Salaries, wages, benefits", value: airport.wages, base: airport.totalExpenses, colour: "#7a3fa0" },
+          { label: "Transport Canada rent", value: airport.rent, base: airport.totalExpenses, colour: "#e8853f" },
+        ];
+
+  return (
+    <div className="border-t border-rule pt-3">
+      <div className="flex items-baseline justify-between">
+        <p className="font-sans text-[0.66rem] font-bold uppercase tracking-[0.09em] text-ink-4">
+          2025 accounts
+        </p>
+        <div className="flex gap-3">
+          {(["revenue", "expenses"] as const).map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => setTab(option)}
+              aria-pressed={tab === option}
+              className={[
+                "cursor-pointer border-b pb-0.5 font-sans text-[0.72rem] transition",
+                tab === option
+                  ? "border-ink font-bold text-ink"
+                  : "border-transparent text-ink-4 hover:text-ink",
+              ].join(" ")}
+            >
+              {option === "revenue" ? "Revenue" : "Expenses"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <ul className="mt-2 space-y-3">
+        {FINANCIALS.map((airport) => {
+          const total = tab === "revenue" ? airport.totalRevenue : airport.totalExpenses;
+          return (
+            <li key={airport.code}>
+              <div className="flex items-baseline justify-between">
+                <span className="font-mono text-[0.72rem] font-semibold">{airport.code}</span>
+                <span className="font-sans text-[0.72rem] tabular text-ink-3">
+                  ${total.toLocaleString()}M
+                </span>
+              </div>
+              <div className="mt-1 flex h-2.5 w-full overflow-hidden">
+                {rowsFor(airport).map((row) => (
+                  <div
+                    key={row.label}
+                    title={`${row.label}: $${row.value}M`}
+                    style={{ width: `${(row.value / total) * 100}%`, background: row.colour }}
+                  />
+                ))}
+              </div>
+              <ul className="mt-1 space-y-0.5">
+                {rowsFor(airport).map((row) => (
+                  <li key={`${airport.code}-${row.label}`} className="flex items-baseline gap-2">
+                    <span className="h-2 w-2 shrink-0" style={{ background: row.colour }} />
+                    <span className="flex-1 font-sans text-[0.68rem] text-ink-3">{row.label}</span>
+                    <span className="font-sans text-[0.68rem] tabular text-ink-2">
+                      ${row.value}M
+                    </span>
+                    <span className="w-9 text-right font-sans text-[0.66rem] tabular text-ink-4">
+                      {Math.round((row.value / row.base) * 100)}%
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {tab === "revenue" ? (
+                <p className="mt-1 font-sans text-[0.64rem] text-ink-4">
+                  Improvement Fee ${airport.aifPerTicket.toFixed(2)} per departing passenger
+                </p>
+              ) : null}
+            </li>
+          );
+        })}
+      </ul>
+
+      <p className="mt-2.5 font-sans text-[0.64rem] leading-relaxed text-ink-4">
+        From the 2025 consolidated financial statements, as compiled in the Canadian Labour
+        Congress report. <cite className="not-italic">Public Runways, Private Profits</cite>, p. 24–25.
+      </p>
+    </div>
   );
 }
 

@@ -3,6 +3,9 @@ import { Inter, Source_Serif_4, Source_Code_Pro } from "next/font/google";
 import "./globals.css";
 import { getArticle } from "@/lib/article.server";
 
+// The headline lives in article.md, so metadata must be read per request.
+export const dynamic = "force-dynamic";
+
 const serif = Source_Serif_4({
   subsets: ["latin"],
   variable: "--font-serif",

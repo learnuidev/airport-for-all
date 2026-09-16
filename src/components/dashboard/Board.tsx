@@ -42,7 +42,7 @@ export function componentValue(row: YearCosts, key: string): number {
 }
 
 export type ChartView = "waterline" | "stacked" | "contribution";
-export type ViewId = "cost" | "charges" | "ticket" | "revenue" | "record";
+export type ViewId = "cost" | "charges" | "ticket" | "revenue" | "books" | "record";
 
 export const VIEWS: {
   id: ViewId;
@@ -83,6 +83,14 @@ export const VIEWS: {
     chart: "contribution",
   },
   {
+    id: "books",
+    label: "The books",
+    title: "The accounts privatisation would close",
+    blurb:
+      "The 2025 statements of the three busiest airports, from the CLC report's own tables. This is the disclosure a private owner would no longer owe anyone.",
+    chart: "contribution",
+  },
+  {
     id: "record",
     label: "The record",
     title: "Five countries, three decades, one direction",
@@ -91,6 +99,23 @@ export const VIEWS: {
     chart: "contribution",
   },
 ];
+
+/**
+ * The 2025 accounts of the three busiest airports, in $ millions. Drawn from the
+ * report's revenue and expense tables, which it compiled from each authority's
+ * consolidated financial statements.
+ */
+export const BOOKS = {
+  revenue: [
+    { key: "aeronautical", label: "Aeronautical", colour: "#1a5fb4" },
+    { key: "nonAeronautical", label: "Non-aeronautical", colour: "#4a90d9" },
+    { key: "aif", label: "Improvement Fees", colour: "#d0021b" },
+  ],
+  expenses: [
+    { key: "wages", label: "Salaries, wages, benefits", colour: "#7a3fa0" },
+    { key: "rent", label: "Transport Canada rent", colour: "#e8853f" },
+  ],
+} as const;
 
 /** Cumulative revenue extraction, in $ millions, after `year` years. */
 export function extractionAt(year: number): number {
@@ -116,6 +141,8 @@ export function axisValues(view: ViewId, rows: YearCosts[] | null, ticket: numbe
       return rows.map((row) => row.ticketTotal);
     case "revenue":
       return rows.map((_, index) => extractionAt(index));
+    case "books":
+      return rows.map((row, index) => 3.95 * Math.pow(1.03, index) * 1000);
     case "record":
       return rows.map((row) => (row.tripTotal - row.ticketTotal) / row.tripTotal);
     default:

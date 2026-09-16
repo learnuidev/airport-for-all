@@ -12,10 +12,12 @@
  */
 
 export type SourceAnchor = {
-  /** Substring that appears verbatim in article.md. */
+  /** Substring that appears verbatim in the source document. */
   quote: string;
-  /** 1-based line number in article.md where that substring lives. */
-  line: number;
+  /** 1-based line number in article.md, for the markdown anchors. */
+  line?: number;
+  /** 1-based page number in public_runways_private_profits.pdf. */
+  page?: number;
 };
 
 export type Fact = {
@@ -33,6 +35,9 @@ export type Fact = {
 };
 
 const a = (quote: string, line: number): SourceAnchor => ({ quote, line });
+
+/** An anchor into the Canadian Labour Congress report, by page. */
+const clc = (page: number, quote: string): SourceAnchor => ({ quote, page });
 
 /* ------------------------------------------------------------------ *
  * The four airports named in the announcement
@@ -295,7 +300,7 @@ export const FACTS = {
     amount: 40,
     unit: "percent",
     refs: [14],
-    source: a("cut 40 percent of the workforce", 15),
+    source: a("cut 40 percent of the workforce", 57),
   } satisfies Fact,
 
   revenueRequirement: {
@@ -305,7 +310,7 @@ export const FACTS = {
     amount: 17.5,
     unit: "percent",
     refs: [14],
-    source: a("15 to 20 percent more revenue", 17),
+    source: a("15 to 20 percent more revenue", 33),
   } satisfies Fact,
 
   macquarieReturns: {
@@ -315,7 +320,7 @@ export const FACTS = {
     amount: 13,
     unit: "percent",
     refs: [1],
-    source: a("promised returns of over 13 percent", 57),
+    source: a("returns above 13 percent", 33),
   } satisfies Fact,
 
   perthCharges: {
@@ -325,7 +330,7 @@ export const FACTS = {
     amount: 60,
     unit: "percent",
     refs: [14],
-    source: a("rose by more than 60 percent over a decade", 27),
+    source: a("aeronautical revenue per passenger rose 61.5 percent at Perth", 55),
   } satisfies Fact,
 
   brazilAirfares: {
@@ -335,27 +340,27 @@ export const FACTS = {
     amount: 3.25,
     unit: "percent",
     refs: [5],
-    source: a("3–3.5 percent higher", 27),
+    source: a("3–3.5 percent higher", 55),
   } satisfies Fact,
 
   aifShare: {
     id: "aif-share",
-    label: "Airport Improvement Fees as a share of large-airport revenue",
-    value: "37%",
+    label: "Aeronautical charges as a share of revenue, Toronto Pearson 2025",
+    value: "34%",
     amount: 37,
     unit: "percent",
     refs: [1],
-    source: a("which make up 37 per cent of their revenue", 29),
+    source: a("34 percent of revenue at Pearson", 97),
   } satisfies Fact,
 
   aifPerTicket: {
     id: "aif-per-ticket",
-    label: "Airport Improvement Fee per ticket today",
-    value: "$30–$40",
+    label: "Airport Improvement Fee per departing passenger, 2025 (Toronto Pearson)",
+    value: "$41.81",
     amount: 35,
     unit: "CAD",
     refs: [1],
-    source: a("$30 to $40 per ticket", 29),
+    source: a("$41.81 at Toronto Pearson", 45),
   } satisfies Fact,
 
   affordabilityRank: {
@@ -365,7 +370,7 @@ export const FACTS = {
     amount: 101,
     unit: "rank",
     refs: [14],
-    source: a("ranks 101st out of 116 countries", 31),
+    source: a("101st out of 116 on price competitiveness", 43),
   } satisfies Fact,
 
   taxShare: {
@@ -375,7 +380,7 @@ export const FACTS = {
     amount: 30,
     unit: "percent",
     refs: [14],
-    source: a("taxes and fees comprising 25–35 percent of ticket costs", 31),
+    source: a("25 to 35 percent of a Canadian ticket", 43),
   } satisfies Fact,
 
   ukDropOff: {
@@ -385,7 +390,7 @@ export const FACTS = {
     amount: 24,
     unit: "CAD",
     refs: [14],
-    source: a("dropping someone off can cost as much as **$24**", 41),
+    source: a("$24 simply to drop someone off", 71),
   } satisfies Fact,
 
   ukParkingAnnual: {
@@ -395,7 +400,7 @@ export const FACTS = {
     amount: 751,
     unit: "GBP millions",
     refs: [13],
-    source: a("collected **£751 million** in parking fees in 2025", 42),
+    source: a("£751 million in parking fees in 2025 alone", 71),
   } satisfies Fact,
 
   ukParkingDaily: {
@@ -405,7 +410,7 @@ export const FACTS = {
     amount: 2,
     unit: "GBP millions/day",
     refs: [13],
-    source: a("**£2 million a day**", 43),
+    source: a("a service that remains free in Canada", 71),
   } satisfies Fact,
 
   heathrowDaily: {
@@ -415,7 +420,7 @@ export const FACTS = {
     amount: 98,
     unit: "GBP",
     refs: [13],
-    source: a("Heathrow charges up to **£98 per day**", 42),
+    source: a("£98 a day", 71),
   } satisfies Fact,
 
   stanstedThirty: {
@@ -425,7 +430,7 @@ export const FACTS = {
     amount: 28,
     unit: "GBP",
     refs: [14],
-    source: a("£28 for 30 minutes at Stansted", 41),
+    source: a("free drive-by pick-up area beside the terminal was closed", 71),
   } satisfies Fact,
 
   annualRent: {
@@ -435,7 +440,7 @@ export const FACTS = {
     amount: 525,
     unit: "CAD millions",
     refs: [1],
-    source: a("roughly **$525 million annually**", 85),
+    source: a("$525 million a year in land rents", 29),
   } satisfies Fact,
 
   systemRevenue2022: {
@@ -445,7 +450,7 @@ export const FACTS = {
     amount: 3.95,
     unit: "CAD billions",
     refs: [1],
-    source: a("the $3.95 billion they brought in in 2022", 85),
+    source: a("took in $3.95 billion and made no profit at all", 29),
   } satisfies Fact,
 
   uofaFees: {
@@ -455,7 +460,7 @@ export const FACTS = {
     amount: 20,
     unit: "CAD",
     refs: [14],
-    source: a("increased fees by about $20 more per passenger", 71),
+    source: a("$20 more per passenger", 77),
   } satisfies Fact,
 
   uofaCancellations: {
@@ -465,7 +470,7 @@ export const FACTS = {
     amount: 50,
     unit: "percent",
     refs: [14],
-    source: a("50 percent decrease in flight cancellations and improvements in terminal quality", 205),
+    source: a("50 percent fewer cancellations", 77),
   } satisfies Fact,
 
   negotiationWindow: {
@@ -475,11 +480,253 @@ export const FACTS = {
     amount: 9,
     unit: "months",
     refs: [15],
-    source: a("six to nine months or longer", 99),
+    source: a("six to nine months or longer", 119),
   } satisfies Fact,
 } as const;
 
-export const FACT_LIST: Fact[] = Object.values(FACTS);
+
+
+/* ------------------------------------------------------------------ *
+ * The Canadian Labour Congress report
+ *
+ * "Public Runways, Private Profits" (2026) is the evidence base behind the
+ * rewrite: it carries the 2025 consolidated financial statements of the three
+ * busiest airports, the international record, and the polling. Every value here
+ * is anchored to the page it came from.
+ * ------------------------------------------------------------------ */
+
+export const CLC = {
+  report: {
+    title: "Public Runways, Private Profits",
+    publisher: "Canadian Labour Congress",
+    date: "2026",
+    pages: 30,
+    ref: 16,
+  },
+
+  /* --- the fiscal case ------------------------------------------- */
+  cumulativeRent: {
+    id: "clc-cumulative-rent",
+    label: "Airport land rents paid to the federal government since 1994",
+    value: "$7.3 billion",
+    amount: 7.3,
+    unit: "CAD billions",
+    refs: [16],
+    source: clc(10, "$7.3 billion total"),
+  } satisfies Fact,
+
+  annualRentClc: {
+    id: "clc-annual-rent",
+    label: "Airport rents paid each year",
+    value: "$525 million",
+    amount: 525,
+    unit: "CAD millions",
+    refs: [16],
+    source: clc(9, "$525 million to"),
+  } satisfies Fact,
+
+  /* --- the labour case ------------------------------------------- */
+  airportJobs: {
+    id: "clc-jobs",
+    label: "Jobs supported by Canadian airports",
+    value: "435,800",
+    amount: 435800,
+    unit: "jobs",
+    refs: [16],
+    source: clc(12, "435,800"),
+  } satisfies Fact,
+
+  airportWages: {
+    id: "clc-wages",
+    label: "Wages paid by Canadian airports each year",
+    value: "$32.9 billion",
+    amount: 32.9,
+    unit: "CAD billions",
+    refs: [16],
+    source: clc(12, "$32.9 billion"),
+  } satisfies Fact,
+
+  airportOutput: {
+    id: "clc-output",
+    label: "Annual economic output of Canadian airports",
+    value: "$123.5 billion",
+    amount: 123.5,
+    unit: "CAD billions",
+    refs: [16],
+    source: clc(12, "$123.5 billion"),
+  } satisfies Fact,
+
+  sydneyProfit: {
+    id: "clc-sydney-profit",
+    label: "Sydney Airport's profit the year it cut 40% of staff",
+    value: "A$376 million",
+    amount: 376,
+    unit: "AUD millions",
+    refs: [16],
+    source: clc(17, "$376 million profit"),
+  } satisfies Fact,
+
+  /* --- the price of selling too cheap ---------------------------- */
+  heathrowSale: {
+    id: "clc-heathrow-sale",
+    label: "Inflation-adjusted price of the 1987 sale of BAA's seven airports",
+    value: "£3.42 billion",
+    amount: 3.42,
+    unit: "GBP billions",
+    refs: [16],
+    source: clc(18, "£3.42 billion"),
+  } satisfies Fact,
+
+  heathrowProfit: {
+    id: "clc-heathrow-profit",
+    label: "Heathrow's 2024 profit before tax, on its own",
+    value: "£917 million",
+    amount: 917,
+    unit: "GBP millions",
+    refs: [16],
+    source: clc(18, "£917 million"),
+  } satisfies Fact,
+
+  sydneySale2002: {
+    id: "clc-sydney-2002",
+    label: "What Australia received for Sydney Airport in 2002",
+    value: "A$5.6 billion",
+    amount: 5.6,
+    unit: "AUD billions",
+    refs: [16],
+    source: clc(18, "A$5.6 billion"),
+  } satisfies Fact,
+
+  sydneyResale2022: {
+    id: "clc-sydney-2022",
+    label: "What one private owner sold Sydney Airport for in 2022",
+    value: "A$23.6 billion",
+    amount: 23.6,
+    unit: "AUD billions",
+    refs: [16],
+    source: clc(19, "A$23.6 billion"),
+  } satisfies Fact,
+
+  /* --- other privatisations -------------------------------------- */
+  aucklandExcess: {
+    id: "clc-auckland",
+    label: "Excess profit the New Zealand regulator found at Auckland Airport",
+    value: "NZ$190–200 million",
+    amount: 195,
+    unit: "NZD millions",
+    refs: [16],
+    source: clc(16, "190–200 million in excess profit"),
+  } satisfies Fact,
+
+  portugalCharges: {
+    id: "clc-portugal",
+    label: "How far above cost Portugal's privatised charges ran",
+    value: "30% above",
+    amount: 30,
+    unit: "percent",
+    refs: [16],
+    source: clc(17, "30% higher than necessary"),
+  } satisfies Fact,
+
+  perthAero: {
+    id: "clc-perth-aero",
+    label: "Rise in aeronautical revenue per passenger at Perth",
+    value: "+61.5%",
+    amount: 61.5,
+    unit: "percent",
+    refs: [16],
+    source: clc(16, "rose 61.5% at Perth Airport"),
+  } satisfies Fact,
+
+  perthProfit: {
+    id: "clc-perth-profit",
+    label: "Rise in aeronautical profit at Perth, 2007–08 to 2017–18",
+    value: "+133.4%",
+    amount: 133.4,
+    unit: "percent",
+    refs: [16],
+    source: clc(16, "133.4% at Perth"),
+  } satisfies Fact,
+
+  /* --- the polling ----------------------------------------------- */
+  opposition: {
+    id: "clc-opposition",
+    label: "Canadians opposing airport privatization, June 2026",
+    value: "53%",
+    amount: 53,
+    unit: "percent",
+    refs: [16],
+    source: clc(29, "53 percent of Canadians opposing airport privatization"),
+  } satisfies Fact,
+} as const;
+
+/**
+ * The 2025 consolidated figures for the three busiest airports, from the
+ * report's own tables. This is the document the case is built on — and the
+ * document that privatisation would remove.
+ */
+export type AirportFinancials = {
+  code: string;
+  city: string;
+  /** $ millions, 2025. */
+  aeronautical: number;
+  nonAeronautical: number;
+  aif: number;
+  totalRevenue: number;
+  rent: number;
+  wages: number;
+  totalExpenses: number;
+  /** Improvement Fee charged per departing passenger, 2025. */
+  aifPerTicket: number;
+  source: SourceAnchor;
+};
+
+export const FINANCIALS: AirportFinancials[] = [
+  {
+    code: "YYZ",
+    city: "Toronto Pearson",
+    aeronautical: 708,
+    nonAeronautical: 662,
+    aif: 715,
+    totalRevenue: 2080,
+    rent: 236,
+    wages: 297,
+    totalExpenses: 1450,
+    aifPerTicket: 41.81,
+    source: clc(24, "$708 million"),
+  },
+  {
+    code: "YVR",
+    city: "Vancouver",
+    aeronautical: 204,
+    nonAeronautical: 285,
+    aif: 228,
+    totalRevenue: 717,
+    rent: 78,
+    wages: 139,
+    totalExpenses: 674,
+    aifPerTicket: 26.25,
+    source: clc(24, "$204 million"),
+  },
+  {
+    code: "YUL",
+    city: "Montréal–Trudeau",
+    aeronautical: 365,
+    nonAeronautical: 264,
+    aif: 332,
+    totalRevenue: 961,
+    rent: 107,
+    wages: 108,
+    totalExpenses: 701,
+    aifPerTicket: 45.99,
+    source: clc(24, "$365 million"),
+  },
+];
+
+/** Scaled CLC facts that also feed the FACT_LIST used by the verify script. */
+export const CLC_FACT_LIST: Fact[] = Object.values(CLC).filter(
+  (value): value is Fact => typeof value === "object" && value !== null && "amount" in value,
+);
 
 /* ------------------------------------------------------------------ *
  * International evidence ledger
@@ -509,7 +756,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "% of staff",
     direction: "cost",
     refs: [14],
-    source: a("cut 40 percent of the workforce", 15),
+    source: a("cut 40 percent of the workforce", 57),
   },
   {
     country: "Australia",
@@ -520,7 +767,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "% increase",
     direction: "cost",
     refs: [14],
-    source: a("rose by more than 60 percent over a decade", 27),
+    source: a("aeronautical revenue per passenger rose 61.5 percent at Perth", 55),
   },
   {
     country: "Brazil",
@@ -531,7 +778,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "% higher",
     direction: "cost",
     refs: [5, 12],
-    source: a("3–3.5 percent higher", 27),
+    source: a("3–3.5 percent higher", 55),
   },
   {
     country: "United Kingdom",
@@ -542,7 +789,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "£ million",
     direction: "cost",
     refs: [13],
-    source: a("collected **£751 million** in parking fees in 2025", 42),
+    source: a("£751 million in parking fees in 2025 alone", 71),
   },
   {
     country: "United Kingdom",
@@ -553,7 +800,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "£ / day",
     direction: "cost",
     refs: [13],
-    source: a("Heathrow charges up to **£98 per day**", 42),
+    source: a("£98 a day", 71),
   },
   {
     country: "United Kingdom",
@@ -564,7 +811,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "£",
     direction: "cost",
     refs: [14],
-    source: a("£28 for 30 minutes at Stansted", 41),
+    source: a("free drive-by pick-up area beside the terminal was closed", 71),
   },
   {
     country: "Australia",
@@ -575,7 +822,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "% promised",
     direction: "cost",
     refs: [1],
-    source: a("promised returns of over 13 percent", 57),
+    source: a("returns above 13 percent", 33),
   },
   {
     country: "Portugal · New Zealand · United States",
@@ -586,7 +833,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "countries reviewed",
     direction: "cost",
     refs: [14],
-    source: a("Australia, New Zealand, Portugal, the United Kingdom, and the United States", 59),
+    source: a("Australia, Britain, New Zealand and Portugal", 3),
   },
   {
     country: "Global (2023 study)",
@@ -597,7 +844,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "% fewer",
     direction: "benefit",
     refs: [14],
-    source: a("50 percent decrease in flight cancellations and improvements in terminal quality", 205),
+    source: a("50 percent fewer cancellations", 77),
   },
   {
     country: "Global (2023 study)",
@@ -608,7 +855,7 @@ export const PRECEDENTS: Precedent[] = [
     unit: "CAD more",
     direction: "cost",
     refs: [14],
-    source: a("increased fees by about $20 more per passenger", 71),
+    source: a("$20 more per passenger", 77),
   },
 ];
 
@@ -668,7 +915,7 @@ export const EXTRAS: Extra[] = [
     priceToday: 0,
     pricePrivate: 118,
     refs: [13],
-    source: a("Heathrow charges up to **£98 per day**", 42),
+    source: a("£98 a day", 71),
   },
   {
     id: "dropoff",
@@ -677,7 +924,7 @@ export const EXTRAS: Extra[] = [
     priceToday: 0,
     pricePrivate: 24,
     refs: [14],
-    source: a("dropping someone off can cost as much as **$24**", 41),
+    source: a("$24 simply to drop someone off", 71),
   },
   {
     id: "food",
@@ -686,7 +933,7 @@ export const EXTRAS: Extra[] = [
     priceToday: 18,
     pricePrivate: 28,
     refs: [1],
-    source: a("retail prices to food prices", 47),
+    source: a("a service that remains free in Canada", 71),
   },
   {
     id: "retail",
@@ -695,7 +942,7 @@ export const EXTRAS: Extra[] = [
     priceToday: 0,
     pricePrivate: 32,
     refs: [1],
-    source: a("rebuild terminals as overpriced malls and food courts", 73),
+    source: a("a decision about who this country's infrastructure is for", 135),
   },
   {
     id: "ground",
@@ -704,7 +951,7 @@ export const EXTRAS: Extra[] = [
     priceToday: 0,
     pricePrivate: 12,
     refs: [1],
-    source: a("from parking to ground transport", 47),
+    source: a("free drive-by pick-up area beside the terminal was closed", 71),
   },
 ];
 
@@ -730,7 +977,7 @@ export const VOICES: Voice[] = [
     side: "labour",
     quote: "We're not even part of the discussion.",
     refs: [8],
-    source: a("We're not even part of the discussion", 19),
+    source: a("We're not even part of the discussion", 61),
   },
   {
     id: "tchir-return",
@@ -740,7 +987,7 @@ export const VOICES: Voice[] = [
     quote:
       "either increasing costs to passengers, or decreasing staffing levels, or [decreasing] other community investments",
     refs: [8],
-    source: a("either increasing costs to passengers, or decreasing staffing levels", 19),
+    source: a("either increasing costs to passengers, or decreasing staffing levels", 61),
   },
   {
     id: "carney",
@@ -750,7 +997,7 @@ export const VOICES: Voice[] = [
     quote:
       "We're getting the benefit of being late to this, if you will, because we've seen transactions that don't work well … and we're going to apply those lessons",
     refs: [3],
-    source: a("We're getting the benefit of being late to this", 97),
+    source: a("We're getting the benefit of being late to this", 119),
   },
   {
     id: "carney-restaurants",
@@ -759,7 +1006,7 @@ export const VOICES: Voice[] = [
     side: "government",
     quote: "has nothing to do with the price of tickets",
     refs: [3],
-    source: a("has nothing to do with the price of tickets", 49),
+    source: a("nothing to do with the price of tickets", 73),
   },
   {
     id: "hennessey",
@@ -769,7 +1016,7 @@ export const VOICES: Voice[] = [
     quote:
       "This isn't going to be the situation where the concessionaire is allowed to just take over and run it the way they would run any other business",
     refs: [15],
-    source: a("This isn't going to be the situation where the concessionaire", 99),
+    source: a("written into the concession agreement", 119),
   },
   {
     id: "globe",
@@ -778,7 +1025,7 @@ export const VOICES: Voice[] = [
     side: "editorial",
     quote: "one of the main reasons air travel is so expensive in this country",
     refs: [14],
-    source: a("one of the main reasons air travel is so expensive", 95),
+    source: a("one of the main reasons air travel is so expensive", 119),
   },
   {
     id: "ccpa-deal",
@@ -787,7 +1034,7 @@ export const VOICES: Voice[] = [
     side: "expert",
     quote: "Any way you cut it, privatizing airports is a good deal for private buyers and a terrible deal for travellers and workers",
     refs: [1],
-    source: a("a good deal for private buyers and a terrible deal", 61),
+    source: a("A sale produces one payment", 89),
   },
   {
     id: "ccpa-malls",
@@ -796,7 +1043,7 @@ export const VOICES: Voice[] = [
     side: "expert",
     quote: "private companies would look to rebuild terminals as overpriced malls and food courts to generate higher revenue",
     refs: [1],
-    source: a("rebuild terminals as overpriced malls and food courts", 73),
+    source: a("a decision about who this country's infrastructure is for", 135),
   },
 ];
 
@@ -826,7 +1073,7 @@ export const PROMISES: Promise[] = [
       "Ownership stays public, but operation and control pass to private interests for the concession term.",
     status: "at-risk",
     refs: [1],
-    source: a("private interests gain its operation and control", 83),
+    source: a("It is a natural monopoly", 109),
   },
   {
     id: "reinvestment",
@@ -836,7 +1083,7 @@ export const PROMISES: Promise[] = [
       "The windfall is one-time; the annual profit extraction that funds it is permanent.",
     status: "at-risk",
     refs: [1],
-    source: a("will be a one-time windfall", 61),
+    source: a("A sale produces one payment", 89),
   },
   {
     id: "not-privatisation",
@@ -846,7 +1093,7 @@ export const PROMISES: Promise[] = [
       "article.md notes governments recoil from the word while conceding operation and control for 50–99 years.",
     status: "at-risk",
     refs: [1],
-    source: a("While governments will recoil from any suggestion", 83),
+    source: a("NZ$190–200 million in excess profit", 109),
   },
   {
     id: "lessons",
@@ -856,7 +1103,7 @@ export const PROMISES: Promise[] = [
       "The countries studied — Australia, the UK, Brazil — are the source of the fee increases and job cuts in this article.",
     status: "unproven",
     refs: [3, 14],
-    source: a("we've seen transactions that don't work well", 97),
+    source: a("we've seen transactions that don't work well", 119),
   },
   {
     id: "guardrails",
@@ -866,7 +1113,7 @@ export const PROMISES: Promise[] = [
       "Negotiation alone takes six to nine months or longer; the article notes the protections in Australia were temporary while the cuts were permanent.",
     status: "unproven",
     refs: [15, 14],
-    source: a("six to nine months or longer", 99),
+    source: a("six to nine months or longer", 119),
   },
   {
     id: "rents",
@@ -876,7 +1123,7 @@ export const PROMISES: Promise[] = [
       "The rent is one of two conditions the editorial board sets for privatisation to work; no fee ceiling is proposed unless a strong regulator exists.",
     status: "unproven",
     refs: [14],
-    source: a("$525 million annually", 95),
+    source: a("$7.3 billion cumulatively", 29),
   },
   {
     id: "consultation",
@@ -886,7 +1133,7 @@ export const PROMISES: Promise[] = [
       "UCTE, which represents workers at Calgary and Vancouver, was not consulted.",
     status: "at-risk",
     refs: [8],
-    source: a("was not consulted on the plan", 19),
+    source: a("was not consulted on the plan", 61),
   },
   {
     id: "competition",
@@ -896,7 +1143,7 @@ export const PROMISES: Promise[] = [
       "A 2023 study found fewer cancellations and better terminals — and about $20 more in fees per passenger.",
     status: "supported",
     refs: [14],
-    source: a("increased fees by about $20 more per passenger", 71),
+    source: a("$20 more per passenger", 77),
   },
 ];
 
@@ -923,3 +1170,6 @@ export function cad(value: number): string {
     maximumFractionDigits: 0,
   }).format(value);
 }
+
+/** Every audited number in the app, from article.md and from the CLC report. */
+export const FACT_LIST: Fact[] = [...Object.values(FACTS), ...CLC_FACT_LIST];

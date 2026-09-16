@@ -595,6 +595,21 @@ const REF_SEEDS: RefSeed[] = [
   },
 ];
 
+/**
+ * The report that carries the financial statements and the international
+ * record: the Canadian Labour Congress's full case.
+ */
+const REPORT_SEEDS: RefSeed[] = [
+  {
+    publisher: "Canadian Labour Congress",
+    title:
+      "Public Runways, Private Profits: Why Airport Privatization Would Be Risky and Costly for Canadians",
+    date: "2026",
+    url: null,
+    kind: "labour",
+  },
+];
+
 /** Sources carried only by the second draft's reference list. */
 const SECOND_DRAFT_SEEDS: RefSeed[] = [
   {
@@ -692,9 +707,7 @@ function buildReferences(cited: Set<number>): Reference[] {
     groupKey: "",
   }));
 
-  const extras: Reference[] = SECOND_DRAFT_SEEDS.filter(
-    (_, i) => !LEGACY_CITED.has(i + 1),
-  ).map((seed, i) => ({
+  const report: Reference[] = REPORT_SEEDS.map((seed, i) => ({
     ...seed,
     id: REF_SEEDS.length + i + 1,
     cited: false,
@@ -702,7 +715,17 @@ function buildReferences(cited: Set<number>): Reference[] {
     groupKey: "",
   }));
 
-  const all = [...canonical, ...extras];
+  const extras: Reference[] = SECOND_DRAFT_SEEDS.filter(
+    (_, i) => !LEGACY_CITED.has(i + 1),
+  ).map((seed, i) => ({
+    ...seed,
+    id: REF_SEEDS.length + REPORT_SEEDS.length + i + 1,
+    cited: false,
+    legacyId: null,
+    groupKey: "",
+  }));
+
+  const all = [...canonical, ...report, ...extras];
 
   // article.md lists the Brazilian airfare study twice ([^5] in prose, [^12] in
   // the footnote block). Collapse references that share a legacy marker or a URL
